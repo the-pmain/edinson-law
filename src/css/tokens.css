@@ -1,0 +1,90 @@
+/* Edison Law - production design tokens */
+:root {
+  color-scheme: light;
+
+  /* Core colour */
+  --edison-ink: #0a2028;
+  --edison-ink-raised: #12313a;
+  --edison-paper: #f1f6f4;
+  --edison-white: #ffffff;
+  --edison-slate: #53676d;
+  --edison-line: #cbdad6;
+  --edison-signal: #008d7a;
+  --edison-signal-deep: #006f63;
+  --edison-signal-bright: #38c6b0;
+  --edison-signal-soft: #cceae2;
+  --edison-copper: #b85a38;
+  --edison-copper-soft: #f0d8cd;
+
+  /* Semantic colour */
+  --color-bg: var(--edison-white);
+  --color-bg-subtle: var(--edison-paper);
+  --color-text: var(--edison-ink);
+  --color-text-muted: var(--edison-slate);
+  --color-border: var(--edison-line);
+  --color-link: var(--edison-signal-deep);
+  --color-action: var(--edison-signal-deep);
+  --color-action-text: var(--edison-white);
+  --color-focus: var(--edison-copper);
+
+  /* Typography */
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-body: "Manrope", Arial, Helvetica, sans-serif;
+  --font-mono: "IBM Plex Mono", Consolas, monospace;
+
+  --text-display: clamp(3.5rem, 7vw, 6rem);
+  --text-h1: clamp(2.75rem, 5vw, 4.5rem);
+  --text-h2: clamp(2.125rem, 4vw, 3.5rem);
+  --text-h3: clamp(1.625rem, 2.5vw, 2.25rem);
+  --text-lead: clamp(1.125rem, 1.5vw, 1.375rem);
+  --text-body: 1rem;
+  --text-small: 0.875rem;
+  --text-label: 0.75rem;
+
+  --leading-tight: 1.02;
+  --leading-heading: 1.12;
+  --leading-body: 1.65;
+  --tracking-label: 0.12em;
+
+  /* Spacing - 4px base */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* Layout */
+  --content-max: 90rem;
+  --reading-max: 46rem;
+  --rail-width: 248px;
+  --grid-gap: clamp(1rem, 2vw, 2rem);
+  --page-pad: clamp(1.25rem, 4vw, 5rem);
+
+  /* Shape and motion */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --border-width: 1px;
+  --duration-fast: 160ms;
+  --duration-base: 240ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Recommended focus treatment */
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

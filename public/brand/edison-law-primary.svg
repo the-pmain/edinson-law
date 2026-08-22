@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="160" viewBox="0 0 720 160" role="img" aria-labelledby="title desc">
+  <title id="title">Edison Law primary logo</title>
+  <desc id="desc">Evidence-path E monogram followed by Edison Law and Law Firm London.</desc>
+  <g fill="none" stroke="#0A2028" stroke-width="8" stroke-linecap="square">
+    <path d="M38 28v104M38 34h72M38 80h56M38 126h72"/>
+  </g>
+  <g fill="#008D7A">
+    <circle cx="118" cy="34" r="11"/>
+    <circle cx="102" cy="80" r="11"/>
+    <circle cx="118" cy="126" r="11"/>
+  </g>
+  <text x="165" y="86" fill="#0A2028" font-family="Newsreader, Georgia, serif" font-size="62" font-weight="500" letter-spacing="1">EDISON LAW</text>
+  <text x="168" y="121" fill="#53676D" font-family="Manrope, Arial, sans-serif" font-size="16" font-weight="600" letter-spacing="5">LAW FIRM · LONDON</text>
+</svg>

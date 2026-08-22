@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /
+
+Sitemap: https://edisonlaw.co.uk/sitemap.xml

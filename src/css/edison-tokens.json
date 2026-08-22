@@ -1,0 +1,44 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "edison": {
+    "color": {
+      "ink": { "$type": "color", "$value": "#0A2028" },
+      "inkRaised": { "$type": "color", "$value": "#12313A" },
+      "paper": { "$type": "color", "$value": "#F1F6F4" },
+      "white": { "$type": "color", "$value": "#FFFFFF" },
+      "slate": { "$type": "color", "$value": "#53676D" },
+      "line": { "$type": "color", "$value": "#CBDAD6" },
+      "signal": { "$type": "color", "$value": "#008D7A" },
+      "signalDeep": { "$type": "color", "$value": "#006F63" },
+      "signalBright": { "$type": "color", "$value": "#38C6B0" },
+      "signalSoft": { "$type": "color", "$value": "#CCEAE2" },
+      "copper": { "$type": "color", "$value": "#B85A38" },
+      "copperSoft": { "$type": "color", "$value": "#F0D8CD" }
+    },
+    "font": {
+      "display": { "$type": "fontFamily", "$value": ["Newsreader", "Georgia", "serif"] },
+      "body": { "$type": "fontFamily", "$value": ["Manrope", "Arial", "sans-serif"] },
+      "mono": { "$type": "fontFamily", "$value": ["IBM Plex Mono", "Consolas", "monospace"] }
+    },
+    "space": {
+      "1": { "$type": "dimension", "$value": "4px" },
+      "2": { "$type": "dimension", "$value": "8px" },
+      "3": { "$type": "dimension", "$value": "12px" },
+      "4": { "$type": "dimension", "$value": "16px" },
+      "6": { "$type": "dimension", "$value": "24px" },
+      "8": { "$type": "dimension", "$value": "32px" },
+      "12": { "$type": "dimension", "$value": "48px" },
+      "16": { "$type": "dimension", "$value": "64px" },
+      "24": { "$type": "dimension", "$value": "96px" },
+      "32": { "$type": "dimension", "$value": "128px" }
+    },
+    "radius": {
+      "small": { "$type": "dimension", "$value": "4px" },
+      "medium": { "$type": "dimension", "$value": "8px" }
+    },
+    "motion": {
+      "fast": { "$type": "duration", "$value": "160ms" },
+      "base": { "$type": "duration", "$value": "240ms" }
+    }
+  }
+}

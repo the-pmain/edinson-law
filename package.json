@@ -1,0 +1,17 @@
+{
+  "name": "edison-law",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "predev": "node scripts/render.mjs",
+    "dev": "vite",
+    "prebuild": "node scripts/render.mjs",
+    "build": "vite build",
+    "preview": "vite preview",
+    "render": "node scripts/render.mjs"
+  },
+  "devDependencies": {
+    "vite": "^8.2.2"
+  }
+}
