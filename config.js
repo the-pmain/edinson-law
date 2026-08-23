@@ -1,9 +1,12 @@
 // Edison Law — simple switches. This is the file to edit.
-// develop: true  = preview banner on, do not treat as live
-// develop: false = production
+// Local `npm run dev` stays in preview. Railway / production builds turn the banner off.
+
+const hosted =
+  process.env.NODE_ENV === "production" ||
+  Boolean(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID);
 
 export const config = {
-  develop: true,
+  develop: !hosted,
   search: true,
   analytics: false,
 };

@@ -11,12 +11,13 @@ npm run dev
 
 Local site: http://localhost:5173/
 
-Turn development mode on or off in `config.js`:
+`config.js` stays in preview locally. Railway production builds turn the banner off automatically.
 
-```js
-export const config = {
-  develop: true,
-  search: true,
-  analytics: false,
-};
+## Railway
+
+Connect the GitHub repo. Railway will run `npm run build`, then `npm start` on `$PORT`.
+
+```bash
+npm run build
+npm start
 ```
