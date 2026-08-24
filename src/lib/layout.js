@@ -46,6 +46,9 @@ function isCurrent(item, path) {
   if (href === "/expertise/") {
     return path === href || path.startsWith("/expertise/");
   }
+  if (href === "/people/") {
+    return path === href || path.startsWith("/people/");
+  }
   return path === href;
 }
 
@@ -99,11 +102,14 @@ function jsonLd(page) {
   }
 
   if (page.person) {
+    const personUrl = `${origin}/people/${page.person.slug}/`;
     graph.push({
       "@type": "Person",
       name: page.person.name,
       jobTitle: page.person.role,
+      url: personUrl,
       worksFor: { "@id": `${origin}/#organisation` },
+      ...(page.person.photo ? { image: `${origin}${page.person.photo}` } : {}),
     });
   }
 
@@ -158,7 +164,13 @@ function searchIndex() {
       type: item.type,
       text: item.description,
     })),
-    { title: "People", href: "/people/", type: "Page", text: site.people[0].name },
+    { title: "People", href: "/people/", type: "Page", text: site.people.map((person) => person.name).join(", ") },
+    ...site.people.map((person) => ({
+      title: person.name,
+      href: `/people/${person.slug}/`,
+      type: "People",
+      text: `${person.role}. ${person.summary}`,
+    })),
     { title: "About", href: "/about/", type: "Page", text: site.shortLine },
     { title: "Contact", href: "/contact/", type: "Page", text: site.email },
     ...site.footerLinks.map((item) => ({

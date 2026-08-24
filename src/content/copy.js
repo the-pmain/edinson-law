@@ -36,8 +36,8 @@ export const home = {
     },
     profile: {
       label: "People",
-      heading: "A London sole practice, named and regulated.",
-      text: `${site.people[0].name} is the solicitor at Edison Law. The firm has been an SRA recognised sole practice since ${site.sraSince}, based in London.`,
+      heading: "Named lawyers, regulated in London.",
+      text: `The firm has been an SRA recognised sole practice since ${site.sraSince}. Open a profile for biography and areas of work.`,
     },
     insight: {
       label: "Insights",
@@ -197,9 +197,9 @@ export const pages = {
   people: {
     path: "/people/",
     title: "People | Edison Law",
-    description: "The solicitor at Edison Law, London.",
+    description: "Lawyers at Edison Law in London. Open a profile for biography and areas of work.",
     heading: "Who you deal with.",
-    lead: "Edison Law is an SRA recognised sole practice. The solicitor is named below. Extended biography will be published only after the firm confirms it.",
+    lead: "Named lawyers at Edison Law. Open a profile for biography and areas of work.",
   },
   about: {
     path: "/about/",

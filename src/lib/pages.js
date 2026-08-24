@@ -3,6 +3,35 @@ import { home, pages, insightBodies } from "../content/copy.js";
 import { crumbs, documentPage, signalGraphic } from "./layout.js";
 import { esc } from "./html.js";
 
+function personHref(person) {
+  return `/people/${person.slug}/`;
+}
+
+function personPortrait(person, className = "person-photo") {
+  if (person.photo) {
+    const w = person.photoWidth || 640;
+    const h = person.photoHeight || 640;
+    return `<img class="${className}" src="${esc(person.photo)}" width="${w}" height="${h}" alt="${esc(person.name)}" decoding="async">`;
+  }
+  return `<div class="profile-initials" aria-hidden="true">${esc(person.initials)}</div>`;
+}
+
+function peopleCards() {
+  return `<div class="people-grid">
+    ${site.people
+      .map(
+        (person) => `<a class="person-card" href="${personHref(person)}">
+          ${personPortrait(person)}
+          <span class="person-card-copy">
+            <h2>${esc(person.name)}</h2>
+            <p class="muted">${esc(person.role)}</p>
+          </span>
+        </a>`,
+      )
+      .join("")}
+  </div>`;
+}
+
 function wrap(inner, band = "") {
   return `<div class="section ${band}"><div class="wrap">${inner}</div></div>`;
 }
@@ -71,17 +100,12 @@ function homePage() {
       </section>
 
       <section class="section band-ink">
-        <div class="wrap profile-block">
-          <div class="profile-aside">
-            <p class="label">${esc(home.sections.profile.label)}</p>
-            <div class="profile-initials" aria-hidden="true">${esc(site.people[0].initials)}</div>
-            <a class="btn btn-ghost" href="/people/">People</a>
-          </div>
-          <div>
-            <h2>${esc(home.sections.profile.heading)}</h2>
-            <p class="lead profile-lead">${esc(home.sections.profile.text)}</p>
-            <p class="mono">SRA ${esc(site.sraNumber)}</p>
-          </div>
+        <div class="wrap people-home">
+          <p class="label">${esc(home.sections.profile.label)}</p>
+          <h2>${esc(home.sections.profile.heading)}</h2>
+          <p class="lead profile-lead">${esc(home.sections.profile.text)}</p>
+          ${peopleCards()}
+          <p class="mono">SRA ${esc(site.sraNumber)}</p>
         </div>
       </section>
 
@@ -281,7 +305,6 @@ function insightPage(item) {
 
 function peoplePage() {
   const page = pages.people;
-  const person = site.people[0];
   const body = `
     <main id="content">
       <div class="wrap page-head">
@@ -289,18 +312,64 @@ function peoplePage() {
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
       </div>
-      <div class="wrap profile-block" style="padding-bottom:6rem">
-        <div class="profile-initials" aria-hidden="true">${esc(person.initials)}</div>
+      <div class="wrap people-index">
+        ${peopleCards()}
+      </div>
+    </main>
+  `;
+  return documentPage({ ...page, crumb: "People" }, body);
+}
+
+function personPage(person) {
+  const page = {
+    path: personHref(person),
+    title: `${person.name} | Edison Law`,
+    description: person.summary,
+    heading: person.name,
+    person,
+    breadcrumbs: [{ label: "People", href: "/people/" }],
+    crumb: person.name,
+  };
+  const body = `
+    <main id="content">
+      <div class="wrap page-head">
+        ${crumbs([
+          { label: "People", href: "/people/" },
+          { label: person.name },
+        ])}
+      </div>
+      <div class="wrap person-page">
+        <aside class="person-aside">
+          ${personPortrait(person, "person-photo person-photo-lead")}
+        </aside>
         <div class="prose">
-          <h2>${esc(person.name)}</h2>
-          <p class="mono">${esc(person.role)} / ${esc(person.firm)}</p>
-          <p>${esc(person.summary)}</p>
-          <p><a href="/contact/">${esc(site.email)}</a></p>
+          <h1>${esc(person.name)}</h1>
+          <p class="mono">${esc(person.role)}</p>
+          ${person.bio.map((para) => `<p>${esc(para)}</p>`).join("")}
+          ${
+            person.quotes?.length
+              ? person.quotes.map((item) => `<blockquote>${esc(item)}</blockquote>`).join("")
+              : ""
+          }
+          ${person.closing ? `<p>${esc(person.closing)}</p>` : ""}
+          ${
+            person.areas?.length
+              ? `<h2>Key areas of work</h2>
+            <ul>${person.areas.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`
+              : ""
+          }
+          ${
+            person.experience?.length
+              ? `<h2>Representative experience</h2>
+            <ul>${person.experience.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`
+              : ""
+          }
+          <p><a class="btn btn-signal" href="/contact/">Discuss a matter</a></p>
         </div>
       </div>
     </main>
   `;
-  return documentPage({ ...page, person, crumb: "People" }, body);
+  return documentPage(page, body);
 }
 
 function aboutPage() {
@@ -465,6 +534,10 @@ export function allPages() {
       html: insightPage(item),
     })),
     { file: "people/index.html", html: peoplePage() },
+    ...site.people.map((person) => ({
+      file: `people/${person.slug}/index.html`,
+      html: personPage(person),
+    })),
     { file: "about/index.html", html: aboutPage() },
     { file: "contact/index.html", html: contactPage() },
     { file: "legal-regulatory/index.html", html: legalPage("legal") },

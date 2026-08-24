@@ -287,6 +287,139 @@
   color: var(--edison-signal-deep);
 }
 
+.people-grid {
+  display: grid;
+  gap: var(--space-8);
+  grid-template-columns: 1fr;
+}
+
+.person-card {
+  display: grid;
+  gap: var(--space-4);
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.person-card h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: var(--leading-heading);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.person-card-copy {
+  display: grid;
+  gap: var(--space-2);
+  align-content: end;
+}
+
+.person-card-copy::after {
+  content: "Open profile";
+  margin-top: var(--space-2);
+  font-size: var(--text-small);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--edison-signal-deep);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.person-card .person-photo,
+.person-card .profile-initials {
+  width: 100%;
+}
+
+.person-card:hover h2,
+.person-card:focus-visible h2 {
+  color: var(--edison-signal-deep);
+}
+
+.person-card:hover .person-photo,
+.person-card:focus-visible .person-photo,
+.person-card:hover .profile-initials,
+.person-card:focus-visible .profile-initials {
+  outline: 3px solid var(--edison-signal);
+  outline-offset: 4px;
+}
+
+.person-card:hover .person-card-copy::after,
+.person-card:focus-visible .person-card-copy::after {
+  color: var(--edison-ink);
+}
+
+.band-ink .person-card-copy::after {
+  color: var(--edison-signal-bright);
+}
+
+.band-ink .person-card:hover h2,
+.band-ink .person-card:focus-visible h2 {
+  color: var(--edison-signal-bright);
+}
+
+.band-ink .person-card:hover .person-photo,
+.band-ink .person-card:focus-visible .person-photo {
+  outline-color: var(--edison-signal-bright);
+}
+
+.band-ink .person-card:hover .person-card-copy::after,
+.band-ink .person-card:focus-visible .person-card-copy::after {
+  color: var(--edison-paper);
+}
+
+.person-photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: center 22%;
+  background: var(--edison-ink-raised);
+}
+
+.person-card .profile-initials {
+  height: auto;
+  aspect-ratio: 1;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+}
+
+.people-index {
+  padding-bottom: var(--space-24);
+}
+
+.people-home .people-grid {
+  margin: 0 0 var(--space-8);
+}
+
+.person-page {
+  display: grid;
+  gap: var(--space-12);
+  padding-bottom: var(--space-24);
+  align-items: start;
+}
+
+.person-page .prose h1 {
+  margin-top: 0;
+}
+
+.person-aside {
+  width: min(22rem, 100%);
+}
+
+.person-page .prose .btn {
+  margin-top: var(--space-4);
+}
+
+.person-page blockquote {
+  margin: 0;
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--edison-signal);
+  font-family: var(--font-display);
+  color: var(--color-text-muted);
+}
+
 @media (min-width: 768px) {
   .pillar-row {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -308,5 +441,10 @@
   .method-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-8);
+  }
+
+  .people-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-8) var(--space-12);
   }
 }
