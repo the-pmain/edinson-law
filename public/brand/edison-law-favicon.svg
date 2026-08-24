@@ -1,13 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Edison Law">
-  <rect width="64" height="64" fill="#0A1629"/>
-  <g fill="#D4B15A">
-    <path d="M18 12h26.5v6.2H25.2v8.6h16.2v5.4H25.2v11.2H45V49H18z"/>
-  </g>
-  <g fill="none" stroke="#D4B15A" stroke-width="1.7" stroke-linejoin="miter">
-    <path d="M8 31.6h48"/>
-    <path d="M12.2 31.6v7.2"/>
-    <path d="M51.8 31.6v7.2"/>
-    <path d="M7.6 38.8h9.2l-4.6 7.6z"/>
-    <path d="M47.2 38.8h9.2l-4.6 7.6z"/>
+  <rect width="64" height="64" fill="#0A2028"/>
+  <g transform="translate(7.5 5) scale(0.245)">
+    <g fill="#fff">
+      <path d="M52 22h108v8h-8v16h8v8H76v46h56l12 9-12 9H76v50h84v8h-8v16h8v8H52z"/>
+      <path d="M18 64h152v6H18z"/>
+      <path d="M170 64h16v3h-7v7h-6V70h-3z"/>
+      <path d="M10 126q16 24 32 0q-16 11-32 0z"/>
+      <path d="M160 114q16 20 32 0q-16 9-32 0z"/>
+    </g>
+    <g fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="miter">
+      <path d="M26 67L10 126M26 67L42 126"/>
+      <path d="M176 67L160 114M176 67L192 114"/>
+    </g>
   </g>
 </svg>

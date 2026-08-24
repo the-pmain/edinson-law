@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260" role="img" aria-label="Edison Law">
+  <g fill="#fff">
+    <path d="M52 22h108v8h-8v16h8v8H76v46h56l12 9-12 9H76v50h84v8h-8v16h8v8H52z"/>
+    <path d="M18 64h152v6H18z"/>
+    <path d="M170 64h16v3h-7v7h-6V70h-3z"/>
+    <path d="M10 126q16 24 32 0q-16 11-32 0z"/>
+    <path d="M160 114q16 20 32 0q-16 9-32 0z"/>
+  </g>
+  <g fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="miter">
+    <path d="M26 67L10 126M26 67L42 126"/>
+    <path d="M176 67L160 114M176 67L192 114"/>
+  </g>
+  <text x="100" y="238" text-anchor="middle" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="600" letter-spacing="0.4em">EDISON LAW</text>
+</svg>

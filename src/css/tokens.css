@@ -62,6 +62,7 @@
   --content-max: 90rem;
   --reading-max: 46rem;
   --rail-width: 248px;
+  --brand-lockup-width: calc(var(--rail-width) - 140px);
   --grid-gap: clamp(1rem, 2vw, 2rem);
   --page-pad: clamp(1.25rem, 4vw, 5rem);
 

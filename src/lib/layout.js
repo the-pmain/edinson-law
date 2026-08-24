@@ -1,7 +1,7 @@
 import { site } from "../../site.config.js";
 import { esc } from "./html.js";
 
-const MARK = `<img src="/brand/edison-law-primary.png" width="238" height="229" alt="Edison Law">`;
+const MARK = `<img class="brand-lockup" src="/brand/edison-law-logo.png" alt="Edison Law">`;
 
 const ICONS = {
   menu: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>`,
@@ -196,11 +196,8 @@ export function documentPage(page, body) {
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="canonical" href="${canonical}">
 
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
-  <link rel="icon" href="/favicon-16.png" type="image/png" sizes="16x16">
-  <link rel="icon" href="/favicon.ico" sizes="48x48">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+  <link rel="icon" href="/brand/edison-law-logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
   <meta name="apple-mobile-web-app-title" content="${esc(site.name)}">
   <meta name="application-name" content="${esc(site.name)}">
@@ -214,7 +211,7 @@ export function documentPage(page, body) {
   <meta property="og:image" content="${ogImage}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Edison Law gold emblem: letter E with the scales of justice">
+  <meta property="og:image:alt" content="Edison Law">
   <meta property="og:locale" content="${site.locale}">
   ${page.article ? `<meta property="article:published_time" content="${page.article.date}">` : ""}
 
