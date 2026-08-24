@@ -272,6 +272,7 @@
 
 .service-index {
   display: grid;
+  padding-bottom: var(--space-24);
 }
 
 .service-index a {

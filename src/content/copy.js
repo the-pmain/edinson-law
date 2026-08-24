@@ -109,6 +109,12 @@ export const home = {
       label: "Insights",
       heading: "Investigation notes, not marketing copy.",
     },
+    london: {
+      heading: "London as the legal route.",
+      text: "The practice is an SRA recognised sole practice in London. Work that crosses borders is still held here: the evidential file, the English court, and local counsel where the money actually sits.",
+      meta: "London · SRA 510498",
+      cta: { label: "About the firm", href: "/about/" },
+    },
     practiceBar: {
       cta: { label: "Explore Our Services", href: "/expertise/" },
     },
@@ -123,8 +129,9 @@ export const home = {
 export const pages = {
   expertise: {
     path: "/expertise/",
-    title: "Expertise | Edison Law",
-    description: "Private prosecutions, asset tracing, crypto fraud, regulatory defence, cross-border recovery and corporate intelligence.",
+    title: "Legal Expertise | Edison Law, London",
+    description:
+      "Private prosecutions, asset tracing, crypto fraud, regulatory defence, cross-border recovery and corporate intelligence — six connected practices in London.",
     heading: "Our services.",
     lead: "Six connected practices. Each page states the problem, the scope and the method.",
   },
@@ -320,19 +327,277 @@ export const pages = {
       },
     ],
   },
+  investigations: {
+    path: "/investigations/",
+    title: "Financial Crime Investigations in London | Edison Law",
+    description:
+      "In-house investigators and forensic specialists in London. We establish what happened, preserve evidence and locate assets before a legal strategy is chosen.",
+    heading: "Establish the facts first.",
+    lead: "Investigations at this firm are the in-house work that decides whether a private prosecution, a freezing order or a regulatory report is possible — and whether it is worth the cost.",
+    schema: "investigations",
+    serviceType: "Financial crime investigation",
+    intro: [
+      "Expertise is the legal route. Investigations are how the file is built. Solicitors, investigators and forensic specialists sit in the same practice, so the person who scopes the enquiry is still on the matter when the evidence is tested.",
+      "We act for companies, organisations and individuals who have been the victims of crime, and for boards that have found a problem inside the organisation. We do not investigate for entertainment, and we will say early when the material will not support the course a client wants.",
+    ],
+    jump: [
+      { label: "Method", href: "#method" },
+      { label: "What we investigate", href: "#work" },
+      { label: "Who does the work", href: "#investigators" },
+      { label: "Instruct", href: "#instruct" },
+    ],
+    method: {
+      label: "Method",
+      heading: "How an investigation is run.",
+      items: [
+        {
+          title: "Preserve",
+          text: "Hold devices, accounts, originals and access logs. Do not overwrite metadata, do not tidy the file, and do not draft a narrative on top of material that has not yet been captured.",
+        },
+        {
+          title: "Establish",
+          text: "Who was involved, how the scheme operated, and what the documents prove — and do not prove. A suspicion is not a fact. A reconstruction that cannot be explained in court is not a reconstruction.",
+        },
+        {
+          title: "Locate",
+          text: "People, entities and value. Nominee directors, connected companies, family members holding property, payment institutions, wallets. Including those who have moved abroad or gone deliberately to ground.",
+        },
+        {
+          title: "File",
+          text: "Continuity, unused material, disclosure records. The test is whether a defence lawyer can pick the file up cold and still find it honest. If it would not survive that, it is not finished.",
+        },
+      ],
+    },
+    people: {
+      label: "Who does the work",
+      heading: "Investigators and forensic specialists.",
+      text: "The people who build the file. Solicitors direct the investigation and take the legal decisions; these are the specialists they work with from the first day.",
+    },
+    cta: {
+      heading: "Instruct an investigation.",
+      text: "Send the facts you already have. Do not send passwords, seed phrases or original identity documents. We will say whether we can help.",
+    },
+  },
+  internalInvestigations: {
+    path: "/investigations/internal-investigations/",
+    title: "Internal Investigations | Edison Law, London",
+    description:
+      "Board-level, employee and whistleblower investigations in London, run to a standard that holds if you later prosecute, report or litigate.",
+    parent: { label: "Investigations", href: "/investigations/" },
+    heading: "When the problem is inside the organisation.",
+    lead: "An internal investigation is useful only if it can survive the next step — a dismissal, a regulatory report, a civil claim or a private prosecution. We run the enquiry as if each of those is already on the table.",
+    schema: "service",
+    serviceType: "Internal investigation",
+    relatedExpertise: ["regulatory", "corporate-intelligence", "private-prosecutions"],
+    when: [
+      "A whistleblower report, unexplained payments or a gap in the accounts has landed on the board.",
+      "Employee or fiduciary misconduct needs to be established before anyone is dismissed or reported.",
+      "You may have to tell the FCA, SFO, a charity regulator or insurers, and the file has to be accurate when you do.",
+    ],
+    scope: [
+      "Scoping and privilege",
+      "Employee and witness interviews",
+      "Documentary and financial reconstruction",
+      "Whistleblower follow-up",
+      "Regulatory notification advice",
+      "Remedial and governance recommendations",
+    ],
+    approach:
+      "The first decisions are about hold, access and privilege — not about a press line. We identify who should be interviewed, in what order, and what must be preserved before anyone is put on notice. Findings are written so they can be disclosed later without embarrassment. If the facts point to a crime against the organisation, the same file can support a private prosecution or recovery; we do not run a second investigation to get there.",
+    faqs: [
+      {
+        q: "Will the subjects know they are being investigated?",
+        a: "Not always, and not at first. We say when a step would make the enquiry visible. Covert steps are taken only on instruction, and only by lawful means.",
+      },
+      {
+        q: "Is this the same as an HR investigation?",
+        a: "No. An employment process can sit alongside this work. It is not a substitute for an evidential file that will be read by a regulator, a defendant or a judge.",
+      },
+      {
+        q: "Can you guarantee the outcome the board wants?",
+        a: "No. We will tell you what the material supports. If it does not support a dismissal, a report or a prosecution, we say so before costs run on.",
+      },
+    ],
+  },
+  financialCrimeInvestigations: {
+    path: "/investigations/financial-crime/",
+    title: "Financial Crime Investigations | Edison Law, London",
+    description:
+      "Fraud and financial crime investigations in London: who was involved, how the scheme ran, and what you can actually prove.",
+    parent: { label: "Investigations", href: "/investigations/" },
+    heading: "What happened, and what you can prove.",
+    lead: "A financial crime investigation establishes the facts of a fraud, false accounting or misappropriation before anyone is asked to commit to a legal route. The output is a file: witnesses, documents, continuity and a clear account of what is known and what is not.",
+    schema: "service",
+    serviceType: "Financial crime investigation",
+    relatedExpertise: ["private-prosecutions", "asset-tracing", "regulatory"],
+    when: [
+      "A report to the police, Action Fraud or the SFO has produced no investigation you can use.",
+      "The loss is serious, but it is not yet clear who did what, or whether the documents will prove it.",
+      "You need a criminal-standard file because a private prosecution, a freezing order or a regulatory report may follow.",
+    ],
+    scope: [
+      "Case scoping and merit assessment",
+      "Witness identification and statements",
+      "Documentary gathering and continuity",
+      "Financial reconstruction with forensic specialists",
+      "Unused material and disclosure records",
+      "Briefing for charging, injunction or report",
+    ],
+    approach:
+      "We start by imposing order: what is alleged, what is in hand, what is missing, and what would have to be true for a case to stand. Investigators take statements and gather documents; forensic specialists rebuild the money; solicitors decide what the file is for. Nothing is obtained in a way that will later embarrass a prosecution. If the evidence will not hold, we stop and say so.",
+    faqs: [
+      {
+        q: "Is this a substitute for the police?",
+        a: "No. It is the work of building a file the authorities have declined to build, or have not built to a standard you can use. A private prosecution remains a separate legal decision.",
+      },
+      {
+        q: "Do you guarantee a prosecution or a recovery?",
+        a: "No. The investigation answers whether either is realistic. That answer is the point of instructing it.",
+      },
+      {
+        q: "How is this different from instructing unregulated investigators?",
+        a: "The enquiry is run inside a solicitors' practice, to a standard that will be tested by the defence and the court. Method, privilege and disclosure are part of the work, not an afterthought.",
+      },
+    ],
+  },
+  digitalInvestigations: {
+    path: "/investigations/digital-crypto/",
+    title: "Digital and Crypto Investigations | Edison Law, London",
+    description:
+      "Digital, payments and cryptocurrency investigations in London: preserve devices and wallets, map the trail, and produce evidence a court will accept.",
+    parent: { label: "Investigations", href: "/investigations/" },
+    heading: "Hold the trail before it moves again.",
+    lead: "Payment diversion, authorised push payment fraud, wallet theft and exchange collapses are usually won or lost in the first days. The investigation is the work of capturing what still exists, mapping where value went, and turning that picture into exhibits.",
+    schema: "service",
+    serviceType: "Digital and cryptocurrency investigation",
+    relatedExpertise: ["crypto-fraud", "asset-tracing", "private-prosecutions"],
+    when: [
+      "Funds have left through a payment service, correspondent bank, e-money account or digital-asset platform.",
+      "Devices, mailboxes or wallets that still hold evidence have not yet been imaged or frozen.",
+      "An exchange or provider may be holding a balance, and you need an evidenced request rather than a hope.",
+    ],
+    scope: [
+      "Evidence preservation and hold notices",
+      "Payments tracing across banks and PSPs",
+      "Blockchain and wallet mapping",
+      "Exchange and platform liaison",
+      "Flow-of-funds schedules and exhibits",
+      "Support for emergency injunctions",
+    ],
+    approach:
+      "On-chain data and bank records are only useful when their limits are stated. We capture the source first, then map what the records show — through payment institutions, mixers, bridges and exchanges — and produce the evidenced picture needed for an emergency application. That tracing work is written so it can move from injunction to trial without being rebuilt.",
+    faqs: [
+      {
+        q: "Can you guarantee that crypto or diverted funds will be recovered?",
+        a: "No. Anyone who guarantees recovery is not describing this work honestly. We will say early when value is still reachable, and equally early when it is not.",
+      },
+      {
+        q: "Should we log into the wallet or exchange ourselves?",
+        a: "Usually not. Accessing an account can destroy metadata, alert a counterparty or create a continuity problem. Describe what you have. We will say how to preserve it.",
+      },
+      {
+        q: "How quickly can you start?",
+        a: "These matters are built for speed. Send what you have: transaction hashes, payment references, institution names, dates. Do not send seed phrases or passwords.",
+      },
+    ],
+  },
+  crossBorderInvestigations: {
+    path: "/investigations/cross-border/",
+    title: "Cross-Border Investigations | Edison Law, London",
+    description:
+      "Cross-border financial crime investigations from London: foreign registries, overseas subsidiaries, and defendants who have left the jurisdiction.",
+    parent: { label: "Investigations", href: "/investigations/" },
+    heading: "The facts do not stop at the UK border.",
+    lead: "A UK-facing loss often has its origins — or its proceeds — overseas. Cross-border investigation is the work of reading the foreign record, finding the people, and putting those facts into a file a London court can use.",
+    schema: "service",
+    serviceType: "Cross-border investigation",
+    relatedExpertise: ["cross-border", "asset-tracing", "private-prosecutions"],
+    when: [
+      "Companies, property or bank accounts sit in another jurisdiction, and the UK file does not explain them.",
+      "A defendant has relocated, changed name, or gone to ground outside England and Wales.",
+      "An overseas subsidiary, supplier or joint venture is where the misconduct actually happened.",
+    ],
+    scope: [
+      "Foreign company, court and insolvency records",
+      "Procurement and regulatory databases",
+      "Location of defendants and witnesses",
+      "Enquiries in overseas subsidiaries",
+      "Coordination with local counsel and researchers",
+      "Service and enforcement groundwork",
+    ],
+    approach:
+      "We obtain what the public and paid record will give, in the languages it is written in, and we are careful about how it is obtained. Registry extracts, court files and local enquiries are logged so they can be exhibited. Where a person has to be found, that is investigation, not a process-server's afterthought. Local counsel are instructed when a step would otherwise be unlawful or invisible from London.",
+    faqs: [
+      {
+        q: "Do you have offices overseas?",
+        a: "The practice is London-based. We work with local counsel, registry researchers and investigators in the jurisdictions where the people and the money actually sit.",
+      },
+      {
+        q: "Can you serve someone who has left the country?",
+        a: "Locating them is the investigative step. Service and enforcement follow once they can be found. We will say if they cannot.",
+      },
+      {
+        q: "Is this mutual legal assistance?",
+        a: "MLA and letters of request are legal routes, not the investigation itself. The investigation produces the facts those routes need. See Cross-border fraud and corruption under Expertise for the legal work.",
+      },
+    ],
+  },
+  assetTracingInvestigations: {
+    path: "/investigations/asset-tracing/",
+    title: "Asset Tracing Investigations | Edison Law, London",
+    description:
+      "Asset tracing investigations in London: where misappropriated value went, whether it is still there, and whether pursuing it is worth the cost.",
+    parent: { label: "Investigations", href: "/investigations/" },
+    heading: "Find the value. Then decide.",
+    lead: "Asset tracing investigation answers the question every victim of fraud eventually asks: where has the money gone, and is any of it still there. The legal remedies — freezing orders, receivership, confiscation — come after that answer, not before.",
+    schema: "service",
+    serviceType: "Asset tracing investigation",
+    relatedExpertise: ["asset-tracing", "crypto-fraud", "cross-border"],
+    when: [
+      "Funds have left, and the destination is a bank, a company, a property, a family member or a wallet — or all of them.",
+      "A defendant appears to have nothing, and that needs to be tested before you spend on proceedings.",
+      "You need an asset picture to support a freezing, proprietary or disclosure application at speed.",
+    ],
+    scope: [
+      "Flow-of-funds from the point of loss",
+      "Banking chains and payment institutions",
+      "Nominee holdings and connected companies",
+      "Property, vehicles, investments and goods",
+      "Digital-asset conversion and cash-out",
+      "Pre-action enforceability assessments",
+    ],
+    approach:
+      "We follow value from the point of loss and we say, early, whether what we find is worth the cost of reaching it. An asset that exists is not always an asset that can be frozen, charged or sold. Findings are produced as schedules and exhibits that solicitors can put in front of a court the same week, and that forensic experts can stand behind if they are cross-examined.",
+    faqs: [
+      {
+        q: "Can you guarantee that assets will be found?",
+        a: "No. We will tell you early when there is value to pursue, and equally early when the trail ends. That is the useful answer.",
+      },
+      {
+        q: "How is this different from Asset tracing and recovery under Expertise?",
+        a: "This page is the investigative work: locating value and saying whether it is reachable. The Expertise page is the legal work that follows — freezing orders, receivership, trust piercing and enforcement.",
+      },
+      {
+        q: "Do you chase assets that will cost more than they return?",
+        a: "Not if we can see that coming. A tracing exercise that is not worth the powder is stopped, and the client is told.",
+      },
+    ],
+  },
   insights: {
     path: "/insights/",
-    title: "Insights | Edison Law",
-    description: "Investigation notes and legal explainers from Edison Law.",
+    title: "Insights | Investigation Notes | Edison Law",
+    description:
+      "Notes on evidence, tracing and legal method from Edison Law in London. They explain how a file is built — not case studies, and not results.",
     heading: "Notes from the work.",
     lead: "Short pieces on method. They explain how evidence becomes a legal decision. They are not case studies and they do not report results.",
   },
   people: {
     path: "/people/",
-    title: "People | Edison Law",
-    description: "Lawyers at Edison Law in London. Open a profile for biography and areas of work.",
+    title: "People | Edison Law, London",
+    description:
+      "Solicitors, investigators and forensic specialists at Edison Law. Open a profile for biography and the work they actually do.",
     heading: "Our people.",
-    lead: "Named lawyers at Edison Law. Open a profile for biography and areas of work.",
+    lead: "Named lawyers, investigators and forensic specialists at Edison Law. Open a profile for biography and areas of work.",
   },
   joinUs: {
     path: "/join-us/",
@@ -436,8 +701,9 @@ export const pages = {
   },
   contact: {
     path: "/contact/",
-    title: "Contact | Edison Law",
-    description: "Instruct Edison Law confidentially about a private prosecution, asset recovery or financial crime matter.",
+    title: "Contact Edison Law | Confidential Instructions, London",
+    description:
+      "Write to Edison Law in London about a private prosecution, asset recovery or financial crime matter. Enquiries are handled confidentially.",
     heading: "Instruct us confidentially.",
     lead: "All enquiries are handled under strict confidentiality protocols. Do not send passwords, seed phrases or original identity documents through this form. Describe the situation. We will say whether we can help.",
     urgent: `For urgent freezing order applications and asset preservation, write to ${site.email} and mark the subject urgent.`,

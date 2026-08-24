@@ -60,7 +60,8 @@ body[data-mode="development"] .preview-banner {
 .header-nav {
   display: none;
   align-items: center;
-  gap: 1.75rem;
+  flex-wrap: wrap;
+  gap: 1.25rem 1.5rem;
 }
 
 .header-nav a {

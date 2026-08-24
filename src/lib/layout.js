@@ -29,19 +29,13 @@ export function trustBadges() {
 
 function isCurrent(item, path) {
   const href = item.href;
-  const label = item.label || "";
   if (href === "/") return path === "/";
 
-  if (label === "Investigations") {
-    return site.insights.some(
-      (note) => note.type === "Investigation note" && path === `/insights/${note.slug}/`,
-    );
+  if (href === "/investigations/") {
+    return path === href || path.startsWith("/investigations/");
   }
-  if (label === "Insights") {
-    if (path === "/insights/") return true;
-    return site.insights.some(
-      (note) => note.type !== "Investigation note" && path === `/insights/${note.slug}/`,
-    );
+  if (href === "/insights/") {
+    return path === href || path.startsWith("/insights/");
   }
   if (href === "/expertise/") {
     return path === href || path.startsWith("/expertise/");
@@ -125,6 +119,45 @@ function jsonLd(page) {
     });
   }
 
+  if (page.schema === "investigations" || page.schema === "service") {
+    const service = {
+      "@type": "Service",
+      name: (page.title || "").replace(/\s*\|\s*.*$/, "").trim() || page.heading,
+      serviceType: page.serviceType || "Legal investigation",
+      provider: { "@id": `${origin}/#organisation` },
+      areaServed: { "@type": "Country", name: "United Kingdom" },
+      url,
+      description: page.description,
+    };
+    if (page.schema === "investigations") {
+      service.hasOfferCatalog = {
+        "@type": "OfferCatalog",
+        name: "Investigations",
+        itemListElement: site.investigations.map((item, index) => ({
+          "@type": "Offer",
+          position: index + 1,
+          itemOffered: {
+            "@type": "Service",
+            name: item.title,
+            url: `${origin}${item.href}`,
+          },
+        })),
+      };
+    }
+    graph.push(service);
+  }
+
+  if (page.faqs?.length) {
+    graph.push({
+      "@type": "FAQPage",
+      mainEntity: page.faqs.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: { "@type": "Answer", text: item.a },
+      })),
+    });
+  }
+
   if (page.path !== "/") {
     const crumbs = [{ name: "Home", item: `${origin}/` }];
     if (page.breadcrumbs) {
@@ -150,14 +183,26 @@ function jsonLd(page) {
 function searchIndex() {
   const items = [
     { title: "Home", href: "/", type: "Page", text: site.masterLine },
-    { title: "Expertise", href: "/expertise/", type: "Page", text: "Practice areas" },
+    { title: "Expertise", href: "/expertise/", type: "Page", text: "Private prosecutions, asset tracing, crypto fraud, regulatory defence, cross-border recovery and corporate intelligence." },
     ...site.practices.map((item) => ({
       title: item.title,
       href: item.href,
       type: "Expertise",
       text: item.summary,
     })),
-    { title: "Insights", href: "/insights/", type: "Page", text: "Investigation notes" },
+    {
+      title: "Investigations",
+      href: "/investigations/",
+      type: "Page",
+      text: "In-house financial crime investigations, internal enquiries, digital tracing and asset location.",
+    },
+    ...site.investigations.map((item) => ({
+      title: item.title,
+      href: item.href,
+      type: "Investigations",
+      text: item.summary,
+    })),
+    { title: "Insights", href: "/insights/", type: "Page", text: "Investigation notes and legal explainers" },
     ...site.insights.map((item) => ({
       title: item.title,
       href: `/insights/${item.slug}/`,
@@ -208,6 +253,8 @@ export function documentPage(page, body) {
   <meta name="format-detection" content="telephone=no">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="canonical" href="${canonical}">
+  <link rel="alternate" hreflang="en-GB" href="${canonical}">
+  <link rel="alternate" hreflang="x-default" href="${canonical}">
 
   <link rel="icon" href="/brand/edison-law-logo.png" type="image/png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -224,7 +271,7 @@ export function documentPage(page, body) {
   <meta property="og:image" content="${ogImage}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Edison Law">
+  <meta property="og:image:alt" content="${esc(page.heading || site.name)}">
   <meta property="og:locale" content="${site.locale}">
   ${page.article ? `<meta property="article:published_time" content="${page.article.date}">` : ""}
 
@@ -232,6 +279,7 @@ export function documentPage(page, body) {
   <meta name="twitter:title" content="${title}">
   <meta name="twitter:description" content="${description}">
   <meta name="twitter:image" content="${ogImage}">
+  <meta name="twitter:image:alt" content="${esc(page.heading || site.name)}">
 
   <link rel="preload" href="/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>

@@ -1,5 +1,11 @@
 import { site } from "../../site.config.js";
 import { home, pages, insightBodies } from "../content/copy.js";
+import {
+  insightMedia,
+  investigationMedia,
+  media,
+  practiceMedia,
+} from "../content/media.js";
 import { crumbs, documentPage, signalGraphic } from "./layout.js";
 import { esc } from "./html.js";
 
@@ -16,10 +22,10 @@ function personPortrait(person, className = "person-photo") {
   return `<div class="profile-initials" aria-hidden="true">${esc(person.initials)}</div>`;
 }
 
-function peopleCards() {
-  if (!site.people.length) return "";
+function peopleCards(list = site.people) {
+  if (!list.length) return "";
   return `<div class="people-grid">
-    ${site.people
+    ${list
       .map(
         (person) => `<a class="person-card" href="${personHref(person)}">
           ${personPortrait(person)}
@@ -37,10 +43,23 @@ function wrap(inner, band = "") {
   return `<div class="section ${band}"><div class="wrap">${inner}</div></div>`;
 }
 
-function roomPhoto() {
-  return `<figure class="room-photo">
-    <img src="/images/meeting-room.jpg" width="1024" height="1024" alt="A quiet meeting room with leather seating and daylight" decoding="async">
+function figure(item, className = "media-figure") {
+  if (!item) return "";
+  return `<figure class="${className}">
+    <img src="${esc(item.src)}" width="${item.width}" height="${item.height}" alt="${esc(item.alt)}" decoding="async" loading="lazy">
   </figure>`;
+}
+
+function roomPhoto() {
+  return figure(media.meetingRoom, "media-figure room-photo");
+}
+
+function photoStrip(items, label) {
+  return `<section class="photo-strip-band" aria-label="${esc(label)}">
+    <div class="wrap photo-strip">
+      ${items.map((item) => figure(item, "media-figure")).join("")}
+    </div>
+  </section>`;
 }
 
 function cta(link) {
@@ -53,6 +72,7 @@ function homePage() {
   const why = home.sections.why;
   const cases = home.sections.cases;
   const recognition = home.sections.recognition;
+  const london = home.sections.london;
   const body = `
     <main id="content">
       <section class="band-paper">
@@ -78,6 +98,7 @@ function homePage() {
             ${site.practices
               .map(
                 (item) => `<a class="practice-item" href="${item.href}">
+                  ${figure(practiceMedia(item.id), "media-figure practice-photo")}
                   <h2>${esc(item.title)}</h2>
                   <p>${esc(item.summary)}</p>
                 </a>`,
@@ -91,15 +112,18 @@ function homePage() {
       </section>
 
       <section class="section">
-        <div class="wrap">
-          <p class="label">${esc(who.label)}</p>
-          <h2>${esc(who.heading)}</h2>
-          <p class="lead muted method-lead">${esc(who.lead)}</p>
-          <p class="muted">${esc(who.text)}</p>
-          <p class="label audience-label">${esc(who.actForLabel)}</p>
-          <ul class="audience-list">
-            ${who.actFor.map((item) => `<li>${esc(item)}</li>`).join("")}
-          </ul>
+        <div class="wrap split-visual who-visual">
+          ${figure(media.fileCorridor, "media-figure")}
+          <div class="who-copy">
+            <p class="label">${esc(who.label)}</p>
+            <h2>${esc(who.heading)}</h2>
+            <p class="lead muted method-lead">${esc(who.lead)}</p>
+            <p class="muted">${esc(who.text)}</p>
+            <p class="label audience-label">${esc(who.actForLabel)}</p>
+            <ul class="audience-list">
+              ${who.actFor.map((item) => `<li>${esc(item)}</li>`).join("")}
+            </ul>
+          </div>
         </div>
       </section>
 
@@ -120,6 +144,11 @@ function homePage() {
           </div>
         </div>
       </section>
+
+      ${photoStrip(
+        [media.archiveBoxes, media.deskFiles, media.meetingRoom],
+        "The rooms in which the work is done",
+      )}
 
       <section class="section">
         <div class="wrap">
@@ -165,21 +194,40 @@ function homePage() {
       </section>
 
       <section class="section band-paper">
-        <div class="wrap reading">
+        <div class="wrap">
           <p class="label">${esc(home.sections.insight.label)}</p>
           <h2>${esc(home.sections.insight.heading)}</h2>
-          <a class="insight-row" href="/insights/${featured.slug}/">
-            <h3>${esc(featured.title)}</h3>
-            <p class="muted">${esc(featured.description)}</p>
+          <a class="insight-visual" href="/insights/${featured.slug}/">
+            ${figure(insightMedia(featured.slug), "media-figure insight-photo")}
+            <span class="insight-copy">
+              <p class="mono">${esc(featured.type)} / ${esc(featured.dateLabel)}</p>
+              <h3>${esc(featured.title)}</h3>
+              <p class="muted">${esc(featured.description)}</p>
+            </span>
           </a>
         </div>
       </section>
 
+      <section class="section band-ink london-band">
+        <div class="wrap split-visual">
+          ${figure(media.londonStreet, "media-figure")}
+          <div class="london-copy">
+            <h2>${esc(london.heading)}</h2>
+            <p class="lead muted london-lead">${esc(london.text)}</p>
+            <p class="mono">${esc(london.meta)}</p>
+            <a class="btn btn-ghost" href="${london.cta.href}">${esc(london.cta.label)}</a>
+          </div>
+        </div>
+      </section>
+
       <section class="section">
-        <div class="wrap cta-band reading">
-          <h2>${esc(home.sections.cta.heading)}</h2>
-          <p class="lead muted">${esc(home.sections.cta.text)}</p>
-          <a class="btn btn-ink" href="${home.sections.cta.cta.href}">${esc(home.sections.cta.cta.label)}</a>
+        <div class="wrap split-visual cta-visual">
+          ${figure(media.evidenceTable, "media-figure")}
+          <div class="cta-band reading">
+            <h2>${esc(home.sections.cta.heading)}</h2>
+            <p class="lead muted">${esc(home.sections.cta.text)}</p>
+            <a class="btn btn-ink" href="${home.sections.cta.cta.href}">${esc(home.sections.cta.cta.label)}</a>
+          </div>
         </div>
       </section>
     </main>
@@ -196,13 +244,16 @@ function expertiseIndex() {
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
       </div>
-      <div class="wrap service-index">
+      <div class="wrap service-index service-visual-index">
         ${site.practices
           .map(
             (item) => `<a href="${item.href}">
-              <p class="label">${item.index}</p>
-              <h2>${esc(item.title)}</h2>
-              <p class="muted">${esc(item.summary)}</p>
+              ${figure(practiceMedia(item.id), "media-figure service-thumb")}
+              <span>
+                <p class="label">${item.index}</p>
+                <h2>${esc(item.title)}</h2>
+                <p class="muted">${esc(item.summary)}</p>
+              </span>
             </a>`,
           )
           .join("")}
@@ -256,9 +307,12 @@ function servicePage(key, practiceId) {
               <p class="label">Related insights</p>
               ${related
                 .map(
-                  (item) => `<a class="insight-row" href="/insights/${item.slug}/">
-                    <p class="mono">${esc(item.type)} / ${esc(item.dateLabel)}</p>
-                    <h3>${esc(item.title)}</h3>
+                  (item) => `<a class="insight-visual" href="/insights/${item.slug}/">
+                    ${figure(insightMedia(item.slug), "media-figure insight-photo")}
+                    <span class="insight-copy">
+                      <p class="mono">${esc(item.type)} / ${esc(item.dateLabel)}</p>
+                      <h3>${esc(item.title)}</h3>
+                    </span>
                   </a>`,
                 )
                 .join("")}
@@ -285,6 +339,206 @@ function servicePage(key, practiceId) {
   );
 }
 
+function investigationIndex() {
+  const page = pages.investigations;
+  const investigators = site.people.filter((person) =>
+    /investigator|forensic|tracing/i.test(person.role),
+  );
+  const notes = site.insights.filter((item) => item.type === "Investigation note");
+  const body = `
+    <main id="content">
+      <div class="wrap page-head">
+        ${crumbs([{ label: "Investigations" }])}
+        <h1>${esc(page.heading)}</h1>
+        <p class="lead muted">${esc(page.lead)}</p>
+        <nav class="page-jump" aria-label="On this page">
+          ${page.jump.map((item) => `<a href="${item.href}">${esc(item.label)}</a>`).join("")}
+        </nav>
+        <a class="btn btn-signal" href="/contact/">Instruct us confidentially</a>
+      </div>
+      <div class="wrap join-intro">
+        ${page.intro.map((para) => `<p>${esc(para)}</p>`).join("")}
+      </div>
+      <section class="section band-paper" id="method">
+        <div class="wrap">
+          <p class="label">${esc(page.method.label)}</p>
+          <h2>${esc(page.method.heading)}</h2>
+          <div class="method-grid investigation-method">
+            ${page.method.items
+              .map(
+                (item) => `<article class="method-step">
+                  <span class="method-node" aria-hidden="true"></span>
+                  <h3>${esc(item.title)}</h3>
+                  <p class="muted">${esc(item.text)}</p>
+                </article>`,
+              )
+              .join("")}
+          </div>
+        </div>
+      </section>
+      <section class="practice-bar" id="work" aria-label="Investigation types">
+        <div class="wrap practice-bar-inner">
+          <div class="practice-bar-head">
+            <p class="label">What we investigate</p>
+            <h2>Five lines of enquiry.</h2>
+          </div>
+          <div class="practice-bar-list">
+            ${site.investigations
+              .map(
+                (item) => `<a class="practice-item" href="${item.href}">
+                  ${figure(investigationMedia(item.id), "media-figure practice-photo")}
+                  <h2>${esc(item.title)}</h2>
+                  <p>${esc(item.summary)}</p>
+                </a>`,
+              )
+              .join("")}
+          </div>
+        </div>
+      </section>
+      <section class="section" id="investigators">
+        <div class="wrap">
+          <p class="label">${esc(page.people.label)}</p>
+          <h2>${esc(page.people.heading)}</h2>
+          <p class="lead profile-lead">${esc(page.people.text)}</p>
+          ${peopleCards(investigators)}
+          <p><a class="btn btn-ghost" href="/people/">All profiles</a></p>
+        </div>
+      </section>
+      ${
+        notes.length
+          ? `<section class="section band-paper">
+        <div class="wrap">
+          <p class="label">Investigation notes</p>
+          <h2>Method, written down.</h2>
+          ${notes
+            .map(
+              (item) => `<a class="insight-visual" href="/insights/${item.slug}/">
+                ${figure(insightMedia(item.slug), "media-figure insight-photo")}
+                <span class="insight-copy">
+                  <p class="mono">${esc(item.type)} / ${esc(item.dateLabel)}</p>
+                  <h3>${esc(item.title)}</h3>
+                  <p class="muted">${esc(item.description)}</p>
+                </span>
+              </a>`,
+            )
+            .join("")}
+        </div>
+      </section>`
+          : ""
+      }
+      <section class="section" id="instruct">
+        <div class="wrap cta-band">
+          <h2>${esc(page.cta.heading)}</h2>
+          <p class="lead muted">${esc(page.cta.text)}</p>
+          <a class="btn btn-signal" href="/contact/">${esc("Write to us")}</a>
+        </div>
+      </section>
+    </main>
+  `;
+  return documentPage({ ...page, crumb: "Investigations" }, body);
+}
+
+function investigationPage(item) {
+  const page = pages[item.copyKey];
+  const related = site.insights.filter((note) =>
+    (item.related || []).some((id) => note.related.includes(id)),
+  );
+  const routes = site.practices.filter((practice) =>
+    (page.relatedExpertise || []).includes(practice.id),
+  );
+  const body = `
+    <main id="content">
+      <div class="wrap page-head">
+        ${crumbs([
+          { label: "Investigations", href: "/investigations/" },
+          { label: page.heading },
+        ])}
+        <h1>${esc(page.heading)}</h1>
+        <p class="lead muted">${esc(page.lead)}</p>
+        <a class="btn btn-signal" href="/contact/">Instruct us confidentially</a>
+      </div>
+      ${wrap(`
+        <div class="prose">
+          <h2>When to contact us</h2>
+          <ul>${page.when.map((line) => `<li>${esc(line)}</li>`).join("")}</ul>
+          <h2>What the investigation covers</h2>
+          <ul>${page.scope.map((line) => `<li>${esc(line)}</li>`).join("")}</ul>
+          <h2>Our approach</h2>
+          <p>${esc(page.approach)}</p>
+        </div>
+      `)}
+      ${wrap(`
+        <h2>Questions we are asked</h2>
+        <div class="faq">
+          ${page.faqs
+            .map(
+              (faq) => `<details>
+                <summary>${esc(faq.q)}</summary>
+                <p>${esc(faq.a)}</p>
+              </details>`,
+            )
+            .join("")}
+        </div>
+      `)}
+      ${
+        routes.length
+          ? wrap(`
+            <div class="related">
+              <p class="label">Legal routes this work supports</p>
+              ${routes
+                .map(
+                  (practice) => `<a class="insight-visual" href="${practice.href}">
+                    ${figure(practiceMedia(practice.id), "media-figure insight-photo")}
+                    <span class="insight-copy">
+                      <h3>${esc(practice.title)}</h3>
+                      <p class="muted">${esc(practice.summary)}</p>
+                    </span>
+                  </a>`,
+                )
+                .join("")}
+            </div>
+          `)
+          : ""
+      }
+      ${
+        related.length
+          ? wrap(`
+            <div class="related">
+              <p class="label">Related insights</p>
+              ${related
+                .map(
+                  (note) => `<a class="insight-visual" href="/insights/${note.slug}/">
+                    ${figure(insightMedia(note.slug), "media-figure insight-photo")}
+                    <span class="insight-copy">
+                      <p class="mono">${esc(note.type)} / ${esc(note.dateLabel)}</p>
+                      <h3>${esc(note.title)}</h3>
+                    </span>
+                  </a>`,
+                )
+                .join("")}
+            </div>
+          `)
+          : ""
+      }
+      ${wrap(`
+        <div class="cta-band">
+          <h2>Instruct this investigation</h2>
+          <p class="muted">Send the facts you already have. All enquiries are handled under strict confidentiality protocols.</p>
+          <a class="btn btn-signal" href="/contact/">Instruct us confidentially</a>
+        </div>
+      `)}
+    </main>
+  `;
+  return documentPage(
+    {
+      ...page,
+      breadcrumbs: [page.parent],
+      crumb: page.heading,
+    },
+    body,
+  );
+}
+
 function insightsIndex() {
   const page = pages.insights;
   const body = `
@@ -294,13 +548,16 @@ function insightsIndex() {
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
       </div>
-      <div class="wrap">
+      <div class="wrap insights-index">
         ${site.insights
           .map(
-            (item) => `<a class="insight-row" href="/insights/${item.slug}/">
-              <p class="mono">${esc(item.type)} / ${esc(item.dateLabel)}</p>
-              <h3>${esc(item.title)}</h3>
-              <p class="muted">${esc(item.description)}</p>
+            (item) => `<a class="insight-visual" href="/insights/${item.slug}/">
+              ${figure(insightMedia(item.slug), "media-figure insight-photo")}
+              <span class="insight-copy">
+                <p class="mono">${esc(item.type)} / ${esc(item.dateLabel)}</p>
+                <h3>${esc(item.title)}</h3>
+                <p class="muted">${esc(item.description)}</p>
+              </span>
             </a>`,
           )
           .join("")}
@@ -499,14 +756,18 @@ function aboutPage() {
         ${crumbs([{ label: "About" }])}
         <h1>${esc(page.heading)}</h1>
       </div>
-      <div class="wrap split-visual about-visual" style="padding-bottom:6rem">
-        ${roomPhoto()}
+      <div class="wrap split-visual about-visual">
+        ${figure(media.meetingRoom, "media-figure room-photo")}
         <div class="prose">
         ${page.blocks
           .map((block) => `<h2>${esc(block.heading)}</h2><p>${esc(block.text)}</p>`)
           .join("")}
         </div>
       </div>
+      ${photoStrip(
+        [media.fileRoom, media.archiveBoxes, media.evidenceTable],
+        "Rooms and files",
+      )}
     </main>
   `;
   return documentPage({ ...page, crumb: "About" }, body);
@@ -524,7 +785,7 @@ function contactPage() {
         <p class="mono">${esc(site.email)}</p>
         <p class="muted small">${esc(`${site.address.line1}, ${site.address.line2}, ${site.address.city} ${site.address.postcode}`)}</p>
       </div>
-      <div class="wrap split-visual contact-visual" style="padding-bottom:6rem">
+      <div class="wrap split-visual contact-visual">
         <form class="form" id="contact-form" novalidate>
           <div class="field">
             <label for="full-name">Full name</label>
@@ -653,6 +914,11 @@ export function allPages() {
       file: "expertise/corporate-intelligence/index.html",
       html: servicePage("corporateIntelligence", "corporate-intelligence"),
     },
+    { file: "investigations/index.html", html: investigationIndex() },
+    ...site.investigations.map((item) => ({
+      file: `${item.href.replace(/^\//, "")}index.html`,
+      html: investigationPage(item),
+    })),
     { file: "insights/index.html", html: insightsIndex() },
     ...site.insights.map((item) => ({
       file: `insights/${item.slug}/index.html`,
