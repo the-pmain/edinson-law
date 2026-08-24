@@ -1,16 +1,7 @@
 import { site } from "../../site.config.js";
 import { esc } from "./html.js";
 
-const MARK = `<svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-  <g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square">
-    <path d="M13 10v44M13 13h29M13 32h23M13 51h29"/>
-  </g>
-  <g fill="#008D7A">
-    <circle cx="47" cy="13" r="5"/>
-    <circle cx="41" cy="32" r="5"/>
-    <circle cx="47" cy="51" r="5"/>
-  </g>
-</svg>`;
+const MARK = `<img src="/brand/edison-law-primary.png" width="238" height="229" alt="Edison Law">`;
 
 const ICONS = {
   menu: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>`,
@@ -19,13 +10,21 @@ const ICONS = {
 };
 
 function brand(href = "/") {
-  return `<a class="brand" href="${href}">
-    ${MARK}
-    <span>
-      <span class="brand-name">EDISON LAW</span>
-      <span class="brand-descriptor">${esc(site.descriptor)}</span>
-    </span>
-  </a>`;
+  return `<a class="brand" href="${href}">${MARK}</a>`;
+}
+
+export function trustBadges() {
+  return `<div class="trust-badges">
+    <a class="trust-badge" href="${esc(site.sraUrl)}" target="_blank" rel="noopener noreferrer">
+      <img src="/brand/sra-badge.svg" width="275" height="88" alt="Regulated by Solicitors Regulation Authority">
+    </a>
+    <a class="trust-badge" href="https://www.laworld.com/" target="_blank" rel="noopener noreferrer">
+      <img src="/brand/laworld.jpg" width="275" height="178" alt="LAWORLD">
+    </a>
+    <a class="trust-badge" href="https://www.icc-ccs.org/" target="_blank" rel="noopener noreferrer">
+      <img src="/brand/icc-fraudnet.jpg" width="275" height="83" alt="ICC FraudNet Commercial Crime Services">
+    </a>
+  </div>`;
 }
 
 function isCurrent(item, path) {
@@ -197,11 +196,12 @@ export function documentPage(page, body) {
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="canonical" href="${canonical}">
 
-  <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="/favicon-16.png" type="image/png" sizes="16x16">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
   <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/favicon.svg" color="${site.themeColor}">
   <meta name="apple-mobile-web-app-title" content="${esc(site.name)}">
   <meta name="application-name" content="${esc(site.name)}">
   <meta name="mobile-web-app-capable" content="yes">
@@ -214,7 +214,7 @@ export function documentPage(page, body) {
   <meta property="og:image" content="${ogImage}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Edison Law evidence-path mark on midnight">
+  <meta property="og:image:alt" content="Edison Law gold emblem: letter E with the scales of justice">
   <meta property="og:locale" content="${site.locale}">
   ${page.article ? `<meta property="article:published_time" content="${page.article.date}">` : ""}
 
@@ -296,33 +296,26 @@ export function documentPage(page, body) {
   <div class="site">
     ${body}
     <footer class="footer">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <p class="brand-name">EDISON LAW</p>
-          <p class="brand-descriptor">${esc(site.descriptor)}</p>
+      <div class="footer-inner">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            ${brand("/")}
+            <p>London</p>
+            <p><a href="mailto:${esc(site.email)}">${esc(site.email)}</a></p>
+          </div>
+          <nav class="footer-links" aria-label="Legal">
+            ${site.footerLinks
+              .map((item) => `<a href="${item.href}">${esc(item.label)}</a>`)
+              .join("")}
+          </nav>
+          ${trustBadges()}
         </div>
-        <div class="footer-regulatory">
-          <a class="sra-badge" href="${esc(site.sraUrl)}" rel="noopener noreferrer">
-            <span class="sra-dot" aria-hidden="true"></span>
-            <span>
-              <strong>SRA regulated</strong><br>
-              SRA number ${esc(site.sraNumber)}
-            </span>
-          </a>
-          <p>Authorised and regulated by the Solicitors Regulation Authority. Recognised sole practice. Head office: ${esc(
-            site.address.line1,
-          )}, ${esc(site.address.line2)}, ${esc(site.address.city)}, ${esc(site.address.postcode)}.</p>
-          <p>Do not treat anything on this site as a recovery guarantee or as advice on your specific facts.</p>
+        <div class="footer-base">
+          <p>Authorised and regulated by the Solicitors Regulation Authority. SRA number ${esc(
+            site.sraNumber,
+          )}.</p>
+          <p>© <span data-year></span> Edison Law</p>
         </div>
-        <nav class="footer-links" aria-label="Legal">
-          ${site.footerLinks
-            .map((item) => `<a href="${item.href}">${esc(item.label)}</a>`)
-            .join("")}
-        </nav>
-      </div>
-      <div class="footer-base">
-        <p>SRA regulated · SRA number ${esc(site.sraNumber)}</p>
-        <p>© <span data-year></span> Edison Law</p>
       </div>
     </footer>
   </div>

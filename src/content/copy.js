@@ -37,11 +37,14 @@ export const home = {
     profile: {
       label: "People",
       heading: "A London sole practice, named and regulated.",
-      text: `${site.people[0].name} is the solicitor at Edison Law. The firm has been an SRA recognised sole practice since ${site.sraSince}, based in Wimbledon.`,
+      text: `${site.people[0].name} is the solicitor at Edison Law. The firm has been an SRA recognised sole practice since ${site.sraSince}, based in London.`,
     },
     insight: {
       label: "Insights",
       heading: "Investigation notes, not marketing copy.",
+    },
+    practiceBar: {
+      cta: { label: "More about us", href: "/expertise/" },
     },
     london: {
       label: "London and beyond",
@@ -218,7 +221,7 @@ export const pages = {
       },
       {
         heading: "Office",
-        text: `The head office recorded with the SRA is ${address}.`,
+        text: "The practice is an SRA recognised sole practice in London. Confirm the current office details on the public SRA record.",
       },
     ],
   },

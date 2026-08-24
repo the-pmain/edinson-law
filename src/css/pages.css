@@ -66,6 +66,107 @@
   aspect-ratio: 1;
 }
 
+.practice-bar {
+  background: var(--edison-ink);
+  color: var(--edison-paper);
+  padding: var(--space-16) var(--page-pad) var(--space-24);
+}
+
+.practice-bar-inner {
+  display: grid;
+  gap: var(--space-12);
+  justify-items: start;
+}
+
+.practice-bar-list {
+  display: grid;
+  gap: var(--space-8);
+  width: 100%;
+}
+
+.practice-item {
+  display: grid;
+  gap: var(--space-3);
+  text-decoration: none;
+  color: inherit;
+}
+
+.practice-item h2 {
+  font-size: clamp(1.5rem, 2.4vw, 2.25rem);
+  color: var(--edison-paper);
+}
+
+.practice-item p {
+  color: #a9bfba;
+  max-width: 36rem;
+}
+
+.practice-item:hover h2 {
+  color: var(--edison-signal-bright);
+}
+
+.practice-bar .btn-ghost {
+  color: var(--edison-paper);
+  border-color: #3a545c;
+}
+
+.practice-bar .btn-ghost:hover {
+  border-color: var(--edison-paper);
+  color: var(--edison-paper);
+}
+
+.method-lead,
+.profile-lead,
+.london-lead {
+  margin: 1rem 0 2.5rem;
+}
+
+.profile-lead {
+  margin-bottom: 1.5rem;
+}
+
+.london-lead {
+  margin-bottom: 0;
+}
+
+.band-ink .btn-ghost {
+  color: var(--edison-paper);
+  border-color: #3a545c;
+}
+
+.band-ink .btn-ghost:hover {
+  border-color: var(--edison-paper);
+  color: var(--edison-paper);
+}
+
+.profile-aside {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: start;
+  align-content: start;
+}
+
+.split-visual {
+  display: grid;
+  gap: var(--space-12);
+  align-items: center;
+}
+
+.room-photo {
+  margin: 0;
+}
+
+.room-photo img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.about-visual .prose {
+  max-width: none;
+}
+
 .cta-band {
   display: grid;
   gap: var(--space-6);
@@ -88,6 +189,13 @@
   gap: var(--space-4);
 }
 
+@media (min-width: 768px) {
+  .practice-bar-list {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-10, 2.5rem) var(--space-16);
+  }
+}
+
 @media (min-width: 1024px) {
   .hero {
     grid-template-columns: minmax(0, 1.2fr) minmax(16rem, 0.8fr);
@@ -96,7 +204,17 @@
   }
 
   .profile-block {
-    grid-template-columns: 16rem minmax(0, 1fr);
+    grid-template-columns: 10rem minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .split-visual {
+    grid-template-columns: minmax(0, 1.05fr) minmax(16rem, 0.85fr);
+    gap: var(--space-16);
+  }
+
+  .about-visual {
+    grid-template-columns: minmax(16rem, 0.85fr) minmax(0, 1.05fr);
     align-items: start;
   }
 }

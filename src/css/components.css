@@ -141,8 +141,7 @@
   gap: var(--space-3);
   text-decoration: none;
   color: inherit;
-  padding: var(--space-8) 0;
-  border-top: var(--border-width) solid var(--color-border);
+  padding: var(--space-8) 0 0;
 }
 
 .insight-row:hover h3 {

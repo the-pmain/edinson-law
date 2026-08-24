@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="275" height="88" viewBox="0 0 275 88">
+  <rect width="275" height="88" fill="#fff"/>
+  <g fill="none" stroke="#111" stroke-width="2.3" stroke-linejoin="miter">
+    <path d="M18 13h28v29c0 15-14 24-14 24s-14-9-14-24z"/>
+    <path d="M29 39L51 15"/>
+  </g>
+  <path fill="#111" d="M43 15h11v11l-11-11z"/>
+  <text x="60" y="24" fill="#111" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700" letter-spacing=".14em">REGULATED BY</text>
+  <text x="60" y="42" fill="#111" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700">SOLICITORS REGULATION</text>
+  <text x="60" y="58" fill="#111" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700">AUTHORITY</text>
+  <path fill="#111" d="M60 70l9 5-9 5z"/>
+  <text x="74" y="79" fill="#111" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700" letter-spacing=".06em">LEARN MORE</text>
+  <text x="260" y="79" fill="#111" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700" text-anchor="end">24 AUG 2026</text>
+</svg>

@@ -33,44 +33,21 @@ body[data-mode="development"] .preview-banner {
 }
 
 .brand {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
+  display: block;
+  width: fit-content;
+  line-height: 0;
   text-decoration: none;
-  color: inherit;
-  min-height: 44px;
 }
 
-.brand-mark {
-  width: 36px;
-  height: 36px;
-  flex: none;
-  color: var(--edison-ink);
-}
-
-.brand > span {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.brand-name {
+.brand img {
   display: block;
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  line-height: 1;
+  height: 56px;
+  width: auto;
 }
 
-.brand-descriptor {
-  display: block;
-  margin-top: 0.35rem;
-  font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
+.footer .brand img {
+  height: auto;
+  width: 6.825rem;
 }
 
 .header-nav {
@@ -140,82 +117,95 @@ body[data-mode="development"] .preview-banner {
 }
 
 .footer {
-  border-top: var(--border-width) solid var(--color-border);
+  margin-top: var(--space-16);
   padding: var(--space-16) var(--page-pad) var(--space-12);
-  background: var(--edison-white);
+  background: var(--edison-ink);
+  color: var(--edison-paper);
+  border-top: 2px solid #c5a05a;
+}
+
+.footer-inner {
+  max-width: var(--content-max);
+  margin: 0 auto;
 }
 
 .footer-grid {
-  max-width: var(--content-max);
-  margin: 0 auto;
   display: grid;
   gap: var(--space-12);
+  align-items: start;
 }
 
-.footer-brand .brand-name {
-  font-size: 1.75rem;
-}
-
-.footer-regulatory {
+.footer-brand {
   display: grid;
   gap: var(--space-4);
-  color: var(--color-text-muted);
+  color: #a9bfba;
   font-size: var(--text-small);
-  max-width: 36rem;
 }
 
-.sra-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-sm);
+.footer-brand a {
+  color: var(--edison-paper);
   text-decoration: none;
-  color: var(--edison-ink);
-  width: fit-content;
 }
 
-.sra-badge:hover {
-  border-color: var(--edison-signal);
-  color: var(--edison-ink);
+.footer-brand a:hover {
+  color: var(--edison-signal-bright);
 }
 
-.sra-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--edison-signal);
-  flex: none;
+.trust-badges {
+  display: grid;
+  gap: 0.5rem;
+  width: min(13.5rem, 100%);
+}
+
+.trust-badge {
+  display: block;
+  background: var(--edison-white);
+  line-height: 0;
+}
+
+.trust-badge img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.trust-badge:hover,
+.trust-badge:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
 }
 
 .footer-links {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.65rem 1.5rem;
+  align-content: start;
 }
 
 .footer-links a {
-  color: var(--edison-ink);
+  color: var(--edison-paper);
   text-decoration: none;
   font-size: var(--text-small);
 }
 
 .footer-links a:hover {
-  color: var(--edison-signal-deep);
+  color: var(--edison-signal-bright);
 }
 
 .footer-base {
-  max-width: var(--content-max);
-  margin: var(--space-12) auto 0;
+  margin-top: var(--space-12);
   padding-top: var(--space-8);
-  border-top: var(--border-width) solid var(--color-border);
+  border-top: var(--border-width) solid rgb(203 218 214 / 0.16);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   gap: var(--space-4);
-  color: var(--color-text-muted);
+  color: #a9bfba;
   font-size: var(--text-small);
+}
+
+.footer-base p:first-child {
+  max-width: 48rem;
 }
 
 .drawer {
@@ -321,7 +311,8 @@ body[data-mode="development"] .preview-banner {
 
 @media (min-width: 768px) {
   .footer-grid {
-    grid-template-columns: 1.2fr 1fr 1fr;
+    grid-template-columns: minmax(10rem, 16rem) minmax(0, 1fr) minmax(12rem, 13.5rem);
+    gap: var(--space-12) var(--space-16);
   }
 }
 
@@ -360,32 +351,12 @@ body[data-mode="development"] .preview-banner {
   }
 
   .rail .brand {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.9rem;
     margin-bottom: 2.25rem;
-    color: var(--edison-paper);
   }
 
-  .rail .brand-mark {
-    width: 40px;
-    height: 40px;
-    color: var(--edison-paper);
-  }
-
-  .rail .brand-mark circle {
-    fill: var(--edison-signal-bright);
-  }
-
-  .rail .brand-name {
-    font-size: 1.35rem;
-    letter-spacing: 0.05em;
-    color: var(--edison-paper);
-  }
-
-  .rail .brand-descriptor {
-    color: #a9bfba;
-    letter-spacing: 0.16em;
+  .rail .brand img {
+    height: auto;
+    width: 6.825rem;
   }
 
   .rail-nav {

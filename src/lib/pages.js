@@ -7,6 +7,12 @@ function wrap(inner, band = "") {
   return `<div class="section ${band}"><div class="wrap">${inner}</div></div>`;
 }
 
+function roomPhoto() {
+  return `<figure class="room-photo">
+    <img src="/images/meeting-room.jpg" width="1024" height="1024" alt="A quiet meeting room with leather seating and daylight" decoding="async">
+  </figure>`;
+}
+
 function cta(link) {
   return `<a class="btn btn-signal" href="${link.href}">${esc(link.label)}</a>`;
 }
@@ -27,20 +33,21 @@ function homePage() {
         </div>
       </section>
 
-      <section class="band-paper" aria-label="Practice areas">
-        <div class="wrap">
-          <div class="pillar-row">
+      <section class="practice-bar" aria-label="Practice areas">
+        <div class="wrap practice-bar-inner">
+          <div class="practice-bar-list">
             ${site.practices
-              .slice(0, 3)
               .map(
-                (item) => `<a class="pillar" href="${item.href}">
-                  <p class="label pillar-index">${item.index}</p>
+                (item) => `<a class="practice-item" href="${item.href}">
                   <h2>${esc(item.title)}</h2>
-                  <p class="muted small">${esc(item.summary)}</p>
+                  <p>${esc(item.summary)}</p>
                 </a>`,
               )
               .join("")}
           </div>
+          <a class="btn btn-ghost" href="${home.sections.practiceBar.cta.href}">${esc(
+            home.sections.practiceBar.cta.label,
+          )}</a>
         </div>
       </section>
 
@@ -48,7 +55,7 @@ function homePage() {
         <div class="wrap">
           <p class="label">${esc(home.sections.method.label)}</p>
           <h2>${esc(home.sections.method.heading)}</h2>
-          <p class="lead muted" style="margin: 1rem 0 2.5rem">${esc(home.sections.method.lead)}</p>
+          <p class="lead muted method-lead">${esc(home.sections.method.lead)}</p>
           <div class="method-grid">
             ${home.sections.method.steps
               .map(
@@ -65,25 +72,24 @@ function homePage() {
 
       <section class="section band-ink">
         <div class="wrap profile-block">
-          <div>
+          <div class="profile-aside">
             <p class="label">${esc(home.sections.profile.label)}</p>
             <div class="profile-initials" aria-hidden="true">${esc(site.people[0].initials)}</div>
+            <a class="btn btn-ghost" href="/people/">People</a>
           </div>
           <div>
             <h2>${esc(home.sections.profile.heading)}</h2>
-            <p class="lead" style="margin: 1rem 0 1.5rem">${esc(home.sections.profile.text)}</p>
+            <p class="lead profile-lead">${esc(home.sections.profile.text)}</p>
             <p class="mono">SRA ${esc(site.sraNumber)}</p>
-            <p style="margin-top:1.5rem"><a class="btn btn-ghost" href="/people/" style="border-color:#3a545c;color:#f1f6f4">People</a></p>
           </div>
         </div>
       </section>
 
       <section class="section">
-        <div class="wrap">
+        <div class="wrap reading">
           <p class="label">${esc(home.sections.insight.label)}</p>
           <h2>${esc(home.sections.insight.heading)}</h2>
           <a class="insight-row" href="/insights/${featured.slug}/">
-            <p class="mono">${esc(featured.type)} / ${esc(featured.dateLabel)}</p>
             <h3>${esc(featured.title)}</h3>
             <p class="muted">${esc(featured.description)}</p>
           </a>
@@ -91,18 +97,21 @@ function homePage() {
       </section>
 
       <section class="section band-paper">
-        <div class="wrap reading">
-          <p class="label">${esc(home.sections.london.label)}</p>
-          <h2>${esc(home.sections.london.heading)}</h2>
-          <p class="lead" style="margin-top:1rem">${esc(home.sections.london.text)}</p>
+        <div class="wrap split-visual">
+          <div>
+            <p class="label">${esc(home.sections.london.label)}</p>
+            <h2>${esc(home.sections.london.heading)}</h2>
+            <p class="lead london-lead">${esc(home.sections.london.text)}</p>
+          </div>
+          ${roomPhoto()}
         </div>
       </section>
 
       <section class="section">
-        <div class="wrap cta-band">
+        <div class="wrap cta-band reading">
           <h2>${esc(home.sections.cta.heading)}</h2>
           <p class="lead muted">${esc(home.sections.cta.text)}</p>
-          ${cta(home.sections.cta.cta)}
+          <a class="btn btn-ink" href="${home.sections.cta.cta.href}">${esc(home.sections.cta.cta.label)}</a>
         </div>
       </section>
     </main>
@@ -302,10 +311,13 @@ function aboutPage() {
         ${crumbs([{ label: "About" }])}
         <h1>${esc(page.heading)}</h1>
       </div>
-      <div class="wrap prose" style="padding-bottom:6rem">
+      <div class="wrap split-visual about-visual" style="padding-bottom:6rem">
+        ${roomPhoto()}
+        <div class="prose">
         ${page.blocks
           .map((block) => `<h2>${esc(block.heading)}</h2><p>${esc(block.text)}</p>`)
           .join("")}
+        </div>
       </div>
     </main>
   `;
@@ -321,11 +333,9 @@ function contactPage() {
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
         <p class="mono">${esc(site.email)}</p>
-        <p class="muted small">${esc(site.address.line1)}, ${esc(site.address.line2)}, ${esc(
-          site.address.city,
-        )}, ${esc(site.address.postcode)}</p>
+        <p class="muted small">London</p>
       </div>
-      <div class="wrap" style="padding-bottom:6rem">
+      <div class="wrap split-visual contact-visual" style="padding-bottom:6rem">
         <form class="form" id="contact-form" novalidate>
           <div class="field">
             <label for="full-name">Full name</label>
@@ -371,6 +381,7 @@ function contactPage() {
             site.email,
           )} on this device.</p>
         </form>
+        ${roomPhoto()}
       </div>
     </main>
   `;
