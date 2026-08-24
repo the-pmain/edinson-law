@@ -3,7 +3,8 @@
 }
 
 .section > .wrap,
-.hero {
+.hero,
+.page-head {
   width: min(var(--content-max), 100%);
   margin-inline: auto;
 }
@@ -232,9 +233,79 @@
   max-width: 28ch;
 }
 
-.related {
+.page-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1.25rem;
+  font-size: var(--text-small);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.page-jump a {
+  color: var(--edison-signal-deep);
+  text-decoration: none;
+}
+
+.page-jump a:hover,
+.page-jump a:focus-visible {
+  color: var(--edison-ink);
+}
+
+.join-intro {
+  padding-bottom: var(--space-8);
+}
+
+.join-intro p {
+  max-width: var(--reading-max);
+}
+
+.join-people-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-6) var(--space-8);
+  margin-bottom: var(--space-8);
+}
+
+.join-people-head .profile-lead {
+  margin-bottom: 0;
+}
+
+.join-vacancies {
+  padding-bottom: var(--space-16);
+}
+
+.join-vacancies .cta-band > :not(.btn) {
+  max-width: var(--reading-max);
+}
+
+body[data-path="/join-us/"] .footer {
+  margin-top: 0;
+  border-top: 0;
+}
+
+.career-tracks article {
   display: grid;
-  gap: var(--space-4);
+  gap: 0.45rem;
+  padding: var(--space-8) 0;
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+.career-tracks h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+#careers,
+#why,
+#people,
+#vacancies {
+  scroll-margin-top: 5.5rem;
 }
 
 @media (min-width: 768px) {

@@ -334,6 +334,81 @@ export const pages = {
     heading: "Our people.",
     lead: "Named lawyers at Edison Law. Open a profile for biography and areas of work.",
   },
+  joinUs: {
+    path: "/join-us/",
+    title: "Join us | Edison Law",
+    description:
+      "Careers at Edison Law in London. Solicitors, barristers, investigators and forensic specialists in financial crime, private prosecutions and asset recovery.",
+    heading: "Join us.",
+    lead: "Discover what a career here is actually for: building cases that hold up when the other side tests them.",
+    intro: [
+      "We recruit and develop people who can take a disordered file — a fraud just discovered, a trail that has already left the banking system — and turn it into a legal position.",
+      "The firm is small enough that every person is visible on the work, and specialised enough that the work is serious: private prosecutions, asset tracing, crypto recovery and cross-border enforcement. That combination is the point. You are not a resource on a large matter. You are on the matter.",
+    ],
+    jump: [
+      { label: "Careers with us", href: "#careers" },
+      { label: "Why Edison Law", href: "#why" },
+      { label: "Get to know us", href: "#people" },
+      { label: "Vacancies", href: "#vacancies" },
+    ],
+    tracks: {
+      label: "Careers with us",
+      heading: "The work you would do.",
+      items: [
+        {
+          title: "Lawyers",
+          text: "Solicitors and barristers who run files from first instruction through to trial, injunction and enforcement. Private prosecutions, asset recovery and regulatory investigations, with the duties of candour and disclosure taken as seriously as the result.",
+        },
+        {
+          title: "Investigators",
+          text: "Field and documentary enquiry that turns a suspicion into a set of established facts: witnesses, continuity, unused material, and the people and assets behind a fraud — including those who have moved or gone to ground.",
+        },
+        {
+          title: "Forensic specialists",
+          text: "Financial and digital analysis that a court will accept: ledgers, payment chains, blockchain trails and expert evidence. Speed when funds are still moving; precision when the numbers have to survive cross-examination.",
+        },
+        {
+          title: "Asset tracing",
+          text: "Locating recoverable value and saying, early, whether pursuing it is worth the cost. Registries, nominees, cross-border structures and the difference between an asset that exists and an asset that can be reached.",
+        },
+        {
+          title: "Business teams",
+          text: "The people who keep a specialist practice running: matter intake, confidentiality, billing and the operational discipline a criminal evidential file requires. Applications are considered when the work needs them.",
+        },
+      ],
+    },
+    why: {
+      label: "Why Edison Law",
+      heading: "How the work is done here.",
+      items: [
+        {
+          title: "One team from the first letter",
+          text: "Solicitors, barristers, investigators and forensic specialists sit in the same practice. A file is not handed across a chambers wall. The person who scoped the investigation is still on it at trial.",
+        },
+        {
+          title: "Visible on the case",
+          text: "The firm is not large enough to hide in. You will be in the room with the client, the evidence and the decision. That is demanding. It is also how people here actually learn the work.",
+        },
+        {
+          title: "Discretion as a habit",
+          text: "Financial crime is reputationally sensitive. We recruit people who can be trusted with incomplete facts, reluctant witnesses and clients who are often under pressure. If that is not how you work, this is not the place.",
+        },
+      ],
+    },
+    people: {
+      label: "Get to know us",
+      heading: "Who you would work with.",
+      text: "From partners to investigators, the people on the files. Open a profile for the work they actually do.",
+    },
+    vacancies: {
+      label: "Vacancies",
+      heading: "If you think you should be here.",
+      text: "We do not keep a public vacancy board. Roles open when a matter-load requires them, and they are filled by people who can do the work described on this site.",
+      detail:
+        "Write with a short account of the work you want to do, the jurisdiction you are qualified in if you are a lawyer, and a CV. Do not send original identity documents. Mark the subject as a careers enquiry.",
+      cta: { label: "Write to us", href: "/contact/" },
+    },
+  },
   about: {
     path: "/about/",
     title: "About Edison Law | London",

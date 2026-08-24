@@ -364,6 +364,81 @@ function peoplePage() {
   return documentPage({ ...page, crumb: "People" }, body);
 }
 
+function joinUsPage() {
+  const page = pages.joinUs;
+  const body = `
+    <main id="content">
+      <div class="wrap page-head">
+        ${crumbs([{ label: "Join us" }])}
+        <h1>${esc(page.heading)}</h1>
+        <p class="lead muted">${esc(page.lead)}</p>
+        <nav class="page-jump" aria-label="On this page">
+          ${page.jump.map((item) => `<a href="${item.href}">${esc(item.label)}</a>`).join("")}
+        </nav>
+      </div>
+      <div class="wrap join-intro">
+        ${page.intro.map((para) => `<p>${esc(para)}</p>`).join("")}
+      </div>
+      <section class="section" id="careers">
+        <div class="wrap">
+          <p class="label">${esc(page.tracks.label)}</p>
+          <h2>${esc(page.tracks.heading)}</h2>
+          <div class="service-index career-tracks">
+            ${page.tracks.items
+              .map(
+                (item) => `<article>
+                  <h3>${esc(item.title)}</h3>
+                  <p class="muted">${esc(item.text)}</p>
+                </article>`,
+              )
+              .join("")}
+          </div>
+        </div>
+      </section>
+      <section class="section band-paper" id="why">
+        <div class="wrap">
+          <p class="label">${esc(page.why.label)}</p>
+          <h2>${esc(page.why.heading)}</h2>
+          <div class="method-grid">
+            ${page.why.items
+              .map(
+                (item) => `<article class="method-step">
+                  <span class="method-node" aria-hidden="true"></span>
+                  <h3>${esc(item.title)}</h3>
+                  <p class="muted">${esc(item.text)}</p>
+                </article>`,
+              )
+              .join("")}
+          </div>
+        </div>
+      </section>
+      <section class="section" id="people">
+        <div class="wrap">
+          <div class="join-people-head">
+            <div>
+              <p class="label">${esc(page.people.label)}</p>
+              <h2>${esc(page.people.heading)}</h2>
+              <p class="lead profile-lead">${esc(page.people.text)}</p>
+            </div>
+            <a class="btn btn-ghost" href="/people/">All profiles</a>
+          </div>
+          ${peopleCards()}
+        </div>
+      </section>
+      <section class="section band-ink join-vacancies" id="vacancies">
+        <div class="wrap cta-band">
+          <p class="label">${esc(page.vacancies.label)}</p>
+          <h2>${esc(page.vacancies.heading)}</h2>
+          <p class="lead muted">${esc(page.vacancies.text)}</p>
+          <p class="muted">${esc(page.vacancies.detail)}</p>
+          <a class="btn btn-signal" href="${page.vacancies.cta.href}">${esc(page.vacancies.cta.label)}</a>
+        </div>
+      </section>
+    </main>
+  `;
+  return documentPage({ ...page, crumb: "Join us" }, body);
+}
+
 function personPage(person) {
   const page = {
     path: personHref(person),
@@ -588,6 +663,7 @@ export function allPages() {
       file: `people/${person.slug}/index.html`,
       html: personPage(person),
     })),
+    { file: "join-us/index.html", html: joinUsPage() },
     { file: "about/index.html", html: aboutPage() },
     { file: "contact/index.html", html: contactPage() },
     { file: "legal-regulatory/index.html", html: legalPage("legal") },

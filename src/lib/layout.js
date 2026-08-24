@@ -171,6 +171,7 @@ function searchIndex() {
       type: "People",
       text: `${person.role}. ${person.summary}`,
     })),
+    { title: "Join us", href: "/join-us/", type: "Page", text: "Careers at Edison Law" },
     { title: "About", href: "/about/", type: "Page", text: site.shortLine },
     { title: "Contact", href: "/contact/", type: "Page", text: site.email },
     ...site.footerLinks.map((item) => ({
