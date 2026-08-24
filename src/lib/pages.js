@@ -17,6 +17,7 @@ function personPortrait(person, className = "person-photo") {
 }
 
 function peopleCards() {
+  if (!site.people.length) return "";
   return `<div class="people-grid">
     ${site.people
       .map(

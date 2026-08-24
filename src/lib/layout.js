@@ -164,7 +164,7 @@ function searchIndex() {
       type: item.type,
       text: item.description,
     })),
-    { title: "People", href: "/people/", type: "Page", text: site.people.map((person) => person.name).join(", ") },
+    { title: "People", href: "/people/", type: "Page", text: site.people.map((person) => person.name).join(", ") || "People" },
     ...site.people.map((person) => ({
       title: person.name,
       href: `/people/${person.slug}/`,

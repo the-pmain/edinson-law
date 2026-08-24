@@ -264,7 +264,7 @@ export const pages = {
     intro:
       "If you are unhappy with our service, tell us. We will take the complaint seriously and respond in writing.",
     steps: [
-      `Write to ${site.people[0].name} at ${site.email} or to ${address}. Mark the letter as a complaint.`,
+      `Write to Abigail Charlotte Wills at ${site.email} or to ${address}. Mark the letter as a complaint.`,
       "Say what went wrong, when it happened, and what you would like us to do.",
       "We aim to acknowledge a complaint promptly and to give a final written response within eight weeks.",
     ],
