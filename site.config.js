@@ -8,8 +8,9 @@ export const site = {
   canonicalOrigin: "https://edisonlaw.co.uk",
   name: "Edison Law",
   descriptor: "Law Firm · London",
-  masterLine: "Following digital evidence. Building legal cases.",
-  shortLine: "Editorial forensics for modern legal work.",
+  masterLine: "When authorities decline to act, we deliver justice.",
+  shortLine:
+    "A specialist firm of solicitors and barristers for financial crime investigation, private prosecution and asset recovery.",
   lang: "en-GB",
   locale: "en_GB",
   themeColor: "#0A2028",
@@ -59,32 +60,52 @@ export const site = {
 
   practices: [
     {
-      id: "financial-crime",
+      id: "private-prosecutions",
       index: "01",
-      title: "Financial crime",
-      href: "/expertise/financial-crime/",
-      summary: "Investigations, defence and advisory work where the facts sit across companies, accounts and people.",
+      title: "Private prosecutions",
+      href: "/expertise/private-prosecutions/",
+      summary:
+        "When public authorities decline to investigate or prosecute, we offer an alternative route to justice — from investigation through to trial.",
     },
     {
-      id: "tax",
+      id: "asset-tracing",
       index: "02",
-      title: "Tax disputes & resolution",
-      href: "/expertise/tax-disputes-resolution/",
-      summary: "HMRC enquiries, disclosure and settlement, and litigation support when the numbers and the law diverge.",
+      title: "Asset tracing & recovery",
+      href: "/expertise/asset-tracing-recovery/",
+      summary:
+        "We trace and recover misappropriated assets wherever they are concealed — offshore structures, wallets, shell companies or alter-ego entities.",
     },
     {
-      id: "crypto",
+      id: "crypto-fraud",
       index: "03",
-      title: "Crypto investigations",
-      href: "/expertise/crypto-investigations/",
-      summary: "Transaction analysis and evidence strategy for matters that begin on-chain and must end in a legal position.",
+      title: "Crypto fraud & digital assets",
+      href: "/expertise/crypto-fraud-digital-assets/",
+      summary:
+        "Legal expertise with blockchain analytics to trace stolen digital assets through complex transaction chains.",
     },
     {
-      id: "digital-assets",
+      id: "regulatory",
       index: "04",
-      title: "Digital asset disputes",
-      href: "/expertise/digital-asset-disputes/",
-      summary: "Ownership, control and recovery strategy for assets that exist as records rather than objects.",
+      title: "Regulatory defence & investigations",
+      href: "/expertise/regulatory-defence-investigations/",
+      summary:
+        "Representation for individuals and corporates under investigation by the SFO, FCA, HMRC and other regulatory bodies.",
+    },
+    {
+      id: "cross-border",
+      index: "05",
+      title: "Cross-border fraud & corruption",
+      href: "/expertise/cross-border-fraud-corruption/",
+      summary:
+        "Multi-jurisdictional asset recovery, working with local counsel to secure evidence, freezing orders and judgment enforcement.",
+    },
+    {
+      id: "corporate-intelligence",
+      index: "06",
+      title: "Corporate intelligence & pre-litigation",
+      href: "/expertise/corporate-intelligence/",
+      summary:
+        "Confidential due diligence, background investigations and integrity monitoring before high-value transactions and appointments.",
     },
   ],
 
@@ -324,7 +345,7 @@ export const site = {
       title: "Tracing assets across multiple wallets: an evidence-first approach",
       description:
         "A practical overview of transaction mapping, evidence provenance and the legal decisions that follow.",
-      related: ["crypto", "digital-assets"],
+      related: ["crypto-fraud", "asset-tracing"],
     },
     {
       slug: "hmrc-enquiry-evidence",
@@ -334,7 +355,7 @@ export const site = {
       title: "What an HMRC enquiry actually needs from the file",
       description:
         "How to separate the documents that decide a tax dispute from the volume that merely surrounds it.",
-      related: ["tax"],
+      related: ["regulatory"],
     },
     {
       slug: "preserving-digital-evidence",
@@ -344,7 +365,7 @@ export const site = {
       title: "Preserving digital evidence before the legal route is chosen",
       description:
         "What to hold, what not to alter, and why early method matters more than early accusation.",
-      related: ["financial-crime", "crypto"],
+      related: ["private-prosecutions", "crypto-fraud"],
     },
   ],
 };

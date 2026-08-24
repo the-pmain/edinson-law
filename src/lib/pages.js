@@ -49,15 +49,24 @@ function cta(link) {
 
 function homePage() {
   const featured = site.insights[0];
+  const who = home.sections.who;
+  const why = home.sections.why;
+  const cases = home.sections.cases;
+  const recognition = home.sections.recognition;
   const body = `
     <main id="content">
       <section class="band-paper">
         <div class="wrap hero">
           <div class="hero-copy">
             <p class="label">${esc(home.sections.hero.descriptor)}</p>
-            <h1 class="display"><span>Following digital evidence.</span><span>Building legal cases.</span></h1>
+            <h1 class="display">${esc(home.sections.hero.heading)}</h1>
             <p class="lead">${esc(home.sections.hero.lead)}</p>
-            ${cta(home.sections.hero.cta)}
+            <div class="hero-actions">
+              ${cta(home.sections.hero.cta)}
+              <a class="btn btn-ghost" href="${home.sections.hero.ctaSecondary.href}">${esc(
+                home.sections.hero.ctaSecondary.label,
+              )}</a>
+            </div>
           </div>
           ${signalGraphic()}
         </div>
@@ -83,16 +92,47 @@ function homePage() {
 
       <section class="section">
         <div class="wrap">
-          <p class="label">${esc(home.sections.method.label)}</p>
-          <h2>${esc(home.sections.method.heading)}</h2>
-          <p class="lead muted method-lead">${esc(home.sections.method.lead)}</p>
-          <div class="method-grid">
-            ${home.sections.method.steps
+          <p class="label">${esc(who.label)}</p>
+          <h2>${esc(who.heading)}</h2>
+          <p class="lead muted method-lead">${esc(who.lead)}</p>
+          <p class="muted">${esc(who.text)}</p>
+          <p class="label audience-label">${esc(who.actForLabel)}</p>
+          <ul class="audience-list">
+            ${who.actFor.map((item) => `<li>${esc(item)}</li>`).join("")}
+          </ul>
+        </div>
+      </section>
+
+      <section class="section band-paper">
+        <div class="wrap">
+          <p class="label">${esc(why.label)}</p>
+          <h2>${esc(why.heading)}</h2>
+          <div class="method-grid why-grid">
+            ${why.items
               .map(
-                (step) => `<article class="method-step">
+                (item) => `<article class="method-step">
                   <span class="method-node" aria-hidden="true"></span>
-                  <h3>${esc(step.title)}</h3>
-                  <p class="muted">${esc(step.text)}</p>
+                  <h3>${esc(item.title)}</h3>
+                  <p class="muted">${esc(item.text)}</p>
+                </article>`,
+              )
+              .join("")}
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <p class="label">${esc(cases.label)}</p>
+          <h2>${esc(cases.heading)}</h2>
+          <div class="case-grid">
+            ${cases.items
+              .map(
+                (item) => `<article class="case-card">
+                  <p class="mono">${esc(item.recovery)}</p>
+                  <h3>${esc(item.title)}</h3>
+                  <p class="muted">${esc(item.jurisdictions)}</p>
+                  <p>${esc(item.text)}</p>
                 </article>`,
               )
               .join("")}
@@ -101,6 +141,20 @@ function homePage() {
       </section>
 
       <section class="section band-ink">
+        <div class="wrap">
+          <p class="label">${esc(recognition.label)}</p>
+          <h2>${esc(recognition.heading)}</h2>
+          <ul class="recognition-list">
+            ${recognition.items.map((item) => `<li>${esc(item)}</li>`).join("")}
+          </ul>
+          <blockquote class="recognition-quote">
+            <p>${esc(recognition.quote)}</p>
+            <p class="mono">${esc(recognition.quoteSource)}</p>
+          </blockquote>
+        </div>
+      </section>
+
+      <section class="section">
         <div class="wrap people-home">
           <p class="label">${esc(home.sections.profile.label)}</p>
           <h2>${esc(home.sections.profile.heading)}</h2>
@@ -110,7 +164,7 @@ function homePage() {
         </div>
       </section>
 
-      <section class="section">
+      <section class="section band-paper">
         <div class="wrap reading">
           <p class="label">${esc(home.sections.insight.label)}</p>
           <h2>${esc(home.sections.insight.heading)}</h2>
@@ -118,17 +172,6 @@ function homePage() {
             <h3>${esc(featured.title)}</h3>
             <p class="muted">${esc(featured.description)}</p>
           </a>
-        </div>
-      </section>
-
-      <section class="section band-paper">
-        <div class="wrap split-visual">
-          <div>
-            <p class="label">${esc(home.sections.london.label)}</p>
-            <h2>${esc(home.sections.london.heading)}</h2>
-            <p class="lead london-lead">${esc(home.sections.london.text)}</p>
-          </div>
-          ${roomPhoto()}
         </div>
       </section>
 
@@ -181,13 +224,13 @@ function servicePage(key, practiceId) {
         ])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
-        <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
+          <a class="btn btn-signal" href="/contact/">Instruct us confidentially</a>
       </div>
       ${wrap(`
         <div class="prose">
           <h2>When to contact us</h2>
           <ul>${page.when.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>
-          <h2>Scope</h2>
+          <h2>Services</h2>
           <ul>${page.scope.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>
           <h2>Our approach</h2>
           <p>${esc(page.approach)}</p>
@@ -226,8 +269,8 @@ function servicePage(key, practiceId) {
       ${wrap(`
         <div class="cta-band">
           <h2>Discuss this matter</h2>
-          <p class="muted">Send the facts you already have. We will say whether the next step is legal work, more evidence, or no action yet.</p>
-          <a class="btn btn-signal" href="/contact/">Contact</a>
+          <p class="muted">Send the facts you already have. All enquiries are handled under strict confidentiality protocols.</p>
+          <a class="btn btn-signal" href="/contact/">Instruct us confidentially</a>
         </div>
       `)}
     </main>
@@ -402,8 +445,9 @@ function contactPage() {
         ${crumbs([{ label: "Contact" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
+        <p class="muted">${esc(page.urgent)}</p>
         <p class="mono">${esc(site.email)}</p>
-        <p class="muted small">London</p>
+        <p class="muted small">${esc(`${site.address.line1}, ${site.address.line2}, ${site.address.city} ${site.address.postcode}`)}</p>
       </div>
       <div class="wrap split-visual contact-visual" style="padding-bottom:6rem">
         <form class="form" id="contact-form" novalidate>
@@ -425,10 +469,7 @@ function contactPage() {
             <label for="matter">Matter type</label>
             <select id="matter" name="matter" required>
               <option value="">Select one</option>
-              <option>Financial crime</option>
-              <option>Tax disputes &amp; resolution</option>
-              <option>Crypto investigations</option>
-              <option>Digital asset disputes</option>
+              ${site.practices.map((item) => `<option>${esc(item.title)}</option>`).join("")}
               <option>Something else</option>
             </select>
             <p class="error" data-error-for="matter">Choose a matter type.</p>
@@ -445,7 +486,7 @@ function contactPage() {
             </label>
             <p class="error" data-error-for="privacy">Confirm you have read the privacy notice.</p>
           </div>
-          <button class="btn btn-signal" type="submit">Prepare email</button>
+          <button class="btn btn-signal" type="submit">Instruct us confidentially</button>
           <p class="form-status" data-form-status></p>
           <p class="small muted">This preview does not send data to a server. It opens a draft to ${esc(
             site.email,
@@ -516,18 +557,26 @@ export function allPages() {
   return [
     { file: "index.html", html: homePage() },
     { file: "expertise/index.html", html: expertiseIndex() },
-    { file: "expertise/financial-crime/index.html", html: servicePage("financialCrime", "financial-crime") },
+    { file: "expertise/private-prosecutions/index.html", html: servicePage("privateProsecutions", "private-prosecutions") },
     {
-      file: "expertise/tax-disputes-resolution/index.html",
-      html: servicePage("tax", "tax"),
+      file: "expertise/asset-tracing-recovery/index.html",
+      html: servicePage("assetTracing", "asset-tracing"),
     },
     {
-      file: "expertise/crypto-investigations/index.html",
-      html: servicePage("crypto", "crypto"),
+      file: "expertise/crypto-fraud-digital-assets/index.html",
+      html: servicePage("cryptoFraud", "crypto-fraud"),
     },
     {
-      file: "expertise/digital-asset-disputes/index.html",
-      html: servicePage("digitalAssets", "digital-assets"),
+      file: "expertise/regulatory-defence-investigations/index.html",
+      html: servicePage("regulatory", "regulatory"),
+    },
+    {
+      file: "expertise/cross-border-fraud-corruption/index.html",
+      html: servicePage("crossBorder", "cross-border"),
+    },
+    {
+      file: "expertise/corporate-intelligence/index.html",
+      html: servicePage("corporateIntelligence", "corporate-intelligence"),
     },
     { file: "insights/index.html", html: insightsIndex() },
     ...site.insights.map((item) => ({
