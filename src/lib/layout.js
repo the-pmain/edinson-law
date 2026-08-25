@@ -1,5 +1,12 @@
 import { site } from "../../site.config.js";
+import {
+  isPending,
+  legalServiceName,
+  schemaOpeningHours,
+  trust,
+} from "../config/trust.js";
 import { esc } from "./html.js";
+import { filterPublicFaqs, regulatoryFooterHtml } from "./trust-html.js";
 
 const MARK = `<img class="brand-lockup" src="/brand/edison-law-logo.png" alt="Edison Law">`;
 
@@ -22,6 +29,16 @@ const PRACTICE_ICON_FALLBACK = PRACTICE_ICONS["corporate-intelligence"];
 
 export function practiceIcon(id) {
   return PRACTICE_ICONS[id] || PRACTICE_ICON_FALLBACK;
+}
+
+const INSIGHT_ICONS = {
+  "tracing-assets-across-wallets": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="7" r="2.2"/><circle cx="18" cy="7" r="2.2"/><circle cx="12" cy="18" r="2.2"/><path d="M7.8 8.4 10.4 16.1M16.2 8.4 13.6 16.1M8.2 7h7.6"/></svg>`,
+  "hmrc-enquiry-evidence": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h8l4 4v12H7z"/><path d="M15 4v4h4"/><path d="M10 12h6M10 15h4"/></svg>`,
+  "preserving-digital-evidence": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3.5" width="14" height="17" rx="1.5"/><path d="M9 7.5h6M9 11h6M9 14.5h3.5"/></svg>`,
+};
+
+export function insightIcon(slug) {
+  return INSIGHT_ICONS[slug] || PRACTICE_ICON_FALLBACK;
 }
 
 function brand(href = "/") {
@@ -83,21 +100,24 @@ function jsonLd(page) {
   const org = {
     "@type": ["LegalService", "Organization"],
     "@id": `${origin}/#organisation`,
-    name: site.name,
+    name: legalServiceName(),
     url: origin,
-    areaServed: "GB",
+    areaServed: "England and Wales",
     description: site.masterLine,
     identifier: site.sraNumber,
     sameAs: [site.sraUrl],
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: `${site.address.line1}, ${site.address.line2}`,
-      addressLocality: site.address.city,
-      postalCode: site.address.postcode,
-      addressCountry: "GB",
-    },
+    openingHours: schemaOpeningHours,
   };
-  if (site.email) org.email = site.email;
+  if (!isPending(trust.contact.email)) org.email = trust.contact.email;
+  if (!isPending(trust.contact.phone)) org.telephone = trust.contact.phone;
+  if (!isPending(trust.contact.address)) {
+    org.address = {
+      "@type": "PostalAddress",
+      streetAddress: trust.contact.address,
+      addressCountry: "GB",
+      addressRegion: "England and Wales",
+    };
+  }
 
   const graph = [org];
 
@@ -119,6 +139,9 @@ function jsonLd(page) {
       url: personUrl,
       worksFor: { "@id": `${origin}/#organisation` },
       ...(page.person.photo ? { image: `${origin}${page.person.photo}` } : {}),
+      ...(page.person.sraId && !isPending(page.person.sraId)
+        ? { identifier: page.person.sraId }
+        : {}),
     });
   }
 
@@ -140,7 +163,7 @@ function jsonLd(page) {
       name: (page.title || "").replace(/\s*\|\s*.*$/, "").trim() || page.heading,
       serviceType: page.serviceType || "Legal investigation",
       provider: { "@id": `${origin}/#organisation` },
-      areaServed: { "@type": "Country", name: "United Kingdom" },
+      areaServed: "England and Wales",
       url,
       description: page.description,
     };
@@ -162,10 +185,11 @@ function jsonLd(page) {
     graph.push(service);
   }
 
-  if (page.faqs?.length) {
+  const faqs = filterPublicFaqs(page.faqs);
+  if (faqs.length) {
     graph.push({
       "@type": "FAQPage",
-      mainEntity: page.faqs.map((item) => ({
+      mainEntity: faqs.map((item) => ({
         "@type": "Question",
         name: item.q,
         acceptedAnswer: { "@type": "Answer", text: item.a },
@@ -248,13 +272,6 @@ function searchIndex() {
     })),
   ];
   return JSON.stringify(items);
-}
-
-export function reviewedNote() {
-  const r = site.review;
-  return `<p class="mono">${esc(
-    `Reviewed by ${r.by}, ${r.title}, on ${r.date}. Next review due ${r.next}.`,
-  )}</p>`;
 }
 
 export function documentPage(page, body) {
@@ -393,10 +410,8 @@ export function documentPage(page, body) {
           ${trustBadges()}
         </div>
         <div class="footer-base">
-          <p>Authorised and regulated by the Solicitors Regulation Authority. SRA number ${esc(
-            site.sraNumber,
-          )}.</p>
-          <p>© <span data-year></span> Edison Law</p>
+          ${regulatoryFooterHtml()}
+          <p>© <span data-year></span> ${esc(trust.firm.tradingName)}</p>
         </div>
       </div>
     </footer>

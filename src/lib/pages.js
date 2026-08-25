@@ -2,12 +2,23 @@ import { site } from "../../site.config.js";
 import { home, pages, insightBodies } from "../content/copy.js";
 import { serviceMatter } from "../content/service-matter.js";
 import {
-  insightMedia,
   media,
   practiceMedia,
 } from "../content/media.js";
-import { crumbs, documentPage, practiceIcon, reviewedNote, signalGraphic } from "./layout.js";
+import { crumbs, documentPage, insightIcon, practiceIcon, signalGraphic } from "./layout.js";
 import { esc } from "./html.js";
+import { trust } from "../config/trust.js";
+import {
+  complaintsHtml,
+  contactDetailsHtml,
+  filterPublicFaqs,
+  htmlWithSraLinks,
+  isPublicText,
+  pricingHtml,
+  privacyHtml,
+  regulatoryHtml,
+  reviewFoot,
+} from "./trust-html.js";
 
 function personHref(person) {
   return `/people/${person.slug}/`;
@@ -84,15 +95,31 @@ function peopleCollective(options = {}) {
           showIntro
             ? `<p class="label">${esc(profile.label)}</p>
             <h2>${esc(profile.heading)}</h2>
-            <p class="lead profile-lead">${esc(profile.text)}</p>`
+            <p class="lead profile-lead">${htmlWithSraLinks(profile.text)}</p>`
             : `<p class="label">${esc(lead.role)}</p>
             <h2>${esc(lead.name)}</h2>
             <p class="lead profile-lead">${esc(lead.summary)}</p>`
         }
       </div>
     </div>
-    ${peopleCards(site.people.filter((person) => !person.principal).slice(0, 14), "compact")}
+    ${peopleCards(
+      options.all
+        ? site.people.filter((person) => !person.principal)
+        : site.people.filter((person) => !person.principal).slice(0, 14),
+      "compact",
+    )}
   `;
+}
+
+function insightEntry(item, extra = "") {
+  return `<a href="/insights/${item.slug}/">
+    <span class="service-mark" aria-hidden="true">${insightIcon(item.slug)}</span>
+    <span>
+      <p class="label">${esc(item.type)} / ${esc(item.dateLabel)}</p>
+      <h2>${esc(item.title)}</h2>
+      ${extra}
+    </span>
+  </a>`;
 }
 
 function wrap(inner, band = "") {
@@ -129,6 +156,10 @@ function matterProse(key) {
     <h2>How the work usually runs</h2>
     <ol>
       ${extra.process
+        .filter(
+          (step) =>
+            isPublicText(step.title) && isPublicText(step.text) && isPublicText(step.timescale),
+        )
         .map(
           (step) =>
             `<li><strong>${esc(step.title)}</strong> (${esc(step.timescale)}). ${esc(step.text)}</li>`,
@@ -140,12 +171,12 @@ function matterProse(key) {
     <h2>What can go wrong</h2>
     ${bulletList(extra.risks)}
     <h2>Who handles your matter</h2>
-    <p>${esc(extra.handler)}</p>
+    <p>${htmlWithSraLinks(extra.handler)}</p>
   `;
 }
 
 function matterFaqs(page, key) {
-  return serviceMatter[key]?.faqs || page.faqs || [];
+  return filterPublicFaqs(serviceMatter[key]?.faqs || page.faqs || []);
 }
 
 function cobraSection(band = "") {
@@ -202,7 +233,6 @@ function homePage() {
             <p class="label">${esc(home.sections.hero.descriptor)}</p>
             <h1 class="display">${esc(home.sections.hero.heading)}</h1>
             <p class="lead">${esc(home.sections.hero.lead)}</p>
-            ${reviewedNote()}
             <div class="hero-actions">
               ${cta(home.sections.hero.cta)}
               <a class="btn btn-ghost" href="${home.sections.hero.ctaSecondary.href}">${esc(
@@ -247,7 +277,7 @@ function homePage() {
           <div class="who-copy">
             <p class="label">${esc(who.label)}</p>
             <h2>${esc(who.heading)}</h2>
-            <p class="lead muted method-lead">${esc(who.lead)}</p>
+            <p class="lead muted method-lead">${htmlWithSraLinks(who.lead)}</p>
             <p class="muted">${esc(who.text)}</p>
             <p class="label audience-label">${esc(who.actForLabel)}</p>
             <ul class="audience-list">
@@ -301,7 +331,7 @@ function homePage() {
           <p class="label">${esc(standing.label)}</p>
           <h2>${esc(standing.heading)}</h2>
           <ul class="recognition-list">
-            ${standing.items.map((item) => `<li>${esc(item)}</li>`).join("")}
+            ${standing.items.map((item) => `<li>${htmlWithSraLinks(item)}</li>`).join("")}
           </ul>
           <p class="standing-note">${esc(standing.note)}</p>
           <p><a class="btn btn-ghost" href="${esc(site.sraUrl)}" target="_blank" rel="noopener noreferrer">${esc(standing.link)}</a></p>
@@ -312,14 +342,9 @@ function homePage() {
         <div class="wrap">
           <p class="label">${esc(home.sections.insight.label)}</p>
           <h2>${esc(home.sections.insight.heading)}</h2>
-          <a class="insight-visual" href="/insights/${featured.slug}/">
-            ${figure(insightMedia(featured.slug), "media-figure insight-photo")}
-            <span class="insight-copy">
-              <p class="mono">${esc(featured.type)} / ${esc(featured.dateLabel)}</p>
-              <h3>${esc(featured.title)}</h3>
-              <p class="muted">${esc(featured.description)}</p>
-            </span>
-          </a>
+          <div class="service-index service-visual-index">
+            ${insightEntry(featured, `<p class="muted">${esc(featured.description)}</p>`)}
+          </div>
         </div>
       </section>
 
@@ -358,7 +383,6 @@ function expertiseIndex() {
         ${crumbs([{ label: "Expertise" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
-        ${reviewedNote()}
       </div>
       <div class="wrap service-index service-visual-index">
         ${site.practices
@@ -374,6 +398,7 @@ function expertiseIndex() {
           )
           .join("")}
       </div>
+      ${reviewFoot(page)}
     </main>
   `;
   return documentPage({ ...page, crumb: "Expertise" }, body);
@@ -391,7 +416,6 @@ function servicePage(key, practiceId) {
         ])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
-        ${reviewedNote()}
           <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
       </div>
       ${wrap(`
@@ -399,35 +423,33 @@ function servicePage(key, practiceId) {
           ${matterProse(key)}
         </div>
       `)}
-      ${wrap(`
+      ${
+        matterFaqs(page, key).length
+          ? wrap(`
         <h2>Questions we are asked</h2>
         <div class="faq">
           ${matterFaqs(page, key)
             .map(
               (item) => `<details>
                 <summary>${esc(item.q)}</summary>
-                <p>${esc(item.a)}</p>
+                <p>${htmlWithSraLinks(item.a)}</p>
               </details>`,
             )
             .join("")}
         </div>
-      `)}
+      `)
+          : ""
+      }
       ${
         related.length
           ? wrap(`
             <div class="related">
               <p class="label">Related insights</p>
+              <div class="service-index service-visual-index">
               ${related
-                .map(
-                  (item) => `<a class="insight-visual" href="/insights/${item.slug}/">
-                    ${figure(insightMedia(item.slug), "media-figure insight-photo")}
-                    <span class="insight-copy">
-                      <p class="mono">${esc(item.type)} / ${esc(item.dateLabel)}</p>
-                      <h3>${esc(item.title)}</h3>
-                    </span>
-                  </a>`,
-                )
+                .map((item) => insightEntry(item))
                 .join("")}
+              </div>
             </div>
           `)
           : ""
@@ -439,6 +461,7 @@ function servicePage(key, practiceId) {
           <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
         </div>
       `)}
+      ${reviewFoot(page)}
     </main>
   `;
   return documentPage(
@@ -465,7 +488,6 @@ function investigationIndex() {
         ${crumbs([{ label: "Investigations" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
-        ${reviewedNote()}
         <nav class="page-jump" aria-label="On this page">
           ${page.jump.map((item) => `<a href="${item.href}">${esc(item.label)}</a>`).join("")}
         </nav>
@@ -508,18 +530,11 @@ function investigationIndex() {
         <div class="wrap">
           <p class="label">Investigation notes</p>
           <h2>Method, written down.</h2>
+          <div class="service-index service-visual-index">
           ${notes
-            .map(
-              (item) => `<a class="insight-visual" href="/insights/${item.slug}/">
-                ${figure(insightMedia(item.slug), "media-figure insight-photo")}
-                <span class="insight-copy">
-                  <p class="mono">${esc(item.type)} / ${esc(item.dateLabel)}</p>
-                  <h3>${esc(item.title)}</h3>
-                  <p class="muted">${esc(item.description)}</p>
-                </span>
-              </a>`,
-            )
+            .map((item) => insightEntry(item, `<p class="muted">${esc(item.description)}</p>`))
             .join("")}
+          </div>
         </div>
       </section>`
           : ""
@@ -531,6 +546,7 @@ function investigationIndex() {
           <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
         </div>
       </section>
+      ${reviewFoot(page)}
     </main>
   `;
   return documentPage({ ...page, crumb: "Investigations" }, body);
@@ -553,7 +569,6 @@ function investigationPage(item) {
         ])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
-        ${reviewedNote()}
         <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
       </div>
       ${wrap(`
@@ -561,19 +576,23 @@ function investigationPage(item) {
           ${matterProse(item.copyKey)}
         </div>
       `)}
-      ${wrap(`
+      ${
+        matterFaqs(page, item.copyKey).length
+          ? wrap(`
         <h2>Questions we are asked</h2>
         <div class="faq">
           ${matterFaqs(page, item.copyKey)
             .map(
               (faq) => `<details>
                 <summary>${esc(faq.q)}</summary>
-                <p>${esc(faq.a)}</p>
+                <p>${htmlWithSraLinks(faq.a)}</p>
               </details>`,
             )
             .join("")}
         </div>
-      `)}
+      `)
+          : ""
+      }
       ${
         routes.length
           ? wrap(`
@@ -599,17 +618,9 @@ function investigationPage(item) {
           ? wrap(`
             <div class="related">
               <p class="label">Related insights</p>
-              ${related
-                .map(
-                  (note) => `<a class="insight-visual" href="/insights/${note.slug}/">
-                    ${figure(insightMedia(note.slug), "media-figure insight-photo")}
-                    <span class="insight-copy">
-                      <p class="mono">${esc(note.type)} / ${esc(note.dateLabel)}</p>
-                      <h3>${esc(note.title)}</h3>
-                    </span>
-                  </a>`,
-                )
-                .join("")}
+              <div class="service-index service-visual-index">
+              ${related.map((note) => insightEntry(note)).join("")}
+              </div>
             </div>
           `)
           : ""
@@ -621,6 +632,7 @@ function investigationPage(item) {
           <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
         </div>
       `)}
+      ${reviewFoot(page)}
     </main>
   `;
   return documentPage(
@@ -642,22 +654,13 @@ function insightsIndex() {
         ${crumbs([{ label: "Insights" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
-        ${reviewedNote()}
       </div>
-      <div class="wrap insights-index">
+      <div class="wrap service-index service-visual-index">
         ${site.insights
-          .map(
-            (item) => `<a class="insight-visual" href="/insights/${item.slug}/">
-              ${figure(insightMedia(item.slug), "media-figure insight-photo")}
-              <span class="insight-copy">
-                <p class="mono">${esc(item.type)} / ${esc(item.dateLabel)}</p>
-                <h3>${esc(item.title)}</h3>
-                <p class="muted">${esc(item.description)}</p>
-              </span>
-            </a>`,
-          )
+          .map((item) => insightEntry(item, `<p class="muted">${esc(item.description)}</p>`))
           .join("")}
       </div>
+      ${reviewFoot(page)}
     </main>
   `;
   return documentPage({ ...page, crumb: "Insights" }, body);
@@ -682,10 +685,8 @@ function insightPage(item) {
           { label: item.title },
         ])}
         <p class="mono">${esc(item.type)} / ${esc(item.dateLabel)}</p>
-        <p class="mono">Author: [[NEEDS_CLIENT_INPUT: named author for this note]]</p>
         <h1>${esc(item.title)}</h1>
         <p class="lead muted">${esc(item.description)}</p>
-        ${reviewedNote()}
       </article>
       <div class="wrap prose">
         ${blocks
@@ -697,6 +698,7 @@ function insightPage(item) {
         </div>
         <p><a href="/contact/">Discuss a related matter</a></p>
       </div>
+      ${reviewFoot(page)}
     </main>
   `;
   return documentPage(page, body);
@@ -709,11 +711,10 @@ function peoplePage() {
       <div class="wrap page-head">
         ${crumbs([{ label: "People" }])}
         <h1>${esc(page.heading)}</h1>
-        <p class="lead muted">${esc(page.lead)}</p>
-        ${reviewedNote()}
+        <p class="lead muted">${htmlWithSraLinks(page.lead)}</p>
       </div>
       <div class="wrap people-index">
-        ${peopleCollective({ intro: false })}
+        ${peopleCollective({ intro: false, all: true })}
       </div>
     </main>
   `;
@@ -728,7 +729,6 @@ function joinUsPage() {
         ${crumbs([{ label: "Join us" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
-        ${reviewedNote()}
         <nav class="page-jump" aria-label="On this page">
           ${page.jump.map((item) => `<a href="${item.href}">${esc(item.label)}</a>`).join("")}
         </nav>
@@ -811,15 +811,14 @@ function personPage(person) {
         <div class="prose">
           <h1>${esc(person.name)}</h1>
           <p class="mono">${esc(person.role)}</p>
-          ${reviewedNote()}
-          <p class="muted">Authorisation: confirm this person on the public SRA record before treating the title as a reserved-activity authorisation. [[NEEDS_CLIENT_INPUT: SRA ID, year of admission, and practising status for ${person.name}]]</p>
-          ${person.bio.map((para) => `<p>${esc(para)}</p>`).join("")}
+          <p class="muted">${htmlWithSraLinks(trust.firm.regulatorCheckText)}</p>
+          ${person.bio.map((para) => `<p>${htmlWithSraLinks(para)}</p>`).join("")}
           ${
             person.quotes?.length
               ? person.quotes.map((item) => `<blockquote>${esc(item)}</blockquote>`).join("")
               : ""
           }
-          ${person.closing ? `<p>${esc(person.closing)}</p>` : ""}
+          ${person.closing ? `<p>${htmlWithSraLinks(person.closing)}</p>` : ""}
           ${
             person.areas?.length
               ? `<h2>Key areas of work</h2>
@@ -847,9 +846,7 @@ function aboutPage() {
   const record = page.record;
   const clients = page.clients;
   const commitments = page.commitments;
-  const namedOnFile = String(
-    site.people.filter((person) => !person.principal).slice(0, 14).length,
-  );
+  const namedOnFile = String(site.people.filter((person) => !person.principal).length);
   const facts = [
     ...record.items,
     { value: namedOnFile, label: "People on the file in these pages, besides the owner" },
@@ -860,7 +857,6 @@ function aboutPage() {
         ${crumbs([{ label: "About" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
-        ${reviewedNote()}
       </div>
       <section class="section-tight">
         <div class="wrap">
@@ -914,6 +910,7 @@ function aboutPage() {
           ${titledStack(commitments.items)}
         </div>
       </section>
+      ${reviewFoot(page)}
     </main>
   `;
   return documentPage({ ...page, crumb: "About" }, body);
@@ -927,18 +924,11 @@ function contactPage() {
         ${crumbs([{ label: "Contact" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
-        ${reviewedNote()}
         <p class="muted">${esc(page.urgent)}</p>
-        <p class="muted">Hours: ${esc(page.hours)}</p>
-        <p class="muted">Telephone: ${esc(page.phone)}</p>
-        <p class="muted">First point of contact: ${esc(page.namedContact)}</p>
-        <p class="muted">Response time: ${esc(page.responseTime)}</p>
-        <p class="muted">Out of hours: ${esc(page.outOfHours)}</p>
-        ${site.email ? `<p class="mono">${esc(site.email)}</p>` : ""}
-        <p class="muted small">${esc(`${site.address.line1}, ${site.address.line2}, ${site.address.city} ${site.address.postcode}`)}</p>
+        ${contactDetailsHtml()}
       </div>
       <div class="wrap split-visual contact-visual">
-        <form class="form" id="contact-form" novalidate>
+        <form class="form" id="contact-form" novalidate data-mailto="${esc(site.email)}" data-ack="${esc(trust.contact.acknowledgementTime)}">
           <div class="field">
             <label for="full-name">Full name</label>
             <input id="full-name" name="name" type="text" autocomplete="name" required>
@@ -979,7 +969,7 @@ function contactPage() {
           <p class="small muted">${
             site.email
               ? `This preview does not send data to a server. It opens a draft to ${esc(site.email)} on this device.`
-              : "This preview does not send data to a server. Write to the office address recorded with the SRA."
+              : esc(trust.contact.acknowledgementTime)
           }</p>
         </form>
         ${roomPhoto()}
@@ -989,37 +979,33 @@ function contactPage() {
   return documentPage({ ...page, crumb: "Contact" }, body);
 }
 
+const TRUST_PAGE_HTML = {
+  regulatory: regulatoryHtml,
+  complaints: complaintsHtml,
+  pricing: pricingHtml,
+  privacy: privacyHtml,
+};
+
 function legalPage(key) {
   const page = pages[key];
-  const extra =
-    key === "complaints"
-      ? `
-        <h2>How to complain</h2>
-        <ol>${page.steps.map((item) => `<li>${esc(item)}</li>`).join("")}</ol>
-        <h2>Legal Ombudsman</h2>
-        ${page.leo.map((item) => `<p>${esc(item)}</p>`).join("")}
-        <p><a href="https://www.legalombudsman.org.uk/" rel="noopener noreferrer">legalombudsman.org.uk</a></p>
-      `
-      : page.blocks.map((block) => `<h2>${esc(block.heading)}</h2><p>${esc(block.text)}</p>`).join("");
+  const extra = TRUST_PAGE_HTML[page.trustPage]
+    ? TRUST_PAGE_HTML[page.trustPage]()
+    : (page.blocks || [])
+        .filter((block) => isPublicText(block.text))
+        .map((block) => `<h2>${esc(block.heading)}</h2><p>${htmlWithSraLinks(block.text)}</p>`)
+        .join("");
 
   const body = `
     <main id="content">
       <div class="wrap page-head">
         ${crumbs([{ label: page.heading }])}
         <h1>${esc(page.heading)}</h1>
-        ${page.intro ? `<p class="lead muted">${esc(page.intro)}</p>` : ""}
-        ${reviewedNote()}
+        ${page.intro && isPublicText(page.intro) ? `<p class="lead muted">${htmlWithSraLinks(page.intro)}</p>` : ""}
       </div>
       <div class="wrap prose" style="padding-bottom:6rem">
         ${extra}
-        ${
-          key === "legal"
-            ? `<p><a href="${esc(site.sraUrl)}" rel="noopener noreferrer">View the SRA record for ${esc(
-                site.sraNumber,
-              )}</a></p>`
-            : ""
-        }
       </div>
+      ${reviewFoot(page)}
     </main>
   `;
   return documentPage({ ...page, crumb: page.heading }, body);
@@ -1088,6 +1074,7 @@ export function allPages() {
     { file: "about/index.html", html: aboutPage() },
     { file: "contact/index.html", html: contactPage() },
     { file: "legal-regulatory/index.html", html: legalPage("legal") },
+    { file: "regulatory-information/index.html", html: legalPage("regulatoryInformation") },
     { file: "how-we-work/index.html", html: legalPage("howWeWork") },
     { file: "terms-of-business/index.html", html: legalPage("terms") },
     { file: "complaints/index.html", html: legalPage("complaints") },

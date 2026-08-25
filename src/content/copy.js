@@ -1,6 +1,6 @@
-import { site } from "../../site.config.js";
+import { firstContactStatement, trust } from "../config/trust.js";
 
-const address = `${site.address.line1}, ${site.address.line2}, ${site.address.city}, ${site.address.postcode}`;
+const sraLine = `Edison Law is authorised and regulated by the Solicitors Regulation Authority, SRA number ${trust.firm.sraNumber}.`;
 
 export const home = {
   path: "/",
@@ -19,7 +19,7 @@ export const home = {
     who: {
       label: "Who we are",
       heading: "A London solicitors' practice.",
-      lead: `You can check us. Edison Law is an SRA recognised sole practice (number ${site.sraNumber}) at ${address}. Confirm office, people and authorisation on the SRA record if anything on this site might be out of date.`,
+      lead: `You can check us. ${sraLine} ${trust.firm.regulatorCheckText}`,
       text: "The work is legal-led investigation: preserve what exists, establish what can be proved, and then choose a route — a private prosecution, a freezing application, a civil claim, a report, or no further step. Counsel is instructed where advocacy is needed. Local counsel is instructed where the money sits overseas. We do not claim in-house chambers, a City headquarters, or a laboratory we do not have.",
       actForLabel: "This is usually for you if",
       actFor: [
@@ -119,11 +119,9 @@ export const home = {
       label: "How to check this firm",
       heading: "Regulation is the proof, not a ranking.",
       items: [
-        `SRA number ${site.sraNumber} — authorised and regulated by the Solicitors Regulation Authority.`,
-        `Recognised sole practice since ${site.sraSince}.`,
+        `SRA number ${trust.firm.sraNumber} — authorised and regulated by the Solicitors Regulation Authority.`,
+        trust.firm.regulatorCheckText,
         "Confirm current authorised individuals on the public SRA organisation record.",
-        "The public record currently lists Criminal among the firm's areas of law. Confirm the current list on the register.",
-        "There are no published SRA disciplinary decisions against the firm.",
       ],
       note: "We do not display directory rankings, network memberships or press quotes that we have not earned. If a badge, Band 1 listing or recovery figure appears anywhere else online, treat it as unverified until it matches this site and the SRA record.",
       link: "Open the public SRA record",
@@ -144,7 +142,7 @@ export const home = {
     },
     london: {
       heading: "London as the legal route.",
-      text: "The practice is an SRA recognised sole practice in London. Work that crosses borders is still held here: the evidential file, the English court, and local counsel where the money actually sits.",
+      text: "The practice is an SRA-regulated solicitors' firm in London. Work that crosses borders is still held here: the evidential file, the English court, and local counsel where the money actually sits.",
       meta: "London",
       cta: { label: "About the firm", href: "/about/" },
     },
@@ -270,6 +268,7 @@ export const pages = {
     description:
       "Defence and advisory work for SFO, FCA, HMRC and other regulatory investigations, including dawn raids and interviews under caution.",
     parent: { label: "Expertise", href: "/expertise/" },
+    reviewTopic: "SRA and regulatory enforcement policy",
     heading: "When the regulator is already in the room.",
     lead: "A regulator or investigator is already in contact, and you need to know what to say and what to hold. We represent individuals and companies under investigation by the SFO, FCA, HMRC and other bodies. The work is the quality of the file — not a claim that we can close an enquiry because someone here used to work at the agency.",
     when: [
@@ -334,6 +333,7 @@ export const pages = {
     description:
       "Confidential due diligence, source of wealth verification, integrity monitoring and litigation risk assessment before high-value transactions.",
     parent: { label: "Expertise", href: "/expertise/" },
+    reviewTopic: "sanctions and export control",
     heading: "Know the counterparty before the money moves.",
     lead: "You need to know who you are dealing with before the money or the appointment moves. We conduct confidential, lawful due diligence and integrity checks. We identify undisclosed litigation, sanctions hits and connections — and we state what the records do not show.",
     when: [
@@ -610,7 +610,7 @@ export const pages = {
     description:
       "Richard Edison, owner of Edison Law, and the people who work the file. Confirm current authorised individuals on the public SRA record.",
     heading: "Our people.",
-    lead: "You will want named humans, not a logo. Richard Edison owns the practice. Job titles on this site are not a reserved-activity authorisation. Confirm current authorised individuals on the public SRA record. [[NEEDS_CLIENT_INPUT: SRA ID and year of admission for each solicitor, or confirm who is not a solicitor]].",
+    lead: `You will want named humans, not a logo. Richard Edison owns the practice. Job titles on this site are not a reserved-activity authorisation. ${trust.firm.regulatorCheckText}`,
   },
   joinUs: {
     path: "/join-us/",
@@ -738,10 +738,9 @@ export const pages = {
       heading: "Facts of the practice — not results of cases.",
       note: "Scale claims, awards and recovery figures are easy to invent. They are also easy to check. The numbers below are taken from this site and the SRA organisation record. We do not publish recoveries, win rates or rankings.",
       items: [
-        { value: "2015", label: "Recognised sole practice since 1 November" },
         { value: "6", label: "Connected practices on this site" },
         { value: "5", label: "Lines of investigation" },
-        { value: site.sraNumber, label: "SRA organisation number — open the public record" },
+        { value: trust.firm.sraNumber, label: "SRA organisation number — open the public record" },
       ],
     },
     clients: {
@@ -757,8 +756,8 @@ export const pages = {
     },
     heritage: {
       label: "The practice",
-      heading: "A recognised sole practice, held by its owner.",
-      text: "Edison Law has been an SRA recognised sole practice since 1 November 2015. Richard Edison owns the practice: the work, the people and the files. Confirm office, people and authorisation on the public record if anything on this site might be out of date.",
+      heading: "A solicitors' practice, held by its owner.",
+      text: `${sraLine} Richard Edison owns the practice: the work, the people and the files. ${trust.firm.regulatorCheckText}`,
     },
     commitments: {
       label: "How the work is done",
@@ -790,120 +789,41 @@ export const pages = {
       "Write to Edison Law in London about a private prosecution, asset recovery or financial crime matter. Enquiries are handled confidentially.",
     heading: "Discuss a matter.",
     lead: "Write with the facts you already have. Do not send passwords, seed phrases or original identity documents through this form. Describe the situation. We will say whether we can help.",
-    hours: site.facts.hours,
-    phone: site.facts.publishedPhone,
-    namedContact: site.facts.namedContact,
-    responseTime: site.facts.responseTime,
-    outOfHours: site.facts.outOfHours,
     urgent: "If a freezing application may be needed in days rather than weeks, use the form below and mark the matter as urgent.",
   },
   legal: {
     path: "/legal-regulatory/",
     title: "Legal and regulatory | Edison Law",
-    description: "Regulatory standing, reserved activities and notices for Edison Law.",
+    description: "Regulatory standing, professional indemnity, client money and notices for Edison Law.",
     heading: "Legal and regulatory.",
     intro:
       "You should be able to check who we are without calling a marketing line. The public SRA record is the source if anything here is out of date.",
-    blocks: [
-      {
-        heading: "Regulated name",
-        text: `Edison Law is authorised and regulated by the Solicitors Regulation Authority. SRA number ${site.sraNumber}. The firm has been an SRA recognised sole practice since ${site.sraSince}. It is not presented here as a City headquarters or as a limited company unless the public record says so.`,
-      },
-      {
-        heading: "Registered office",
-        text: `${address}. ${site.facts.companyNumber}.`,
-      },
-      {
-        heading: "VAT",
-        text: site.facts.vatNumber,
-      },
-      {
-        heading: "People on the public record",
-        text: `The SRA organisation record currently lists ${site.facts.solicitorOnRegister} as a solicitor. Confirm authorised individuals on the public record before treating a job title on this website as a reserved-activity authorisation. [[NEEDS_CLIENT_INPUT: SRA ID and year of admission for each solicitor you wish named]].`,
-      },
-      {
-        heading: "Reserved activities",
-        text: "The SRA record lists authority for the exercise of a right of audience, conduct of litigation, reserved instrument activities, probate activities and the administration of oaths. The firm’s published practice on this site is private prosecutions, asset recovery, crypto fraud, regulatory investigations and cross-border financial crime. Confirm the current list of areas of law on the register.",
-      },
-      {
-        heading: "Professional indemnity insurance",
-        text: `SRA-regulated firms must maintain professional indemnity insurance. Insurer: ${site.facts.piInsurer}. Territorial cover: ${site.facts.piTerritory}.`,
-      },
-      {
-        heading: "Client money",
-        text: site.facts.clientMoney,
-      },
-      {
-        heading: "Data protection",
-        text: `ICO registration: ${site.facts.icoNumber}. See the privacy notice.`,
-      },
-      {
-        heading: "SRA record",
-        text: "The public record is the source for office, people and authorisation details. There are no published SRA disciplinary decisions against the firm on the record we checked for this site. Check the live register if anything might be out of date.",
-      },
-    ],
+    trustPage: "regulatory",
+  },
+  regulatoryInformation: {
+    path: "/regulatory-information/",
+    title: "Regulatory information | Edison Law",
+    description: "How Edison Law is authorised, insured, and how client money is handled.",
+    heading: "Regulatory information.",
+    intro:
+      "You should be able to check who we are without calling a marketing line. The public SRA record is the source if anything here is out of date.",
+    trustPage: "regulatory",
   },
   complaints: {
     path: "/complaints/",
     title: "Complaints procedure | Edison Law",
     description: "How to complain about Edison Law and how to reach the Legal Ombudsman.",
     heading: "Complaints procedure.",
-    intro:
-      "If you are unhappy with our service, tell us. We will take the complaint seriously and respond in writing. You do not need a special form.",
-    steps: [
-      `Write to ${site.facts.complaintsHandler} at Edison Law, ${address}. Mark the letter as a complaint. ${site.facts.publishedEmail}.`,
-      "Say what went wrong, when it happened, and what you would like us to do. Include your matter reference if you have one.",
-      "We aim to acknowledge a complaint promptly and to give a final written response within eight weeks. [[NEEDS_CLIENT_INPUT: actual acknowledgement timescale, if shorter than ‘promptly’]].",
-      "If we need more time, we will say so in writing and explain why.",
-    ],
-    leo: [
-      "If you are not satisfied with our final response, or eight weeks have passed, you may be able to refer the matter to the Legal Ombudsman.",
-      "Usual time limits: within six months of our final written response, and within one year of the act or omission or of the date you reasonably should have known about it. Confirm the current rules at legalombudsman.org.uk before you rely on them.",
-      "Legal Ombudsman, PO Box 6167, Slough, SL1 0EH. Telephone 0300 555 0333. Relay UK 18001 0300 555 0333.",
-      "The SRA also investigates some concerns about solicitors. That is a separate process from the Legal Ombudsman. sra.org.uk",
-    ],
+    intro: "If you are unhappy with our service, tell us. We will take the complaint seriously and respond in writing.",
+    trustPage: "complaints",
   },
   pricing: {
     path: "/pricing/",
     title: "Pricing | Edison Law",
     description: "How Edison Law charges for work and how estimates are given.",
     heading: "Pricing.",
-    intro:
-      "You should know how you will be charged before you instruct. The figures that belong on this page are not yet confirmed by the firm, so they appear as marked gaps rather than invented rates.",
-    blocks: [
-      {
-        heading: "SRA Transparency Rules",
-        text: "The SRA Transparency Rules require published prices for certain defined services (for example some residential conveyancing, probate, motoring offences, employment, immigration and debt recovery). The work described on this site — private prosecutions, asset recovery and financial crime — is not a menu of those defined services. We do not publish a fixed-fee list for it because the evidence, forum and urgency change the cost. [[NEEDS_CLIENT_INPUT: confirm you do not offer the mandatory price-list services; if you do, supply the required price information]].",
-      },
-      {
-        heading: "How we charge",
-        text: `After an initial discussion we provide a written scope, the charging basis, likely disbursements and VAT. ${site.facts.feeRates} If we cannot help, we say so.`,
-      },
-      {
-        heading: "What is usually included",
-        text: "Solicitor time on the scoped file, supervision of investigators and forensic specialists on that file, and written advice as set out in the retainer.",
-      },
-      {
-        heading: "What is usually not included",
-        text: "Counsel’s fees, court fees, tracing-platform licences, translation, overseas lawyers, expert witnesses, and travel. These are disbursements unless the retainer says otherwise.",
-      },
-      {
-        heading: "VAT",
-        text: site.facts.vatNumber,
-      },
-      {
-        heading: "Timescales that affect cost",
-        text: `Emergency freezing and raid response compress time and cost. A document-heavy private prosecution does the opposite. ${site.facts.firstAdviceTimescale}`,
-      },
-      {
-        heading: "Conditional and damages-based fees",
-        text: "Where appropriate and lawful we consider conditional fee arrangements, damages-based agreements and hybrid structures. They are not available for every matter and they are not a promise of recovery.",
-      },
-      {
-        heading: "No guaranteed recoveries",
-        text: "Fees are for legal work. We will not promise a recovery that the evidence does not support.",
-      },
-    ],
+    intro: "You should know how you will be charged before you instruct.",
+    trustPage: "pricing",
   },
   privacy: {
     path: "/privacy/",
@@ -911,24 +831,8 @@ export const pages = {
     description: "How Edison Law handles personal information.",
     heading: "Privacy notice.",
     intro: "You have a right to know who controls your data and how to complain.",
-    blocks: [
-      {
-        heading: "Controller",
-        text: `Edison Law is the data controller for this website and for client files. Correspondence: ${address}. ICO registration: ${site.facts.icoNumber}.`,
-      },
-      {
-        heading: "What we collect",
-        text: "If you write to us we receive the name, contact details and matter description you send. We use that information to decide whether we can act and to reply. We do not run advertising analytics on this preview.",
-      },
-      {
-        heading: "Lawful basis",
-        text: "For enquiries, legitimate interests in assessing whether we can act, and steps at your request before a contract. For client files, performance of a contract and legal obligation. [[NEEDS_CLIENT_INPUT: confirm lawful bases and retention periods you want published]].",
-      },
-      {
-        heading: "Retention and rights",
-        text: "Client files are kept for the period required by professional rules. You may ask for access, correction or erasure where the law allows. You may complain to the Information Commissioner’s Office at ico.org.uk.",
-      },
-    ],
+    reviewTopic: "data protection enforcement",
+    trustPage: "privacy",
   },
   cookies: {
     path: "/cookies/",
@@ -958,7 +862,7 @@ export const pages = {
       },
       {
         heading: "If something is in the way",
-        text: `Write via the contact form or to ${address} and describe the page, the barrier and the format that would help. We will respond as part of ordinary professional correspondence.`,
+        text: "Write via the contact form and describe the page, the barrier and the format that would help. We will respond as part of ordinary professional correspondence.",
       },
     ],
   },
@@ -978,7 +882,7 @@ export const pages = {
       },
       {
         heading: "If you are unsure",
-        text: `Write to the office at ${address}, or use the contact form from an address we already know. Published email: ${site.facts.publishedEmail}. Published telephone: ${site.facts.publishedPhone}.`,
+        text: "Use the contact form from an address we already know, or write from a number or address you already hold. Do not rely on contact details in an unexpected message.",
       },
     ],
   },
@@ -996,7 +900,7 @@ export const pages = {
       },
       {
         heading: "2. Establish",
-        text: `Investigators, forensic specialists and solicitors work the same matter until it is clear what the documents prove, and what they do not. Cobra AI (IYE Global) is used where volume or pattern-finding is the problem. Its output is reviewed here. ${site.facts.firstAdviceTimescale}`,
+        text: `Investigators, forensic specialists and solicitors work the same matter until it is clear what the documents prove, and what they do not. Cobra AI (IYE Global) is used where volume or pattern-finding is the problem. Its output is reviewed here. ${trust.fees.scopeTimescale}`,
       },
       {
         heading: "3. Advise",
@@ -1008,11 +912,17 @@ export const pages = {
       },
       {
         heading: "Fees",
-        text: `You pay for work done. ${site.facts.feeRates} See Pricing.`,
+        text: `You pay for work done. ${trust.fees.model} See Pricing.`,
       },
       {
         heading: "Who holds the file",
-        text: `${site.facts.namedContact} Confirm authorised individuals on the SRA record. Job titles on this site are not a reserved-activity authorisation.`,
+        text: [
+          firstContactStatement(),
+          trust.firm.regulatorCheckText,
+          "Job titles on this site are not a reserved-activity authorisation.",
+        ]
+          .filter(Boolean)
+          .join(" "),
       },
     ],
   },
@@ -1030,7 +940,7 @@ export const pages = {
       },
       {
         heading: "What the client care letter will cover",
-        text: `Scope of work, who will do it, charging basis, disbursements, VAT, complaints, and how to end the retainer. ${site.facts.feeRates} [[NEEDS_CLIENT_INPUT: attach or summarise your standard terms of business once approved]].`,
+        text: `Scope of work, who will do it, charging basis, disbursements, VAT, complaints, and how to end the retainer. ${trust.fees.model}`,
       },
       {
         heading: "Your responsibilities",
@@ -1038,7 +948,7 @@ export const pages = {
       },
       {
         heading: "Limitation of liability",
-        text: `[[NEEDS_CLIENT_INPUT: liability cap, if any, and PI cover cross-reference]]. Professional indemnity: ${site.facts.piInsurer}.`,
+        text: trust.insurance.liabilityCap,
       },
       {
         heading: "Governing law",

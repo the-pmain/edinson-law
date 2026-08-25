@@ -1,8 +1,11 @@
-import { site } from "../../site.config.js";
+import { firstContactStatement, isPending, trust } from "../config/trust.js";
 
-const costs = `You pay for work done, not for a hoped-for recovery. After we have enough facts to scope the file, you receive a written charging basis, likely disbursements and how VAT is treated. ${site.facts.feeRates} Counsel, court fees, tracing tools, translation and overseas lawyers are usually billed as disbursements on top. Conditional fee arrangements and damages-based agreements are considered only where they are lawful for the work. See Pricing.`;
+const costs = `You pay for work done, not for a hoped-for recovery. ${trust.fees.model} ${trust.fees.vatTreatment} Counsel, court fees, tracing tools, translation and overseas lawyers are usually billed as disbursements on top. Conditional fee arrangements and damages-based agreements are considered only where they are lawful for the work. See Pricing.`;
 
-const handler = `The file is held at Edison Law. ${site.facts.namedContact} Advocacy in court is done by instructed counsel, not by listing in-house chambers. Job titles on this site are not a reserved-activity authorisation. Confirm authorised individuals on the public SRA record.`;
+const named = firstContactStatement();
+const handler = `The file is held at Edison Law.${named ? ` ${named}` : ""} Advocacy in court is done by instructed counsel, not by listing in-house chambers. Job titles on this site are not a reserved-activity authorisation. ${trust.firm.regulatorCheckText}`;
+
+const firstScope = trust.fees.scopeTimescale;
 
 export const serviceMatter = {
   privateProsecutions: {
@@ -28,7 +31,7 @@ export const serviceMatter = {
       },
       {
         title: "Merit and cost",
-        timescale: site.facts.firstAdviceTimescale,
+        timescale: firstScope,
         text: "We say whether the facts can meet the criminal standard, what disclosure will look like, and whether the cost is proportionate. If they cannot, we stop.",
       },
       {
@@ -113,7 +116,7 @@ export const serviceMatter = {
       },
       {
         title: "Say whether it is worth pursuing",
-        timescale: site.facts.firstAdviceTimescale,
+        timescale: firstScope,
         text: "We map where value went and whether any of it is still reachable at a cost you should pay. If it is not, we stop.",
       },
       {
@@ -273,7 +276,7 @@ export const serviceMatter = {
       },
       {
         title: "Scope the file",
-        timescale: site.facts.firstAdviceTimescale,
+        timescale: firstScope,
         text: "Which documents decide the issue. Volume is not the same as an answer.",
       },
       {
@@ -322,7 +325,7 @@ export const serviceMatter = {
       },
       {
         q: "Are your fees covered by insurance?",
-        a: "[[NEEDS_CLIENT_INPUT: whether D&O or legal-expenses insurance is typically billed, and on what terms]]. We will read the policy before we assume it pays.",
+        a: trust.fees.thirdPartyFunding,
       },
       {
         q: "When would you turn this down?",
@@ -348,7 +351,7 @@ export const serviceMatter = {
     process: [
       {
         title: "Establish where the people and the value sit",
-        timescale: site.facts.firstAdviceTimescale,
+        timescale: firstScope,
         text: "A UK file that pretends the world is England will fail. We map forum, asset and defendant before anyone files.",
       },
       {
@@ -438,7 +441,7 @@ export const serviceMatter = {
       },
       {
         title: "A usable note",
-        timescale: site.facts.firstAdviceTimescale,
+        timescale: firstScope,
         text: "What is established, what is inference, and whether money spent chasing the counterparty would be wasted.",
       },
     ],
@@ -477,7 +480,7 @@ export const serviceMatter = {
       },
       {
         q: "What does it cost?",
-        a: `A scoped enquiry with a written cap or hourly basis. ${site.facts.feeRates} See Pricing.`,
+        a: `A scoped enquiry with a written cap or hourly basis. ${trust.fees.model} See Pricing.`,
       },
       {
         q: "When would you turn this down?",
@@ -513,7 +516,7 @@ export const serviceMatter = {
       },
       {
         title: "Findings and next step",
-        timescale: site.facts.firstAdviceTimescale,
+        timescale: firstScope,
         text: "What is proved, what is not, and whether dismissal, a report, a claim or a private prosecution is supportable. If it is not, we say so.",
       },
     ],
@@ -544,7 +547,7 @@ export const serviceMatter = {
       },
       {
         q: "Are interviews recorded?",
-        a: "[[NEEDS_CLIENT_INPUT: whether interviews are typically audio-recorded or note-based]]. The method is chosen so the record will hold.",
+        a: trust.method.interviewRecording,
       },
       {
         q: "Can the same file support a private prosecution later?",
@@ -588,7 +591,7 @@ export const serviceMatter = {
       },
       {
         title: "File",
-        timescale: site.facts.firstAdviceTimescale,
+        timescale: firstScope,
         text: "A written account a defence solicitor could pick up cold. Then a decision: prosecute, freeze, report, claim, or stop.",
       },
     ],
@@ -686,7 +689,7 @@ export const serviceMatter = {
       },
       {
         q: "Can you image my laptop remotely?",
-        a: "[[NEEDS_CLIENT_INPUT: whether remote collection is offered, and on what terms]]. Live ‘checking’ of a device is often the wrong first step.",
+        a: trust.method.deviceCollection,
       },
       {
         q: "What is Cobra AI in this work?",
@@ -738,7 +741,7 @@ export const serviceMatter = {
       },
       {
         title: "A single picture",
-        timescale: site.facts.firstAdviceTimescale,
+        timescale: firstScope,
         text: "What is proved here, what is proved there, and what remains inference.",
       },
     ],
@@ -769,7 +772,9 @@ export const serviceMatter = {
       },
       {
         q: "What languages can you work in?",
-        a: "[[NEEDS_CLIENT_INPUT: languages available in-house]]. Translation is otherwise a disbursement.",
+        a: isPending(trust.method.languages)
+          ? ""
+          : `${trust.method.languages} Translation is otherwise a disbursement.`,
       },
       {
         q: "Can this feed an English freezing application?",
@@ -808,7 +813,7 @@ export const serviceMatter = {
       },
       {
         title: "Reachability",
-        timescale: site.facts.firstAdviceTimescale,
+        timescale: firstScope,
         text: "Encumbrances, nominees, location, and cost of getting there.",
       },
       {

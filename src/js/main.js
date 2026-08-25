@@ -1,5 +1,4 @@
 import { config } from "../../config.js";
-import { site } from "../../site.config.js";
 
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -130,17 +129,17 @@ function contactForm() {
       .join("\n");
 
     status.dataset.visible = "true";
-    if (!site.email) {
-      status.textContent =
-        "This preview does not send. Write to the office address recorded with the SRA.";
+    const mailto = form.dataset.mailto || "";
+    if (!mailto) {
+      status.textContent = form.dataset.ack || "";
       return;
     }
 
-    const href = `mailto:${site.email}?subject=${encodeURIComponent(
+    const href = `mailto:${mailto}?subject=${encodeURIComponent(
       `Edison Law enquiry — ${matter}`,
     )}&body=${encodeURIComponent(body)}`;
 
-    status.textContent = `Draft prepared for ${site.email}. If your email app does not open, write to that address directly.`;
+    status.textContent = `Draft prepared for ${mailto}. If your email app does not open, write to that address directly.`;
     window.location.href = href;
   });
 }

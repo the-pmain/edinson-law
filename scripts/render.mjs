@@ -1,16 +1,36 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { site } from "../site.config.js";
+import { formatOutstandingReport } from "../src/config/trust.js";
 import { allPages } from "../src/lib/pages.js";
+
+const PLACEHOLDER = /VERIFY_|NEEDS_CLIENT_INPUT/;
 
 const root = process.cwd();
 const pages = allPages();
+const leaks = [];
 
 for (const page of pages) {
   const dest = join(root, page.file);
   mkdirSync(dirname(dest), { recursive: true });
   writeFileSync(dest, page.html);
   console.log(`wrote ${page.file}`);
+}
+
+function walkHtml(dir, acc = []) {
+  for (const name of readdirSync(dir)) {
+    if (name === "node_modules" || name === ".git" || name === "dist") continue;
+    const path = join(dir, name);
+    const stat = statSync(path);
+    if (stat.isDirectory()) walkHtml(path, acc);
+    else if (name.endsWith(".html")) acc.push(path);
+  }
+  return acc;
+}
+
+for (const file of walkHtml(root)) {
+  const html = readFileSync(file, "utf8");
+  if (PLACEHOLDER.test(html)) leaks.push(file.replace(`${root}\\`, "").replace(`${root}/`, ""));
 }
 
 const origin = site.canonicalOrigin.replace(/\/$/, "");
@@ -72,3 +92,10 @@ writeFileSync(
 );
 
 console.log(`rendered ${pages.length} pages (${site.mode})`);
+console.log(`\n${formatOutstandingReport()}`);
+
+if (leaks.length) {
+  console.error("Placeholder strings leaked into rendered HTML:");
+  for (const file of leaks) console.error(`  ${file}`);
+  process.exit(1);
+}
