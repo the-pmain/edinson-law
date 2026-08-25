@@ -17,7 +17,7 @@
     },
     "font": {
       "display": { "$type": "fontFamily", "$value": ["Newsreader", "Georgia", "serif"] },
-      "body": { "$type": "fontFamily", "$value": ["Manrope", "Arial", "sans-serif"] },
+      "body": { "$type": "fontFamily", "$value": ["Newsreader", "Georgia", "serif"] },
       "mono": { "$type": "fontFamily", "$value": ["IBM Plex Mono", "Consolas", "monospace"] }
     },
     "space": {

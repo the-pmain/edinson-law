@@ -129,11 +129,17 @@ function contactForm() {
       .filter(Boolean)
       .join("\n");
 
+    status.dataset.visible = "true";
+    if (!site.email) {
+      status.textContent =
+        "This preview does not send. Write to the office address recorded with the SRA.";
+      return;
+    }
+
     const href = `mailto:${site.email}?subject=${encodeURIComponent(
       `Edison Law enquiry — ${matter}`,
     )}&body=${encodeURIComponent(body)}`;
 
-    status.dataset.visible = "true";
     status.textContent = `Draft prepared for ${site.email}. If your email app does not open, write to that address directly.`;
     window.location.href = href;
   });

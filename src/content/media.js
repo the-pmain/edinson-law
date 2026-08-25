@@ -49,6 +49,30 @@ export const media = {
     height: 1024,
     alt: "Uniform archive boxes on floor-to-ceiling shelves",
   },
+  aboutWho: {
+    src: "/images/about-who.jpg",
+    width: 1536,
+    height: 1024,
+    alt: "A quiet London street of brick terraces on an overcast day",
+  },
+  aboutMethod: {
+    src: "/images/about-method.jpg",
+    width: 1536,
+    height: 1024,
+    alt: "Paper files and notes laid out on a glass desk",
+  },
+  aboutClients: {
+    src: "/images/about-clients.jpg",
+    width: 1536,
+    height: 1024,
+    alt: "Two chairs set for a confidential discussion",
+  },
+  aboutOffice: {
+    src: "/images/about-office.jpg",
+    width: 1536,
+    height: 1024,
+    alt: "A wet London terrace street seen from a quiet interior",
+  },
 };
 
 const practiceImages = {

@@ -9,6 +9,21 @@ const ICONS = {
   search: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M16 16l5 5"/></svg>`,
 };
 
+const PRACTICE_ICONS = {
+  "private-prosecutions": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16"/><path d="M7 19V10h10v9"/><path d="M9 10V7h6v3"/><path d="M4 13h3M17 13h3"/></svg>`,
+  "asset-tracing": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="18" r="2.25"/><circle cx="12" cy="6" r="2.25"/><circle cx="19" cy="13" r="2.25"/><path d="M6.8 16.3 10.5 8.2M14.1 7.6 17.1 11.3"/></svg>`,
+  "crypto-fraud": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="8" width="7" height="8" rx="1"/><rect x="14.5" y="8" width="7" height="8" rx="1"/><path d="M9.5 12h5"/><path d="M5 11h2.5M5 13h1.75M16.5 11H19M16.5 13h1.75"/></svg>`,
+  regulatory: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M5 20V9l7-5 7 5v11"/><path d="M10 20v-5h4v5"/><path d="M8.5 12v4M12 12v4M15.5 12v4"/></svg>`,
+  "cross-border": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="12" r="3.4"/><circle cx="17" cy="12" r="3.4"/><path d="M10.4 12h3.2"/><path d="M12 5.5v2M12 16.5v2"/></svg>`,
+  "corporate-intelligence": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h11v13H8z"/><path d="M5 4h11v3"/><path d="M11 12h5M11 15h3.5"/></svg>`,
+};
+
+const PRACTICE_ICON_FALLBACK = PRACTICE_ICONS["corporate-intelligence"];
+
+export function practiceIcon(id) {
+  return PRACTICE_ICONS[id] || PRACTICE_ICON_FALLBACK;
+}
+
 function brand(href = "/") {
   return `<a class="brand" href="${href}">${MARK}</a>`;
 }
@@ -70,7 +85,6 @@ function jsonLd(page) {
     "@id": `${origin}/#organisation`,
     name: site.name,
     url: origin,
-    email: site.email,
     areaServed: "GB",
     description: site.masterLine,
     identifier: site.sraNumber,
@@ -83,6 +97,7 @@ function jsonLd(page) {
       addressCountry: "GB",
     },
   };
+  if (site.email) org.email = site.email;
 
   const graph = [org];
 
@@ -194,7 +209,7 @@ function searchIndex() {
       title: "Investigations",
       href: "/investigations/",
       type: "Page",
-      text: "In-house financial crime investigations, internal enquiries, digital tracing and asset location.",
+      text: "Financial crime investigations, internal enquiries, digital tracing and asset location.",
     },
     ...site.investigations.map((item) => ({
       title: item.title,
@@ -218,7 +233,13 @@ function searchIndex() {
     })),
     { title: "Join us", href: "/join-us/", type: "Page", text: "Careers at Edison Law" },
     { title: "About", href: "/about/", type: "Page", text: site.shortLine },
-    { title: "Contact", href: "/contact/", type: "Page", text: site.email },
+    {
+      title: site.tools.cobraAi.name,
+      href: "/#cobra-ai",
+      type: "Page",
+      text: `Investigative tool from ${site.tools.cobraAi.vendor}. Used on the file; output is reviewed here.`,
+    },
+    { title: "Contact", href: "/contact/", type: "Page", text: "Write to the London office" },
     ...site.footerLinks.map((item) => ({
       title: item.label,
       href: item.href,
@@ -296,9 +317,6 @@ export function documentPage(page, body) {
     FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
   -->
   <a class="skip-link" href="#content">Skip to content</a>
-  <div class="preview-banner" role="status">
-    <p>Development preview. Confirm SRA, contact, people and insurance details with the firm before publication. Email currently taken from a public listing.</p>
-  </div>
 
   <header class="compact-header">
     ${brand("/")}
@@ -325,7 +343,6 @@ export function documentPage(page, body) {
       ${site.search.enabled ? `<button type="button" data-search-open>Search</button>` : ""}
       <a href="/accessibility/">Accessibility</a>
       <a href="/contact/">Contact</a>
-      <p class="mono">SRA ${esc(site.sraNumber)}</p>
     </div>
   </aside>
 
@@ -359,7 +376,7 @@ export function documentPage(page, body) {
           <div class="footer-brand">
             ${brand("/")}
             <p>London</p>
-            <p><a href="mailto:${esc(site.email)}">${esc(site.email)}</a></p>
+            ${site.email ? `<p><a href="mailto:${esc(site.email)}">${esc(site.email)}</a></p>` : ""}
           </div>
           <nav class="footer-links" aria-label="Legal">
             ${site.footerLinks

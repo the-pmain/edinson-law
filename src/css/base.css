@@ -16,11 +16,15 @@ body {
 
 body {
   min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
   background: var(--edison-white);
   color: var(--color-text);
   font-family: var(--font-body);
   font-size: var(--text-body);
   font-weight: 400;
+  font-optical-sizing: auto;
   line-height: var(--leading-body);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -96,7 +100,7 @@ h3 {
 .label {
   font-family: var(--font-body);
   font-size: var(--text-label);
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: var(--tracking-label);
   line-height: 1.4;
   text-transform: uppercase;

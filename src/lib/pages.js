@@ -2,32 +2,44 @@ import { site } from "../../site.config.js";
 import { home, pages, insightBodies } from "../content/copy.js";
 import {
   insightMedia,
-  investigationMedia,
   media,
   practiceMedia,
 } from "../content/media.js";
-import { crumbs, documentPage, signalGraphic } from "./layout.js";
+import { crumbs, documentPage, practiceIcon, signalGraphic } from "./layout.js";
 import { esc } from "./html.js";
 
 function personHref(person) {
   return `/people/${person.slug}/`;
 }
 
+function portraitSlot(person, className = "") {
+  const label = `${person.name}, portrait to follow`;
+  return `<div class="portrait-slot ${className}" role="img" aria-label="${esc(label)}">
+    <span class="portrait-slot-ring" aria-hidden="true"></span>
+    <span class="portrait-slot-initials">${esc(person.initials)}</span>
+    <span class="portrait-slot-mark">Portrait to follow</span>
+  </div>`;
+}
+
 function personPortrait(person, className = "person-photo") {
-  if (person.photo) {
+  const useSlot = site.peoplePlaceholders || !person.photo;
+  if (!useSlot && person.photo) {
     const w = person.photoWidth || 640;
     const h = person.photoHeight || 640;
     return `<img class="${className}" src="${esc(person.photo)}" width="${w}" height="${h}" alt="${esc(person.name)}" decoding="async">`;
   }
-  return `<div class="profile-initials" aria-hidden="true">${esc(person.initials)}</div>`;
+  return portraitSlot(person, className);
 }
 
-function peopleCards(list = site.people) {
+function peopleCards(list = site.people, variant = "") {
   if (!list.length) return "";
-  return `<div class="people-grid">
+  const compact = variant === "compact";
+  return `<div class="people-grid${compact ? " people-grid-collective" : ""}">
     ${list
       .map(
-        (person) => `<a class="person-card" href="${personHref(person)}">
+        (person) => `<a class="person-card${compact ? " person-card-compact" : ""}${
+          person.principal ? " person-card-lead" : ""
+        }" href="${personHref(person)}">
           ${personPortrait(person)}
           <span class="person-card-copy">
             <h2>${esc(person.name)}</h2>
@@ -39,8 +51,80 @@ function peopleCards(list = site.people) {
   </div>`;
 }
 
+function principalPerson() {
+  return site.people.find((person) => person.principal) || site.people[0];
+}
+
+function collectiveShot() {
+  const profile = home.sections.profile;
+  const lead = principalPerson();
+  const src = lead.practicePhoto || lead.photo;
+  if (!src) return "";
+  const w = lead.practicePhotoWidth || lead.photoWidth || 640;
+  const h = lead.practicePhotoHeight || lead.photoHeight || 640;
+  return `<a class="owner-row-photo" href="${personHref(lead)}">
+      <img src="${esc(src)}" width="${w}" height="${h}" alt="${esc(profile.collectiveAlt)}" decoding="async">
+      <span class="owner-row-cap">
+        <span>${esc(profile.collectiveCaption)}</span>
+        <span class="mono">${esc(profile.collectiveMark)}</span>
+      </span>
+    </a>`;
+}
+
+function peopleCollective(options = {}) {
+  const profile = home.sections.profile;
+  const lead = principalPerson();
+  const showIntro = options.intro !== false;
+  return `
+    <div class="owner-row">
+      ${collectiveShot()}
+      <div class="owner-row-copy">
+        ${
+          showIntro
+            ? `<p class="label">${esc(profile.label)}</p>
+            <h2>${esc(profile.heading)}</h2>
+            <p class="lead profile-lead">${esc(profile.text)}</p>`
+            : `<p class="label">${esc(lead.role)}</p>
+            <h2>${esc(lead.name)}</h2>
+            <p class="lead profile-lead">${esc(lead.summary)}</p>`
+        }
+      </div>
+    </div>
+    ${peopleCards(site.people.filter((person) => !person.principal).slice(0, 14), "compact")}
+  `;
+}
+
 function wrap(inner, band = "") {
   return `<div class="section ${band}"><div class="wrap">${inner}</div></div>`;
+}
+
+function titledStack(items) {
+  return `<div class="item-stack">
+    ${items
+      .map(
+        (item) => `<article>
+          <h3>${esc(item.title)}</h3>
+          <p class="muted">${esc(item.text)}</p>
+        </article>`,
+      )
+      .join("")}
+  </div>`;
+}
+
+function cobraSection(band = "") {
+  const cobra = home.sections.cobra;
+  const href = site.tools.cobraAi.href;
+  return `<section class="section${band ? ` ${band}` : ""}" id="cobra-ai">
+        <div class="wrap tool-block">
+          <p class="label">${esc(cobra.label)}</p>
+          <h2>${esc(cobra.heading)}</h2>
+          <p class="lead muted">${esc(cobra.lead)}</p>
+          <p>${esc(cobra.text)}</p>
+          ${titledStack(cobra.items)}
+          <p class="tool-source muted">${esc(cobra.sourceNote)} <a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(cobra.sourceLabel)}</a>.</p>
+          <p><a class="btn btn-ghost" href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(cobra.cta)}</a></p>
+        </div>
+      </section>`;
 }
 
 function figure(item, className = "media-figure") {
@@ -71,11 +155,11 @@ function homePage() {
   const who = home.sections.who;
   const why = home.sections.why;
   const cases = home.sections.cases;
-  const recognition = home.sections.recognition;
+  const standing = home.sections.standing;
   const london = home.sections.london;
   const body = `
     <main id="content">
-      <section class="band-paper">
+      <section class="section band-paper">
         <div class="wrap hero">
           <div class="hero-copy">
             <p class="label">${esc(home.sections.hero.descriptor)}</p>
@@ -92,13 +176,21 @@ function homePage() {
         </div>
       </section>
 
+      <section class="section band-paper" id="people">
+        <div class="wrap people-home">
+          ${peopleCollective()}
+          <div class="people-home-foot">
+            <a class="btn btn-ghost" href="${home.sections.profile.cta.href}">${esc(home.sections.profile.cta.label)}</a>
+          </div>
+        </div>
+      </section>
+
       <section class="practice-bar" aria-label="Practice areas">
         <div class="wrap practice-bar-inner">
           <div class="practice-bar-list">
             ${site.practices
               .map(
                 (item) => `<a class="practice-item" href="${item.href}">
-                  ${figure(practiceMedia(item.id), "media-figure practice-photo")}
                   <h2>${esc(item.title)}</h2>
                   <p>${esc(item.summary)}</p>
                 </a>`,
@@ -131,19 +223,11 @@ function homePage() {
         <div class="wrap">
           <p class="label">${esc(why.label)}</p>
           <h2>${esc(why.heading)}</h2>
-          <div class="method-grid why-grid">
-            ${why.items
-              .map(
-                (item) => `<article class="method-step">
-                  <span class="method-node" aria-hidden="true"></span>
-                  <h3>${esc(item.title)}</h3>
-                  <p class="muted">${esc(item.text)}</p>
-                </article>`,
-              )
-              .join("")}
-          </div>
+          ${titledStack(why.items)}
         </div>
       </section>
+
+      ${cobraSection()}
 
       ${photoStrip(
         [media.archiveBoxes, media.deskFiles, media.meetingRoom],
@@ -154,11 +238,12 @@ function homePage() {
         <div class="wrap">
           <p class="label">${esc(cases.label)}</p>
           <h2>${esc(cases.heading)}</h2>
+          <p class="lead muted method-lead">${esc(cases.intro)}</p>
           <div class="case-grid">
             ${cases.items
               .map(
                 (item) => `<article class="case-card">
-                  <p class="mono">${esc(item.recovery)}</p>
+                  <p class="mono">${esc(item.kind)}</p>
                   <h3>${esc(item.title)}</h3>
                   <p class="muted">${esc(item.jurisdictions)}</p>
                   <p>${esc(item.text)}</p>
@@ -171,25 +256,13 @@ function homePage() {
 
       <section class="section band-ink">
         <div class="wrap">
-          <p class="label">${esc(recognition.label)}</p>
-          <h2>${esc(recognition.heading)}</h2>
+          <p class="label">${esc(standing.label)}</p>
+          <h2>${esc(standing.heading)}</h2>
           <ul class="recognition-list">
-            ${recognition.items.map((item) => `<li>${esc(item)}</li>`).join("")}
+            ${standing.items.map((item) => `<li>${esc(item)}</li>`).join("")}
           </ul>
-          <blockquote class="recognition-quote">
-            <p>${esc(recognition.quote)}</p>
-            <p class="mono">${esc(recognition.quoteSource)}</p>
-          </blockquote>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="wrap people-home">
-          <p class="label">${esc(home.sections.profile.label)}</p>
-          <h2>${esc(home.sections.profile.heading)}</h2>
-          <p class="lead profile-lead">${esc(home.sections.profile.text)}</p>
-          ${peopleCards()}
-          <p class="mono">SRA ${esc(site.sraNumber)}</p>
+          <p class="standing-note">${esc(standing.note)}</p>
+          <p><a class="btn btn-ghost" href="${esc(site.sraUrl)}" target="_blank" rel="noopener noreferrer">${esc(standing.link)}</a></p>
         </div>
       </section>
 
@@ -248,7 +321,7 @@ function expertiseIndex() {
         ${site.practices
           .map(
             (item) => `<a href="${item.href}">
-              ${figure(practiceMedia(item.id), "media-figure service-thumb")}
+              <span class="service-mark" aria-hidden="true">${practiceIcon(item.id)}</span>
               <span>
                 <p class="label">${item.index}</p>
                 <h2>${esc(item.title)}</h2>
@@ -275,7 +348,7 @@ function servicePage(key, practiceId) {
         ])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
-          <a class="btn btn-signal" href="/contact/">Instruct us confidentially</a>
+          <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
       </div>
       ${wrap(`
         <div class="prose">
@@ -324,7 +397,7 @@ function servicePage(key, practiceId) {
         <div class="cta-band">
           <h2>Discuss this matter</h2>
           <p class="muted">Send the facts you already have. All enquiries are handled under strict confidentiality protocols.</p>
-          <a class="btn btn-signal" href="/contact/">Instruct us confidentially</a>
+          <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
         </div>
       `)}
     </main>
@@ -354,28 +427,12 @@ function investigationIndex() {
         <nav class="page-jump" aria-label="On this page">
           ${page.jump.map((item) => `<a href="${item.href}">${esc(item.label)}</a>`).join("")}
         </nav>
-        <a class="btn btn-signal" href="/contact/">Instruct us confidentially</a>
+        <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
       </div>
       <div class="wrap join-intro">
         ${page.intro.map((para) => `<p>${esc(para)}</p>`).join("")}
       </div>
-      <section class="section band-paper" id="method">
-        <div class="wrap">
-          <p class="label">${esc(page.method.label)}</p>
-          <h2>${esc(page.method.heading)}</h2>
-          <div class="method-grid investigation-method">
-            ${page.method.items
-              .map(
-                (item) => `<article class="method-step">
-                  <span class="method-node" aria-hidden="true"></span>
-                  <h3>${esc(item.title)}</h3>
-                  <p class="muted">${esc(item.text)}</p>
-                </article>`,
-              )
-              .join("")}
-          </div>
-        </div>
-      </section>
+      ${cobraSection("band-paper")}
       <section class="practice-bar" id="work" aria-label="Investigation types">
         <div class="wrap practice-bar-inner">
           <div class="practice-bar-head">
@@ -386,7 +443,6 @@ function investigationIndex() {
             ${site.investigations
               .map(
                 (item) => `<a class="practice-item" href="${item.href}">
-                  ${figure(investigationMedia(item.id), "media-figure practice-photo")}
                   <h2>${esc(item.title)}</h2>
                   <p>${esc(item.summary)}</p>
                 </a>`,
@@ -400,7 +456,7 @@ function investigationIndex() {
           <p class="label">${esc(page.people.label)}</p>
           <h2>${esc(page.people.heading)}</h2>
           <p class="lead profile-lead">${esc(page.people.text)}</p>
-          ${peopleCards(investigators)}
+          ${peopleCards(investigators, "compact")}
           <p><a class="btn btn-ghost" href="/people/">All profiles</a></p>
         </div>
       </section>
@@ -430,7 +486,7 @@ function investigationIndex() {
         <div class="wrap cta-band">
           <h2>${esc(page.cta.heading)}</h2>
           <p class="lead muted">${esc(page.cta.text)}</p>
-          <a class="btn btn-signal" href="/contact/">${esc("Write to us")}</a>
+          <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
         </div>
       </section>
     </main>
@@ -455,7 +511,7 @@ function investigationPage(item) {
         ])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
-        <a class="btn btn-signal" href="/contact/">Instruct us confidentially</a>
+        <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
       </div>
       ${wrap(`
         <div class="prose">
@@ -522,9 +578,9 @@ function investigationPage(item) {
       }
       ${wrap(`
         <div class="cta-band">
-          <h2>Instruct this investigation</h2>
+          <h2>Discuss this investigation</h2>
           <p class="muted">Send the facts you already have. All enquiries are handled under strict confidentiality protocols.</p>
-          <a class="btn btn-signal" href="/contact/">Instruct us confidentially</a>
+          <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
         </div>
       `)}
     </main>
@@ -614,7 +670,7 @@ function peoplePage() {
         <p class="lead muted">${esc(page.lead)}</p>
       </div>
       <div class="wrap people-index">
-        ${peopleCards()}
+        ${peopleCollective({ intro: false })}
       </div>
     </main>
   `;
@@ -656,17 +712,7 @@ function joinUsPage() {
         <div class="wrap">
           <p class="label">${esc(page.why.label)}</p>
           <h2>${esc(page.why.heading)}</h2>
-          <div class="method-grid">
-            ${page.why.items
-              .map(
-                (item) => `<article class="method-step">
-                  <span class="method-node" aria-hidden="true"></span>
-                  <h3>${esc(item.title)}</h3>
-                  <p class="muted">${esc(item.text)}</p>
-                </article>`,
-              )
-              .join("")}
-          </div>
+          ${titledStack(page.why.items)}
         </div>
       </section>
       <section class="section" id="people">
@@ -679,7 +725,7 @@ function joinUsPage() {
             </div>
             <a class="btn btn-ghost" href="/people/">All profiles</a>
           </div>
-          ${peopleCards()}
+          ${peopleCards(site.people, "compact")}
         </div>
       </section>
       <section class="section band-ink join-vacancies" id="vacancies">
@@ -736,7 +782,8 @@ function personPage(person) {
           }
           ${
             person.experience?.length
-              ? `<h2>Representative experience</h2>
+              ? `<h2>Work of this kind</h2>
+            <p class="muted">These items describe the kinds of file this person works on. They are not published client results.</p>
             <ul>${person.experience.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`
               : ""
           }
@@ -750,24 +797,76 @@ function personPage(person) {
 
 function aboutPage() {
   const page = pages.about;
+  const story = page.lifecycle;
+  const record = page.record;
+  const clients = page.clients;
+  const commitments = page.commitments;
+  const namedOnFile = String(
+    site.people.filter((person) => !person.principal).slice(0, 14).length,
+  );
+  const facts = [
+    ...record.items,
+    { value: namedOnFile, label: "People on the file in these pages, besides the owner" },
+  ];
   const body = `
     <main id="content">
       <div class="wrap page-head">
         ${crumbs([{ label: "About" }])}
         <h1>${esc(page.heading)}</h1>
+        <p class="lead muted">${esc(page.lead)}</p>
       </div>
-      <div class="wrap split-visual about-visual">
-        ${figure(media.meetingRoom, "media-figure room-photo")}
-        <div class="prose">
-        ${page.blocks
-          .map((block) => `<h2>${esc(block.heading)}</h2><p>${esc(block.text)}</p>`)
-          .join("")}
+      <section class="section-tight">
+        <div class="wrap">
+          <p class="label">${esc(story.label)}</p>
+          <h2>${esc(story.heading)}</h2>
+          <div class="stage-grid">
+            ${story.items
+              .map(
+                (item) => `<article class="stage-card">
+                  <p class="label">${esc(item.index)}</p>
+                  <h3>${esc(item.title)}</h3>
+                  <p class="muted">${esc(item.text)}</p>
+                </article>`,
+              )
+              .join("")}
+          </div>
         </div>
-      </div>
-      ${photoStrip(
-        [media.fileRoom, media.archiveBoxes, media.evidenceTable],
-        "Rooms and files",
-      )}
+      </section>
+      <section class="section">
+        <div class="wrap">
+          <p class="label">${esc(clients.label)}</p>
+          <h2>${esc(clients.heading)}</h2>
+          <p class="lead muted method-lead">${esc(clients.note)}</p>
+          <ul class="audience-list">
+            ${clients.items.map((item) => `<li>${esc(item)}</li>`).join("")}
+          </ul>
+        </div>
+      </section>
+      <section class="section band-ink">
+        <div class="wrap">
+          <p class="label">${esc(record.label)}</p>
+          <h2>${esc(record.heading)}</h2>
+          <p class="lead muted">${esc(record.note)}</p>
+          <div class="facts-strip">
+            ${facts
+              .map((item) => {
+                const value =
+                  item.value === site.sraNumber
+                    ? `<a href="${esc(site.sraUrl)}" target="_blank" rel="noopener noreferrer">${esc(item.value)}</a>`
+                    : esc(item.value);
+                return `<p class="fact-item"><span class="fact-value">${value}</span><span class="fact-label">${esc(item.label)}</span></p>`;
+              })
+              .join("")}
+          </div>
+        </div>
+      </section>
+      <section class="section">
+        <div class="wrap">
+          <p class="label">${esc(commitments.label)}</p>
+          <h2>${esc(commitments.heading)}</h2>
+          ${titledStack(commitments.items)}
+        </div>
+      </section>
     </main>
   `;
   return documentPage({ ...page, crumb: "About" }, body);
@@ -782,7 +881,7 @@ function contactPage() {
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
         <p class="muted">${esc(page.urgent)}</p>
-        <p class="mono">${esc(site.email)}</p>
+        ${site.email ? `<p class="mono">${esc(site.email)}</p>` : ""}
         <p class="muted small">${esc(`${site.address.line1}, ${site.address.line2}, ${site.address.city} ${site.address.postcode}`)}</p>
       </div>
       <div class="wrap split-visual contact-visual">
@@ -822,11 +921,13 @@ function contactPage() {
             </label>
             <p class="error" data-error-for="privacy">Confirm you have read the privacy notice.</p>
           </div>
-          <button class="btn btn-signal" type="submit">Instruct us confidentially</button>
+          <button class="btn btn-signal" type="submit">Discuss a matter</button>
           <p class="form-status" data-form-status></p>
-          <p class="small muted">This preview does not send data to a server. It opens a draft to ${esc(
-            site.email,
-          )} on this device.</p>
+          <p class="small muted">${
+            site.email
+              ? `This preview does not send data to a server. It opens a draft to ${esc(site.email)} on this device.`
+              : "This preview does not send data to a server. Write to the office address recorded with the SRA."
+          }</p>
         </form>
         ${roomPhoto()}
       </div>

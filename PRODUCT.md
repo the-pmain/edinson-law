@@ -34,8 +34,8 @@ Visitors arrive under pressure, often via adviser referral or search, and scan f
 - WCAG 2.2 AA, skip link, keyboard navigation, persistent form labels, `prefers-reduced-motion`.
 - Do not say: guaranteed recovery, “we will get your crypto back”, “best forensic experts”, or “act now before it is too late”.
 - Do not invent prices, testimonials, case outcomes, a telephone number, or biographies beyond public regulatory facts.
-- Phone number is unpublished. [ASSUMED] Email `abi.wills@edisonlaw.co.uk` is taken from a public directory listing and must be confirmed before launch.
-- This preview does not send form data to a server; the contact form prepares a local mailto draft.
+- Phone number and email are unpublished. Do not invent a contact address.
+- This preview does not send form data to a server. If a published email is later confirmed, the contact form can prepare a local mailto draft.
 - Analytics stay off unless enabled in `site.config.js`.
 - All expertise, insurance and regulatory wording must be re-confirmed by the firm before publication.
 
