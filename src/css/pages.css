@@ -411,8 +411,37 @@
   color: #a9bfba;
 }
 
-.contact-visual {
-  padding-bottom: var(--space-24);
+.contact-page {
+  display: grid;
+  gap: var(--space-8);
+  padding: var(--space-16) 0 var(--space-24);
+}
+
+.contact-layout {
+  display: grid;
+  gap: var(--space-12);
+  align-items: start;
+}
+
+.contact-copy {
+  display: grid;
+  gap: var(--space-6);
+  align-content: start;
+}
+
+.contact-copy h1 {
+  margin: 0;
+  max-width: 14ch;
+}
+
+.contact-copy .lead {
+  max-width: 36rem;
+}
+
+.contact-layout .form {
+  width: 100%;
+  max-width: none;
+  margin: 0;
 }
 
 .band-ink .insight-visual:hover h3,
@@ -435,6 +464,73 @@
 
 .page-head h1 {
   max-width: 28ch;
+}
+
+.legal-doc {
+  display: grid;
+  padding-bottom: var(--space-24);
+}
+
+.legal-entry {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-8) 0;
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+.legal-entry h2 {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--edison-signal-deep);
+}
+
+.legal-entry p {
+  margin: 0;
+  max-width: 46rem;
+}
+
+.legal-entry ul,
+.legal-entry ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.legal-entry li {
+  padding: 0;
+  border: 0;
+  max-width: 46rem;
+}
+
+.legal-entry .item-stack {
+  margin: 0;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--space-6);
+  width: 100%;
+}
+
+.legal-entry .item-stack article {
+  padding: 0;
+  border: 0;
+}
+
+.legal-note {
+  margin: 0;
+  padding: var(--space-6) 0 0;
+  border-top: var(--border-width) solid var(--color-border);
+  max-width: 46rem;
+}
+
+.legal-note + .legal-note {
+  border-top: 0;
+  padding-top: var(--space-4);
 }
 
 .tool-block {
@@ -532,6 +628,12 @@ body[data-path="/join-us/"] .footer {
 }
 
 @media (min-width: 768px) {
+  .legal-entry {
+    grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr);
+    column-gap: var(--space-12);
+    align-items: start;
+  }
+
   .practice-bar-list {
     grid-template-columns: 1fr 1fr;
     gap: var(--space-10, 2.5rem) var(--space-16);
@@ -614,5 +716,10 @@ body[data-path="/join-us/"] .footer {
   .person-page {
     grid-template-columns: minmax(14rem, 20rem) minmax(0, 1fr);
     gap: var(--space-16);
+  }
+
+  .contact-layout {
+    grid-template-columns: minmax(16rem, 0.9fr) minmax(20rem, 1.1fr);
+    column-gap: var(--space-16);
   }
 }

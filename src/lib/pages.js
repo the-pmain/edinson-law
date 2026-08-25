@@ -202,10 +202,6 @@ function figure(item, className = "media-figure") {
   </figure>`;
 }
 
-function roomPhoto() {
-  return figure(media.meetingRoom, "media-figure room-photo");
-}
-
 function photoStrip(items, label) {
   return `<section class="photo-strip-band" aria-label="${esc(label)}">
     <div class="wrap photo-strip">
@@ -302,7 +298,7 @@ function homePage() {
       ${cobraSection()}
 
       ${photoStrip(
-        [media.archiveBoxes, media.deskFiles, media.meetingRoom],
+        [media.archiveBoxes, media.deskFiles, media.quietRoom],
         "The rooms in which the work is done",
       )}
 
@@ -920,15 +916,16 @@ function contactPage() {
   const page = pages.contact;
   const body = `
     <main id="content">
-      <div class="wrap page-head">
+      <div class="wrap contact-page">
         ${crumbs([{ label: "Contact" }])}
-        <h1>${esc(page.heading)}</h1>
-        <p class="lead muted">${esc(page.lead)}</p>
-        <p class="muted">${esc(page.urgent)}</p>
-        ${contactDetailsHtml()}
-      </div>
-      <div class="wrap split-visual contact-visual">
-        <form class="form" id="contact-form" novalidate data-mailto="${esc(site.email)}" data-ack="${esc(trust.contact.acknowledgementTime)}">
+        <div class="contact-layout">
+          <div class="contact-copy">
+            <h1>${esc(page.heading)}</h1>
+            <p class="lead muted">${esc(page.lead)}</p>
+            <p class="muted">${esc(page.urgent)}</p>
+            ${contactDetailsHtml()}
+          </div>
+          <form class="form" id="contact-form" novalidate data-mailto="${esc(site.email)}" data-ack="${esc(trust.contact.acknowledgementTime)}">
           <div class="field">
             <label for="full-name">Full name</label>
             <input id="full-name" name="name" type="text" autocomplete="name" required>
@@ -972,7 +969,7 @@ function contactPage() {
               : esc(trust.contact.acknowledgementTime)
           }</p>
         </form>
-        ${roomPhoto()}
+        </div>
       </div>
     </main>
   `;
@@ -992,7 +989,7 @@ function legalPage(key) {
     ? TRUST_PAGE_HTML[page.trustPage]()
     : (page.blocks || [])
         .filter((block) => isPublicText(block.text))
-        .map((block) => `<h2>${esc(block.heading)}</h2><p>${htmlWithSraLinks(block.text)}</p>`)
+        .map((block) => `<article class="legal-entry"><h2>${esc(block.heading)}</h2><p>${htmlWithSraLinks(block.text)}</p></article>`)
         .join("");
 
   const body = `
@@ -1002,7 +999,7 @@ function legalPage(key) {
         <h1>${esc(page.heading)}</h1>
         ${page.intro && isPublicText(page.intro) ? `<p class="lead muted">${htmlWithSraLinks(page.intro)}</p>` : ""}
       </div>
-      <div class="wrap prose" style="padding-bottom:6rem">
+      <div class="wrap legal-doc">
         ${extra}
       </div>
       ${reviewFoot(page)}

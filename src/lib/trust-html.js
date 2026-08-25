@@ -52,12 +52,12 @@ export function htmlWithSraLinks(text) {
 
 function block(heading, text) {
   if (!isPublicText(text)) return "";
-  return `<h2>${esc(heading)}</h2><p>${htmlWithSraLinks(text)}</p>`;
+  return `<article class="legal-entry"><h2>${esc(heading)}</h2><p>${htmlWithSraLinks(text)}</p></article>`;
 }
 
 function blockHtml(heading, inner) {
   if (!inner) return "";
-  return `<h2>${esc(heading)}</h2>${inner}`;
+  return `<article class="legal-entry"><h2>${esc(heading)}</h2>${inner}</article>`;
 }
 
 export function regulatoryFooterHtml() {
@@ -146,7 +146,9 @@ export function regulatoryHtml() {
   if (isPublicText(money.statement)) parts.push(block("Client money", money.statement));
   if (isPublicText(money.bankNote)) parts.push(block("Client account", money.bankNote));
   if (isPublicText(f.icoNumber)) parts.push(block("Data protection", `ICO registration: ${f.icoNumber}.`));
-  parts.push(`<p>See also the <a href="/privacy/">privacy notice</a>.</p>`);
+  parts.push(
+    `<p class="legal-note">See also the <a href="/privacy/">privacy notice</a>.</p>`,
+  );
   return parts.filter(Boolean).join("");
 }
 
@@ -165,15 +167,18 @@ export function complaintsHtml() {
   }
   if (isPublicText(c.ombudsmanText)) parts.push(block("Legal Ombudsman and the SRA", c.ombudsmanText));
   parts.push(
-    `<p>Legal Ombudsman, PO Box 6167, Slough, SL1 0EH. Telephone 0300 555 0333. Relay UK 18001 0300 555 0333. <a href="https://www.legalombudsman.org.uk/" rel="noopener noreferrer">legalombudsman.org.uk</a></p>`,
+    `<p class="legal-note">Legal Ombudsman, PO Box 6167, Slough, SL1 0EH. Telephone 0300 555 0333. Relay UK 18001 0300 555 0333. <a href="https://www.legalombudsman.org.uk/" rel="noopener noreferrer">legalombudsman.org.uk</a></p>`,
   );
-  if (isPublicText(c.noRetaliation)) parts.push(`<p>${esc(c.noRetaliation)}</p>`);
+  if (isPublicText(c.noRetaliation)) parts.push(`<p class="legal-note">${esc(c.noRetaliation)}</p>`);
   return parts.filter(Boolean).join("");
 }
 
 export function pricingHtml() {
   const f = trust.fees;
-  const parts = [block("How we charge", f.model), feeBandsHtml()];
+  const parts = [
+    block("How we charge", f.model),
+    `<article class="legal-entry"><h2>Hourly rates</h2>${feeBandsHtml()}</article>`,
+  ];
   parts.push(block("VAT", f.vatTreatment));
   parts.push(block("How time is recorded", f.billingUnit));
   parts.push(block("Scope and timescales", f.scopeTimescale));
@@ -182,7 +187,7 @@ export function pricingHtml() {
   parts.push(block("Insurance and third-party funding", f.thirdPartyFunding));
   if (isPublicText(f.standardTerms)) {
     parts.push(
-      `<p>Standard terms of business: <a href="${esc(f.standardTerms)}">${esc(f.standardTerms)}</a></p>`,
+      `<p class="legal-note">Standard terms of business: <a href="${esc(f.standardTerms)}">${esc(f.standardTerms)}</a></p>`,
     );
   }
   parts.push(

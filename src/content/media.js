@@ -13,11 +13,11 @@ export const media = {
     height: 1024,
     alt: "Rain on a London terrace street, seen through a tall interior window",
   },
-  meetingRoom: {
-    src: "/images/meeting-room.jpg",
-    width: 1024,
-    height: 1024,
-    alt: "A quiet meeting room with leather seating and daylight",
+  quietRoom: {
+    src: "/images/quiet-room.jpg",
+    width: 900,
+    height: 600,
+    alt: "Leather chairs in a daylit room, set for a confidential discussion",
   },
   evidenceTable: {
     src: "/images/evidence-table.jpg",
@@ -79,13 +79,13 @@ const practiceImages = {
   "private-prosecutions": "fileCorridor",
   "asset-tracing": "evidenceTable",
   "crypto-fraud": "deskFiles",
-  regulatory: "meetingRoom",
+  regulatory: "quietRoom",
   "cross-border": "londonStreet",
   "corporate-intelligence": "archiveBoxes",
 };
 
 const investigationImages = {
-  internal: "meetingRoom",
+  internal: "quietRoom",
   "financial-crime": "fileRoom",
   digital: "deskFiles",
   "cross-border": "londonWindow",
