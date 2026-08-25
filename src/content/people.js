@@ -242,7 +242,7 @@ export const people = [
     bio: [
       "Rosalind is a confiscation specialist in the firm's financial crime team. Rosalind's job is the part that comes after the verdict: making sure the benefit figure, the available amount and the enforcement route are ready before anyone assumes the money will come back.",
       "She acts for companies, organisations and individuals who have been the victims of crime. She prepares confiscation and compensation files, tests what a defendant actually owns, and works with tracing and forensic colleagues so hidden value is on the schedule rather than discovered too late.",
-      "Rosalind supports advice on the best means of retrieving assets linked to the offending by coordinating restraint, confiscation and civil enforcement as one sequence, not three afterthoughts. She is precise about what POCA will reach and what it will not.",
+      "Rosalind supports advice on which retrieval route the facts will carry — restraint, confiscation and civil enforcement as one sequence, not three afterthoughts. She is precise about what POCA will reach and what it will not.",
       "She is calm, exact and unwilling to inflate a figure that will not survive a hearing. Clients are told the recoverable position, not the hopeful one.",
     ],
     experience: [

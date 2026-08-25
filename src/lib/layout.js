@@ -250,13 +250,20 @@ function searchIndex() {
   return JSON.stringify(items);
 }
 
+export function reviewedNote() {
+  const r = site.review;
+  return `<p class="mono">${esc(
+    `Reviewed by ${r.by}, ${r.title}, on ${r.date}. Next review due ${r.next}.`,
+  )}</p>`;
+}
+
 export function documentPage(page, body) {
   const origin = site.canonicalOrigin.replace(/\/$/, "");
   const canonical = `${origin}${page.path}`;
   const title = esc(page.title);
   const description = esc(page.description);
   const ogImage = `${origin}/og-image.png`;
-  const robots = site.mode === "development" ? "noindex, nofollow" : "index, follow";
+  const robots = "noindex, nofollow";
 
   return `<!DOCTYPE html>
 <html lang="${site.lang}">

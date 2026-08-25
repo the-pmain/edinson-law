@@ -31,10 +31,7 @@ ${urls}
 `,
 );
 
-const robots =
-  site.mode === "development"
-    ? `User-agent: *\nDisallow: /\n\nSitemap: ${origin}/sitemap.xml\n`
-    : `User-agent: *\nAllow: /\n\nSitemap: ${origin}/sitemap.xml\n`;
+const robots = `User-agent: *\nDisallow: /\n\nSitemap: ${origin}/sitemap.xml\n`;
 
 writeFileSync(join(root, "public/robots.txt"), robots);
 writeFileSync(

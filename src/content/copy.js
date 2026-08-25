@@ -12,21 +12,26 @@ export const home = {
     hero: {
       descriptor: "Private prosecutions · Asset recovery · Financial crime",
       heading: "Following digital evidence. Building legal cases.",
-      lead: "Edison Law is an SRA-regulated solicitors' practice in London. We investigate financial crime, build files that can be tested in court, and advise on private prosecution and recovery where the evidence supports it. We will not promise a result the facts cannot carry.",
+      lead: "You need to know whether the money can be followed and whether a court in England and Wales will take the facts you already have. Edison Law is an SRA-regulated solicitors' practice in London. We investigate financial crime and advise on private prosecution and recovery only where the evidence will carry it. We will not promise a result the facts cannot support.",
       cta: { label: "Discuss a matter", href: "/contact/" },
-      ctaSecondary: { label: "How we work", href: "/expertise/" },
+      ctaSecondary: { label: "How we work", href: "/how-we-work/" },
     },
     who: {
       label: "Who we are",
       heading: "A London solicitors' practice.",
-      lead: `Edison Law is an SRA recognised sole practice (number ${site.sraNumber}) at ${address}. Confirm office, people and authorisation on the SRA record if anything on this site might be out of date.`,
+      lead: `You can check us. Edison Law is an SRA recognised sole practice (number ${site.sraNumber}) at ${address}. Confirm office, people and authorisation on the SRA record if anything on this site might be out of date.`,
       text: "The work is legal-led investigation: preserve what exists, establish what can be proved, and then choose a route — a private prosecution, a freezing application, a civil claim, a report, or no further step. Counsel is instructed where advocacy is needed. Local counsel is instructed where the money sits overseas. We do not claim in-house chambers, a City headquarters, or a laboratory we do not have.",
-      actForLabel: "Typical instructing clients",
+      actForLabel: "This is usually for you if",
       actFor: [
-        "Individuals and family offices who have lost money to fraud",
-        "Companies and financial institutions",
-        "Charities and trustees",
-        "Professional advisers referring a live matter",
+        "You have lost money to fraud and need a legal route, not a recovery slogan",
+        "You are a company, charity or trustee facing internal or payment fraud",
+        "You are a professional adviser referring a live matter",
+      ],
+      actNotForLabel: "We will turn the work away if",
+      actNotFor: [
+        "You want a guaranteed recovery, conviction or ranking",
+        "You need us to invent offices, results or a City headquarters we do not have",
+        "You will not let us preserve devices, accounts and originals before a story is written",
       ],
     },
     cobra: {
@@ -161,16 +166,16 @@ export const pages = {
     description:
       "Private prosecutions, asset tracing, crypto fraud, regulatory defence, cross-border recovery and corporate intelligence — six connected practices in London.",
     heading: "Our services.",
-    lead: "Six connected practices. Each page states the problem, the scope and the method — not a promised recovery.",
+    lead: "You have a live problem: a fraud, a trail of money, a regulator, or a decision whether to prosecute. Each page states who the work is for, what the law actually says, how it usually runs, and when we would turn it away.",
   },
   privateProsecutions: {
     path: "/expertise/private-prosecutions/",
     title: "Private Prosecutions Solicitors in London | Edison Law",
     description:
-      "Bespoke criminal prosecutions from investigation through to trial when public authorities decline to act.",
+      "Criminal prosecutions from investigation through to trial when public authorities decline to act.",
     parent: { label: "Expertise", href: "/expertise/" },
     heading: "When authorities decline to act.",
-    lead: "When public authorities decline to investigate or prosecute, a private prosecution can be an alternative route — if the evidence will hold. We assemble the file to a criminal standard, manage disclosure, and instruct counsel for trial. We do not have a special prosecutorial licence beyond what the SRA already authorises, and we will advise against a prosecution the evidence cannot carry.",
+    lead: "The police or Action Fraud have not taken your case on, and you still need to know if a criminal court will. A private prosecution is possible only if the evidence will hold. We assemble the file to a criminal standard, manage disclosure, and instruct counsel. We will advise against a prosecution the evidence cannot carry.",
     when: [
       "A report to the police, Action Fraud or the SFO has produced no investigation.",
       "The loss is serious enough that a private prosecution is a realistic route.",
@@ -202,7 +207,7 @@ export const pages = {
       "Tracing and recovering misappropriated assets through offshore structures, cryptocurrency wallets, shell companies and alter-ego entities.",
     parent: { label: "Expertise", href: "/expertise/" },
     heading: "Where the money has gone.",
-    lead: "We locate misappropriated value — through banks, nominees, property, companies or wallets — and say early whether pursuing it is worth the cost. Tracing, freezing and enforcement are legal work. They are not a guarantee that money will come back.",
+    lead: "You do not know where the money has gone, and you need to know whether chasing it is worth the cost. We locate misappropriated value through banks, nominees, property, companies or wallets. Tracing and freezing are legal work. They are not a guarantee that money will come back.",
     when: [
       "Funds have left the client's control and the destination is unclear.",
       "A defendant appears to have nothing, and that needs to be tested.",
@@ -234,7 +239,7 @@ export const pages = {
       "Blockchain tracing, exchange liaison and recovery strategy for stolen cryptocurrency, wallet theft and digital-asset disputes.",
     parent: { label: "Expertise", href: "/expertise/" },
     heading: "What the chain can prove.",
-    lead: "On-chain records, exchange liaison and emergency applications are useful only when their limits are stated. We map wallets, hops and cash-outs, and convert that picture into exhibits. We have not published recovery totals, and anyone who guarantees that cryptocurrency will be returned is not describing this work honestly.",
+    lead: "Value has moved across wallets or exchanges, and you need to know what the chain can actually prove. We map hops and cash-outs and convert that picture into exhibits. We have not published recovery totals. Anyone who guarantees that cryptocurrency will be returned is not describing this work honestly.",
     when: [
       "Value has moved across wallets, mixers, bridges or exchanges.",
       "An exchange or service provider is holding frozen balances.",
@@ -266,7 +271,7 @@ export const pages = {
       "Defence and advisory work for SFO, FCA, HMRC and other regulatory investigations, including dawn raids and interviews under caution.",
     parent: { label: "Expertise", href: "/expertise/" },
     heading: "When the regulator is already in the room.",
-    lead: "We represent individuals and companies under investigation by the SFO, FCA, HMRC and other regulators. The work is the quality of the file and the timing of what is said — not a claim that we can close an enquiry because someone here used to work at the agency.",
+    lead: "A regulator or investigator is already in contact, and you need to know what to say and what to hold. We represent individuals and companies under investigation by the SFO, FCA, HMRC and other bodies. The work is the quality of the file — not a claim that we can close an enquiry because someone here used to work at the agency.",
     when: [
       "A dawn raid, interview under caution or information notice has landed.",
       "An internal investigation may need to be reported.",
@@ -298,7 +303,7 @@ export const pages = {
       "Multi-jurisdictional asset recovery, mutual legal assistance, recognition of foreign judgments and enforcement across financial centres and offshore territories.",
     parent: { label: "Expertise", href: "/expertise/" },
     heading: "More than one legal system, one strategy.",
-    lead: "Where a UK-facing loss has its origins — or its proceeds — overseas, the London file still has to be honest about what can be obtained from here. We work with local counsel in the jurisdictions where the people and the money actually sit. We do not list a count of countries as if it were a network of offices.",
+    lead: "The loss or the money sits outside England, and you need a London file that is honest about what can be done from here. We work with local counsel where the people and the money actually sit. We do not list a count of countries as if it were a network of offices.",
     when: [
       "A UK-facing loss has its origins — or its proceeds — overseas.",
       "Evidence, freezing relief or enforcement is needed in more than one country.",
@@ -330,7 +335,7 @@ export const pages = {
       "Confidential due diligence, source of wealth verification, integrity monitoring and litigation risk assessment before high-value transactions.",
     parent: { label: "Expertise", href: "/expertise/" },
     heading: "Know the counterparty before the money moves.",
-    lead: "We conduct confidential due diligence, background investigations and integrity monitoring for high-value transactions, investments and appointments. Our investigations identify undisclosed litigation, regulatory sanctions, political exposure and reputational risks before they crystallise.",
+    lead: "You need to know who you are dealing with before the money or the appointment moves. We conduct confidential, lawful due diligence and integrity checks. We identify undisclosed litigation, sanctions hits and connections — and we state what the records do not show.",
     when: [
       "A transaction, investment or appointment needs enhanced due diligence.",
       "Source of wealth or integrity needs to be verified before funds move.",
@@ -361,7 +366,7 @@ export const pages = {
     description:
       "Investigators and forensic specialists in London. We establish what happened, preserve evidence and locate assets before a legal strategy is chosen.",
     heading: "Establish the facts first.",
-    lead: "Investigations at this firm are the work that decides whether a private prosecution, a freezing order or a regulatory report is possible — and whether it is worth the cost.",
+    lead: "You do not yet know what happened, and you should not pick a legal route until you do. Investigations here decide whether a private prosecution, a freezing order or a regulatory report is possible — and whether it is worth the cost.",
     schema: "investigations",
     serviceType: "Financial crime investigation",
     intro: [
@@ -393,7 +398,7 @@ export const pages = {
       "Board-level, employee and whistleblower investigations in London, run to a standard that holds if you later prosecute, report or litigate.",
     parent: { label: "Investigations", href: "/investigations/" },
     heading: "When the problem is inside the organisation.",
-    lead: "An internal investigation is useful only if it can survive the next step — a dismissal, a regulatory report, a civil claim or a private prosecution. We run the enquiry as if each of those is already on the table.",
+    lead: "Something inside the business does not add up, and you need a file that will still hold if you later dismiss, report or prosecute. We run the enquiry as if each of those steps is already on the table.",
     schema: "service",
     serviceType: "Internal investigation",
     relatedExpertise: ["regulatory", "corporate-intelligence", "private-prosecutions"],
@@ -434,7 +439,7 @@ export const pages = {
       "Fraud and financial crime investigations in London: who was involved, how the scheme ran, and what you can actually prove.",
     parent: { label: "Investigations", href: "/investigations/" },
     heading: "What happened, and what you can prove.",
-    lead: "A financial crime investigation establishes the facts of a fraud, false accounting or misappropriation before anyone is asked to commit to a legal route. The output is a file: witnesses, documents, continuity and a clear account of what is known and what is not.",
+    lead: "You think a fraud has happened, but you cannot yet say who did what or whether the documents will prove it. This work produces a file: witnesses, continuity and a clear account of what is known and what is not.",
     schema: "service",
     serviceType: "Financial crime investigation",
     relatedExpertise: ["private-prosecutions", "asset-tracing", "regulatory"],
@@ -475,7 +480,7 @@ export const pages = {
       "Digital, payments and cryptocurrency investigations in London: preserve devices and wallets, map the trail, and produce evidence a court will accept.",
     parent: { label: "Investigations", href: "/investigations/" },
     heading: "Hold the trail before it moves again.",
-    lead: "Payment diversion, authorised push payment fraud, wallet theft and exchange collapses are usually won or lost in the first days. The investigation is the work of capturing what still exists, mapping where value went, and turning that picture into exhibits.",
+    lead: "Money or messages have just left, and you need the trail held before anyone has a look. Payment diversion, authorised push payment fraud, wallets and devices: capture first, then map in a form a court will accept.",
     schema: "service",
     serviceType: "Digital and cryptocurrency investigation",
     relatedExpertise: ["crypto-fraud", "asset-tracing", "private-prosecutions"],
@@ -516,7 +521,7 @@ export const pages = {
       "Cross-border financial crime investigations from London: foreign registries, overseas subsidiaries, and defendants who have left the jurisdiction.",
     parent: { label: "Investigations", href: "/investigations/" },
     heading: "The facts do not stop at the UK border.",
-    lead: "A UK-facing loss often has its origins — or its proceeds — overseas. Cross-border investigation is the work of reading the foreign record, finding the people, and putting those facts into a file a London court can use.",
+    lead: "The people or the records sit outside England, and you need facts a London court can actually use. We read the foreign record, find the people, and put those facts into one file. We do not treat a London letterhead as extra-territorial.",
     schema: "service",
     serviceType: "Cross-border investigation",
     relatedExpertise: ["cross-border", "asset-tracing", "private-prosecutions"],
@@ -557,7 +562,7 @@ export const pages = {
       "Asset tracing investigations in London: where misappropriated value went, whether it is still there, and whether pursuing it is worth the cost.",
     parent: { label: "Investigations", href: "/investigations/" },
     heading: "Find the value. Then decide.",
-    lead: "Asset tracing investigation answers the question every victim of fraud eventually asks: where has the money gone, and is any of it still there. The legal remedies — freezing orders, receivership, confiscation — come after that answer, not before.",
+    lead: "You need to know where the money has gone, and whether any of it is still there, before you spend on a freeze. Legal remedies come after that answer, not before. We will tell you to stop if the chase is not worth the cost.",
     schema: "service",
     serviceType: "Asset tracing investigation",
     relatedExpertise: ["asset-tracing", "crypto-fraud", "cross-border"],
@@ -605,7 +610,7 @@ export const pages = {
     description:
       "Richard Edison, owner of Edison Law, and the people who work the file. Confirm current authorised individuals on the public SRA record.",
     heading: "Our people.",
-    lead: "Richard Edison owns the practice. Then the people who work the file. Confirm current authorised individuals on the public SRA record.",
+    lead: "You will want named humans, not a logo. Richard Edison owns the practice. Job titles on this site are not a reserved-activity authorisation. Confirm current authorised individuals on the public SRA record. [[NEEDS_CLIENT_INPUT: SRA ID and year of admission for each solicitor, or confirm who is not a solicitor]].",
   },
   joinUs: {
     path: "/join-us/",
@@ -613,7 +618,7 @@ export const pages = {
     description:
       "Careers at Edison Law in London. Lawyers, investigators and forensic specialists in financial crime, private prosecutions and asset recovery.",
     heading: "Join us.",
-    lead: "Discover what a career here is actually for: building cases that hold up when the other side tests them.",
+    lead: "You want to know what the work here actually is: building files that hold up when the other side tests them. We do not keep a public vacancy board.",
     intro: [
       "We recruit and develop people who can take a disordered file — a fraud just discovered, a trail that has already left the banking system — and turn it into a legal position.",
       "The practice is small. Every person is visible on the work: private prosecutions, asset tracing, crypto fraud and cross-border enforcement. You are not a resource on a large matter. You are on the matter.",
@@ -688,7 +693,7 @@ export const pages = {
     description:
       "Edison Law is an SRA recognised sole practice in London for financial crime investigation, private prosecution and asset recovery.",
     heading: "A London solicitors' practice.",
-    lead: "Edison Law sits where financial crime, digital evidence and a legal route meet. The work is to turn a disordered set of facts into a file that can be tested in court — and to say early when it cannot. We do not sell a recovery. We hold the file.",
+    lead: "You need a firm you can check, not a recovery slogan. Edison Law is an SRA recognised sole practice in London. The work is to turn a disordered set of facts into a file that can be tested in court — and to say early when it cannot.",
     lifecycle: {
       label: "How a matter is held",
       heading: "Three stages. One file.",
@@ -785,6 +790,11 @@ export const pages = {
       "Write to Edison Law in London about a private prosecution, asset recovery or financial crime matter. Enquiries are handled confidentially.",
     heading: "Discuss a matter.",
     lead: "Write with the facts you already have. Do not send passwords, seed phrases or original identity documents through this form. Describe the situation. We will say whether we can help.",
+    hours: site.facts.hours,
+    phone: site.facts.publishedPhone,
+    namedContact: site.facts.namedContact,
+    responseTime: site.facts.responseTime,
+    outOfHours: site.facts.outOfHours,
     urgent: "If a freezing application may be needed in days rather than weeks, use the form below and mark the matter as urgent.",
   },
   legal: {
@@ -792,26 +802,44 @@ export const pages = {
     title: "Legal and regulatory | Edison Law",
     description: "Regulatory standing, reserved activities and notices for Edison Law.",
     heading: "Legal and regulatory.",
+    intro:
+      "You should be able to check who we are without calling a marketing line. The public SRA record is the source if anything here is out of date.",
     blocks: [
       {
         heading: "Regulated name",
-        text: `Edison Law is authorised and regulated by the Solicitors Regulation Authority. SRA number ${site.sraNumber}. The firm has been an SRA recognised sole practice since ${site.sraSince}.`,
+        text: `Edison Law is authorised and regulated by the Solicitors Regulation Authority. SRA number ${site.sraNumber}. The firm has been an SRA recognised sole practice since ${site.sraSince}. It is not presented here as a City headquarters or as a limited company unless the public record says so.`,
+      },
+      {
+        heading: "Registered office",
+        text: `${address}. ${site.facts.companyNumber}.`,
+      },
+      {
+        heading: "VAT",
+        text: site.facts.vatNumber,
+      },
+      {
+        heading: "People on the public record",
+        text: `The SRA organisation record currently lists ${site.facts.solicitorOnRegister} as a solicitor. Confirm authorised individuals on the public record before treating a job title on this website as a reserved-activity authorisation. [[NEEDS_CLIENT_INPUT: SRA ID and year of admission for each solicitor you wish named]].`,
       },
       {
         heading: "Reserved activities",
-        text: "The SRA record lists authority for the exercise of a right of audience, conduct of litigation, reserved instrument activities, probate activities and the administration of oaths. The firm’s published practice on this site is private prosecutions, asset recovery, crypto fraud, regulatory investigations and cross-border financial crime.",
+        text: "The SRA record lists authority for the exercise of a right of audience, conduct of litigation, reserved instrument activities, probate activities and the administration of oaths. The firm’s published practice on this site is private prosecutions, asset recovery, crypto fraud, regulatory investigations and cross-border financial crime. Confirm the current list of areas of law on the register.",
       },
       {
-        heading: "People",
-        text: "Confirm current authorised individuals on the public SRA record before treating a job title as a reserved-activity authorisation.",
+        heading: "Professional indemnity insurance",
+        text: `SRA-regulated firms must maintain professional indemnity insurance. Insurer: ${site.facts.piInsurer}. Territorial cover: ${site.facts.piTerritory}.`,
       },
       {
-        heading: "Insurance",
-        text: "SRA-regulated firms must maintain professional indemnity insurance. The insurer name and wording will be stated here once the firm confirms the current policy for publication.",
+        heading: "Client money",
+        text: site.facts.clientMoney,
+      },
+      {
+        heading: "Data protection",
+        text: `ICO registration: ${site.facts.icoNumber}. See the privacy notice.`,
       },
       {
         heading: "SRA record",
-        text: "The public record is the source for office, people and authorisation details. Check it if anything on this site might be out of date.",
+        text: "The public record is the source for office, people and authorisation details. There are no published SRA disciplinary decisions against the firm on the record we checked for this site. Check the live register if anything might be out of date.",
       },
     ],
   },
@@ -821,16 +849,18 @@ export const pages = {
     description: "How to complain about Edison Law and how to reach the Legal Ombudsman.",
     heading: "Complaints procedure.",
     intro:
-      "If you are unhappy with our service, tell us. We will take the complaint seriously and respond in writing.",
+      "If you are unhappy with our service, tell us. We will take the complaint seriously and respond in writing. You do not need a special form.",
     steps: [
-      `Write to Edison Law at ${address}. Mark the letter as a complaint.`,
-      "Say what went wrong, when it happened, and what you would like us to do.",
-      "We aim to acknowledge a complaint promptly and to give a final written response within eight weeks.",
+      `Write to ${site.facts.complaintsHandler} at Edison Law, ${address}. Mark the letter as a complaint. ${site.facts.publishedEmail}.`,
+      "Say what went wrong, when it happened, and what you would like us to do. Include your matter reference if you have one.",
+      "We aim to acknowledge a complaint promptly and to give a final written response within eight weeks. [[NEEDS_CLIENT_INPUT: actual acknowledgement timescale, if shorter than ‘promptly’]].",
+      "If we need more time, we will say so in writing and explain why.",
     ],
     leo: [
       "If you are not satisfied with our final response, or eight weeks have passed, you may be able to refer the matter to the Legal Ombudsman.",
-      "Usual time limits: within six months of our final written response, and within one year of the act or omission or of the date you reasonably should have known about it. Confirm the current rules at legalombudsman.org.uk.",
+      "Usual time limits: within six months of our final written response, and within one year of the act or omission or of the date you reasonably should have known about it. Confirm the current rules at legalombudsman.org.uk before you rely on them.",
       "Legal Ombudsman, PO Box 6167, Slough, SL1 0EH. Telephone 0300 555 0333. Relay UK 18001 0300 555 0333.",
+      "The SRA also investigates some concerns about solicitors. That is a separate process from the Legal Ombudsman. sra.org.uk",
     ],
   },
   pricing: {
@@ -838,14 +868,36 @@ export const pages = {
     title: "Pricing | Edison Law",
     description: "How Edison Law charges for work and how estimates are given.",
     heading: "Pricing.",
+    intro:
+      "You should know how you will be charged before you instruct. The figures that belong on this page are not yet confirmed by the firm, so they appear as marked gaps rather than invented rates.",
     blocks: [
       {
-        heading: "Transparency",
-        text: "The SRA Transparency Rules require published prices for certain defined services. The work described on this site — private prosecutions, asset recovery and financial crime — is scoped case by case. We do not publish a menu of fixed fees for that work because the evidence, forum and urgency change the cost.",
+        heading: "SRA Transparency Rules",
+        text: "The SRA Transparency Rules require published prices for certain defined services (for example some residential conveyancing, probate, motoring offences, employment, immigration and debt recovery). The work described on this site — private prosecutions, asset recovery and financial crime — is not a menu of those defined services. We do not publish a fixed-fee list for it because the evidence, forum and urgency change the cost. [[NEEDS_CLIENT_INPUT: confirm you do not offer the mandatory price-list services; if you do, supply the required price information]].",
       },
       {
-        heading: "How we quote",
-        text: "After an initial discussion we provide a written scope, the charging basis, likely disbursements and VAT. If we cannot help, we say so. Where appropriate we offer conditional fee arrangements, damages-based agreements and hybrid structures.",
+        heading: "How we charge",
+        text: `After an initial discussion we provide a written scope, the charging basis, likely disbursements and VAT. ${site.facts.feeRates} If we cannot help, we say so.`,
+      },
+      {
+        heading: "What is usually included",
+        text: "Solicitor time on the scoped file, supervision of investigators and forensic specialists on that file, and written advice as set out in the retainer.",
+      },
+      {
+        heading: "What is usually not included",
+        text: "Counsel’s fees, court fees, tracing-platform licences, translation, overseas lawyers, expert witnesses, and travel. These are disbursements unless the retainer says otherwise.",
+      },
+      {
+        heading: "VAT",
+        text: site.facts.vatNumber,
+      },
+      {
+        heading: "Timescales that affect cost",
+        text: `Emergency freezing and raid response compress time and cost. A document-heavy private prosecution does the opposite. ${site.facts.firstAdviceTimescale}`,
+      },
+      {
+        heading: "Conditional and damages-based fees",
+        text: "Where appropriate and lawful we consider conditional fee arrangements, damages-based agreements and hybrid structures. They are not available for every matter and they are not a promise of recovery.",
       },
       {
         heading: "No guaranteed recoveries",
@@ -858,18 +910,23 @@ export const pages = {
     title: "Privacy | Edison Law",
     description: "How Edison Law handles personal information.",
     heading: "Privacy notice.",
+    intro: "You have a right to know who controls your data and how to complain.",
     blocks: [
       {
         heading: "Controller",
-        text: `Edison Law is the data controller for this website and for client files. Correspondence: ${address}.`,
+        text: `Edison Law is the data controller for this website and for client files. Correspondence: ${address}. ICO registration: ${site.facts.icoNumber}.`,
       },
       {
         heading: "What we collect",
         text: "If you write to us we receive the name, contact details and matter description you send. We use that information to decide whether we can act and to reply. We do not run advertising analytics on this preview.",
       },
       {
+        heading: "Lawful basis",
+        text: "For enquiries, legitimate interests in assessing whether we can act, and steps at your request before a contract. For client files, performance of a contract and legal obligation. [[NEEDS_CLIENT_INPUT: confirm lawful bases and retention periods you want published]].",
+      },
+      {
         heading: "Retention and rights",
-        text: "Client files are kept for the period required by professional rules. You may ask for access, correction or erasure where the law allows. You may complain to the Information Commissioner’s Office.",
+        text: "Client files are kept for the period required by professional rules. You may ask for access, correction or erasure where the law allows. You may complain to the Information Commissioner’s Office at ico.org.uk.",
       },
     ],
   },
@@ -921,7 +978,75 @@ export const pages = {
       },
       {
         heading: "If you are unsure",
-        text: "Write to the office address recorded with the SRA, or use the contact form on this site from an address we already know.",
+        text: `Write to the office at ${address}, or use the contact form from an address we already know. Published email: ${site.facts.publishedEmail}. Published telephone: ${site.facts.publishedPhone}.`,
+      },
+    ],
+  },
+  howWeWork: {
+    path: "/how-we-work/",
+    title: "How we work | Edison Law",
+    description: "How Edison Law holds a file: preserve, establish, advise — and when we turn work away.",
+    heading: "How we work.",
+    intro:
+      "You should know the order of the work before you instruct. It is the same whether the next step is a private prosecution, a freeze, a report, or a decision to stop.",
+    blocks: [
+      {
+        heading: "1. Preserve",
+        text: "Devices, accounts and originals are held before anyone drafts a narrative. What still exists is captured so it can later be exhibited. Timescale: same day to 48 hours once instructed, unless the volume makes that impossible — in which case we say so.",
+      },
+      {
+        heading: "2. Establish",
+        text: `Investigators, forensic specialists and solicitors work the same matter until it is clear what the documents prove, and what they do not. Cobra AI (IYE Global) is used where volume or pattern-finding is the problem. Its output is reviewed here. ${site.facts.firstAdviceTimescale}`,
+      },
+      {
+        heading: "3. Advise",
+        text: "A private prosecution, a freezing application, a civil claim, a regulatory report — or no further step. Counsel is instructed where advocacy is needed. Local counsel is instructed where people or value sit overseas.",
+      },
+      {
+        heading: "When we turn work away",
+        text: "We will not run a prosecution the evidence cannot carry, chase value that is not worth the cost, or promise a recovery. We will not accept seed phrases, passwords or original identity documents through the website.",
+      },
+      {
+        heading: "Fees",
+        text: `You pay for work done. ${site.facts.feeRates} See Pricing.`,
+      },
+      {
+        heading: "Who holds the file",
+        text: `${site.facts.namedContact} Confirm authorised individuals on the SRA record. Job titles on this site are not a reserved-activity authorisation.`,
+      },
+    ],
+  },
+  terms: {
+    path: "/terms-of-business/",
+    title: "Terms of business | Edison Law",
+    description: "How a retainer with Edison Law is formed and what it covers.",
+    heading: "Terms of business.",
+    intro:
+      "You are not a client because you sent a web form. A retainer starts when we write to accept instructions on agreed terms.",
+    blocks: [
+      {
+        heading: "No retainer from this website",
+        text: "Sending the contact form, or reading these pages, does not create a solicitor-client relationship. We must complete conflict checks and send a client care letter before we act.",
+      },
+      {
+        heading: "What the client care letter will cover",
+        text: `Scope of work, who will do it, charging basis, disbursements, VAT, complaints, and how to end the retainer. ${site.facts.feeRates} [[NEEDS_CLIENT_INPUT: attach or summarise your standard terms of business once approved]].`,
+      },
+      {
+        heading: "Your responsibilities",
+        text: "Give us accurate facts. Do not destroy devices or accounts we have asked you to hold. Do not send passwords or seed phrases through the website.",
+      },
+      {
+        heading: "Limitation of liability",
+        text: `[[NEEDS_CLIENT_INPUT: liability cap, if any, and PI cover cross-reference]]. Professional indemnity: ${site.facts.piInsurer}.`,
+      },
+      {
+        heading: "Governing law",
+        text: "The courts of England and Wales. These web pages are general information, not advice on your facts.",
+      },
+      {
+        heading: "Complaints",
+        text: "The complaints procedure is published at /complaints/. Legal Ombudsman referral rights are set out there.",
       },
     ],
   },

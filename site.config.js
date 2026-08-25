@@ -21,6 +21,34 @@ export const site = {
   sraSince: "1 November 2015",
   email: "",
   phone: "",
+  facts: {
+    entityType: "SRA recognised sole practice",
+    solicitorOnRegister: "Abigail Charlotte Wills",
+    companyNumber:
+      "[[NEEDS_CLIENT_INPUT: Companies House number, or confirm this is not a limited company]]",
+    vatNumber: "[[NEEDS_CLIENT_INPUT: VAT number, or confirm not VAT-registered]]",
+    icoNumber: "[[NEEDS_CLIENT_INPUT: ICO registration number]]",
+    piInsurer: "[[NEEDS_CLIENT_INPUT: professional indemnity insurer name]]",
+    piTerritory: "[[NEEDS_CLIENT_INPUT: PI territorial cover, e.g. England and Wales]]",
+    clientMoney:
+      "[[NEEDS_CLIENT_INPUT: whether client money is held, and with which bank]]",
+    hours: "[[NEEDS_CLIENT_INPUT: office hours]]",
+    publishedPhone: "[[NEEDS_CLIENT_INPUT: published landline, or confirm unpublished]]",
+    publishedEmail: "[[NEEDS_CLIENT_INPUT: published email address]]",
+    responseTime: "[[NEEDS_CLIENT_INPUT: enquiry response time]]",
+    namedContact: "[[NEEDS_CLIENT_INPUT: named first point of contact]]",
+    outOfHours: "[[NEEDS_CLIENT_INPUT: out-of-hours position]]",
+    feeRates: "[[NEEDS_CLIENT_INPUT: hourly rates or fee bands, plus VAT treatment]]",
+    firstAdviceTimescale:
+      "[[NEEDS_CLIENT_INPUT: typical timescale for first written scope after instruction]]",
+    complaintsHandler: "[[NEEDS_CLIENT_INPUT: named complaints handler]]",
+  },
+  review: {
+    by: "[[NEEDS_CLIENT_INPUT: reviewing solicitor name]]",
+    title: "[[NEEDS_CLIENT_INPUT: reviewer job title]]",
+    date: "[[NEEDS_CLIENT_INPUT: last review date]]",
+    next: "[[NEEDS_CLIENT_INPUT: next review date]]",
+  },
   address: {
     line1: "12 Augustus Road",
     line2: "Wimbledon",
@@ -61,6 +89,8 @@ export const site = {
 
   footerLinks: [
     { label: "Legal & regulatory", href: "/legal-regulatory/" },
+    { label: "How we work", href: "/how-we-work/" },
+    { label: "Terms of business", href: "/terms-of-business/" },
     { label: "Pricing", href: "/pricing/" },
     { label: "Complaints", href: "/complaints/" },
     { label: "Privacy", href: "/privacy/" },

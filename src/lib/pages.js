@@ -1,11 +1,12 @@
 import { site } from "../../site.config.js";
 import { home, pages, insightBodies } from "../content/copy.js";
+import { serviceMatter } from "../content/service-matter.js";
 import {
   insightMedia,
   media,
   practiceMedia,
 } from "../content/media.js";
-import { crumbs, documentPage, practiceIcon, signalGraphic } from "./layout.js";
+import { crumbs, documentPage, practiceIcon, reviewedNote, signalGraphic } from "./layout.js";
 import { esc } from "./html.js";
 
 function personHref(person) {
@@ -111,6 +112,42 @@ function titledStack(items) {
   </div>`;
 }
 
+function bulletList(items) {
+  return `<ul>${items.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`;
+}
+
+function matterProse(key) {
+  const extra = serviceMatter[key];
+  if (!extra) return "";
+  return `
+    <h2>Who this is for</h2>
+    ${bulletList(extra.forWhom)}
+    <h2>Who this is not for</h2>
+    ${bulletList(extra.notFor)}
+    <h2>${esc(extra.law.heading)}</h2>
+    <p>${esc(extra.law.text)}</p>
+    <h2>How the work usually runs</h2>
+    <ol>
+      ${extra.process
+        .map(
+          (step) =>
+            `<li><strong>${esc(step.title)}</strong> (${esc(step.timescale)}). ${esc(step.text)}</li>`,
+        )
+        .join("")}
+    </ol>
+    <h2>What it costs</h2>
+    <p>${esc(extra.costs)}</p>
+    <h2>What can go wrong</h2>
+    ${bulletList(extra.risks)}
+    <h2>Who handles your matter</h2>
+    <p>${esc(extra.handler)}</p>
+  `;
+}
+
+function matterFaqs(page, key) {
+  return serviceMatter[key]?.faqs || page.faqs || [];
+}
+
 function cobraSection(band = "") {
   const cobra = home.sections.cobra;
   const href = site.tools.cobraAi.href;
@@ -165,6 +202,7 @@ function homePage() {
             <p class="label">${esc(home.sections.hero.descriptor)}</p>
             <h1 class="display">${esc(home.sections.hero.heading)}</h1>
             <p class="lead">${esc(home.sections.hero.lead)}</p>
+            ${reviewedNote()}
             <div class="hero-actions">
               ${cta(home.sections.hero.cta)}
               <a class="btn btn-ghost" href="${home.sections.hero.ctaSecondary.href}">${esc(
@@ -214,6 +252,10 @@ function homePage() {
             <p class="label audience-label">${esc(who.actForLabel)}</p>
             <ul class="audience-list">
               ${who.actFor.map((item) => `<li>${esc(item)}</li>`).join("")}
+            </ul>
+            <p class="label audience-label">${esc(who.actNotForLabel)}</p>
+            <ul class="audience-list">
+              ${who.actNotFor.map((item) => `<li>${esc(item)}</li>`).join("")}
             </ul>
           </div>
         </div>
@@ -316,6 +358,7 @@ function expertiseIndex() {
         ${crumbs([{ label: "Expertise" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
+        ${reviewedNote()}
       </div>
       <div class="wrap service-index service-visual-index">
         ${site.practices
@@ -348,22 +391,18 @@ function servicePage(key, practiceId) {
         ])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
+        ${reviewedNote()}
           <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
       </div>
       ${wrap(`
         <div class="prose">
-          <h2>When to contact us</h2>
-          <ul>${page.when.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>
-          <h2>Services</h2>
-          <ul>${page.scope.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>
-          <h2>Our approach</h2>
-          <p>${esc(page.approach)}</p>
+          ${matterProse(key)}
         </div>
       `)}
       ${wrap(`
         <h2>Questions we are asked</h2>
         <div class="faq">
-          ${page.faqs
+          ${matterFaqs(page, key)
             .map(
               (item) => `<details>
                 <summary>${esc(item.q)}</summary>
@@ -396,7 +435,7 @@ function servicePage(key, practiceId) {
       ${wrap(`
         <div class="cta-band">
           <h2>Discuss this matter</h2>
-          <p class="muted">Send the facts you already have. All enquiries are handled under strict confidentiality protocols.</p>
+          <p class="muted">Write with the facts you already have. Do not send passwords, seed phrases or original identity documents.</p>
           <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
         </div>
       `)}
@@ -405,6 +444,8 @@ function servicePage(key, practiceId) {
   return documentPage(
     {
       ...page,
+      faqs: matterFaqs(page, key),
+      schema: page.schema || "service",
       breadcrumbs: [page.parent],
       crumb: page.heading,
     },
@@ -424,6 +465,7 @@ function investigationIndex() {
         ${crumbs([{ label: "Investigations" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
+        ${reviewedNote()}
         <nav class="page-jump" aria-label="On this page">
           ${page.jump.map((item) => `<a href="${item.href}">${esc(item.label)}</a>`).join("")}
         </nav>
@@ -511,22 +553,18 @@ function investigationPage(item) {
         ])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
+        ${reviewedNote()}
         <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
       </div>
       ${wrap(`
         <div class="prose">
-          <h2>When to contact us</h2>
-          <ul>${page.when.map((line) => `<li>${esc(line)}</li>`).join("")}</ul>
-          <h2>What the investigation covers</h2>
-          <ul>${page.scope.map((line) => `<li>${esc(line)}</li>`).join("")}</ul>
-          <h2>Our approach</h2>
-          <p>${esc(page.approach)}</p>
+          ${matterProse(item.copyKey)}
         </div>
       `)}
       ${wrap(`
         <h2>Questions we are asked</h2>
         <div class="faq">
-          ${page.faqs
+          ${matterFaqs(page, item.copyKey)
             .map(
               (faq) => `<details>
                 <summary>${esc(faq.q)}</summary>
@@ -579,7 +617,7 @@ function investigationPage(item) {
       ${wrap(`
         <div class="cta-band">
           <h2>Discuss this investigation</h2>
-          <p class="muted">Send the facts you already have. All enquiries are handled under strict confidentiality protocols.</p>
+          <p class="muted">Write with the facts you already have. Do not send passwords, seed phrases or original identity documents.</p>
           <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
         </div>
       `)}
@@ -588,6 +626,7 @@ function investigationPage(item) {
   return documentPage(
     {
       ...page,
+      faqs: matterFaqs(page, item.copyKey),
       breadcrumbs: [page.parent],
       crumb: page.heading,
     },
@@ -603,6 +642,7 @@ function insightsIndex() {
         ${crumbs([{ label: "Insights" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
+        ${reviewedNote()}
       </div>
       <div class="wrap insights-index">
         ${site.insights
@@ -642,8 +682,10 @@ function insightPage(item) {
           { label: item.title },
         ])}
         <p class="mono">${esc(item.type)} / ${esc(item.dateLabel)}</p>
+        <p class="mono">Author: [[NEEDS_CLIENT_INPUT: named author for this note]]</p>
         <h1>${esc(item.title)}</h1>
         <p class="lead muted">${esc(item.description)}</p>
+        ${reviewedNote()}
       </article>
       <div class="wrap prose">
         ${blocks
@@ -668,6 +710,7 @@ function peoplePage() {
         ${crumbs([{ label: "People" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
+        ${reviewedNote()}
       </div>
       <div class="wrap people-index">
         ${peopleCollective({ intro: false })}
@@ -685,6 +728,7 @@ function joinUsPage() {
         ${crumbs([{ label: "Join us" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
+        ${reviewedNote()}
         <nav class="page-jump" aria-label="On this page">
           ${page.jump.map((item) => `<a href="${item.href}">${esc(item.label)}</a>`).join("")}
         </nav>
@@ -767,6 +811,8 @@ function personPage(person) {
         <div class="prose">
           <h1>${esc(person.name)}</h1>
           <p class="mono">${esc(person.role)}</p>
+          ${reviewedNote()}
+          <p class="muted">Authorisation: confirm this person on the public SRA record before treating the title as a reserved-activity authorisation. [[NEEDS_CLIENT_INPUT: SRA ID, year of admission, and practising status for ${person.name}]]</p>
           ${person.bio.map((para) => `<p>${esc(para)}</p>`).join("")}
           ${
             person.quotes?.length
@@ -814,6 +860,7 @@ function aboutPage() {
         ${crumbs([{ label: "About" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
+        ${reviewedNote()}
       </div>
       <section class="section-tight">
         <div class="wrap">
@@ -880,7 +927,13 @@ function contactPage() {
         ${crumbs([{ label: "Contact" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
+        ${reviewedNote()}
         <p class="muted">${esc(page.urgent)}</p>
+        <p class="muted">Hours: ${esc(page.hours)}</p>
+        <p class="muted">Telephone: ${esc(page.phone)}</p>
+        <p class="muted">First point of contact: ${esc(page.namedContact)}</p>
+        <p class="muted">Response time: ${esc(page.responseTime)}</p>
+        <p class="muted">Out of hours: ${esc(page.outOfHours)}</p>
         ${site.email ? `<p class="mono">${esc(site.email)}</p>` : ""}
         <p class="muted small">${esc(`${site.address.line1}, ${site.address.line2}, ${site.address.city} ${site.address.postcode}`)}</p>
       </div>
@@ -955,6 +1008,7 @@ function legalPage(key) {
         ${crumbs([{ label: page.heading }])}
         <h1>${esc(page.heading)}</h1>
         ${page.intro ? `<p class="lead muted">${esc(page.intro)}</p>` : ""}
+        ${reviewedNote()}
       </div>
       <div class="wrap prose" style="padding-bottom:6rem">
         ${extra}
@@ -1034,6 +1088,8 @@ export function allPages() {
     { file: "about/index.html", html: aboutPage() },
     { file: "contact/index.html", html: contactPage() },
     { file: "legal-regulatory/index.html", html: legalPage("legal") },
+    { file: "how-we-work/index.html", html: legalPage("howWeWork") },
+    { file: "terms-of-business/index.html", html: legalPage("terms") },
     { file: "complaints/index.html", html: legalPage("complaints") },
     { file: "pricing/index.html", html: legalPage("pricing") },
     { file: "privacy/index.html", html: legalPage("privacy") },
