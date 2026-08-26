@@ -15,12 +15,11 @@ export const people = [
     practicePhotoWidth: 626,
     practicePhotoHeight: 417,
     summary:
-      "Owner of Edison Law. Holds the practice: the work, the people, and the files.",
+      "Owner of Edison Law, an SRA-regulated sole practice in London.",
     bio: [
-      "Richard Edison is the owner of Edison Law. The practice is an SRA-regulated solicitors' firm in London for financial crime investigation, private prosecution and asset recovery.",
-      "He holds the practice. The people who work the file sit here: lawyers, investigators and forensic specialists, on the same matters, from first instruction through to trial or a decision that no further step is justified.",
-      "The work is legal-led investigation. Devices, accounts and originals are held before anyone drafts a narrative. A route is chosen only when the facts will carry it — a private prosecution, a freezing application, a civil claim, a report, or no further step.",
-      "Confirm office, people and authorisation on the public SRA record if anything on this site might be out of date. Richard does not promise a recovery the facts cannot carry.",
+      "Richard Edison is named on this site as the owner of Edison Law. The firm is an SRA-regulated sole practice in London advising on criminal, investigative and recovery matters involving fraud and financial misconduct.",
+      "Each instruction is supervised by a named solicitor. Specialist investigators and forensic professionals are introduced where their expertise is needed, with their role and status explained.",
+      "Confirm current authorised individuals on the public SRA record. Job titles on this site are not a reserved-activity authorisation.",
     ],
   },
   {

@@ -41,6 +41,18 @@ export function insightIcon(slug) {
   return INSIGHT_ICONS[slug] || PRACTICE_ICON_FALLBACK;
 }
 
+const WHY_ICONS = {
+  solicitor: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3"/><path d="M6 19.5c1.2-3.2 3.4-4.8 6-4.8s4.8 1.6 6 4.8"/></svg>`,
+  evidence: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3.5" width="14" height="17" rx="1.5"/><path d="M9 8h6M9 11.5h6M9 15h3.5"/></svg>`,
+  fees: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="16" height="13" rx="1.5"/><path d="M8 6V5h8v1"/><path d="M8 11.5h3M8 14.5h5"/></svg>`,
+  discretion: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5.5" y="11" width="13" height="9" rx="1.5"/><path d="M8 11V8.2A4 4 0 0 1 16 8.2V11"/></svg>`,
+  london: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="12" r="3.4"/><circle cx="17" cy="12" r="3.4"/><path d="M10.4 12h3.2"/></svg>`,
+};
+
+export function whyIcon(id) {
+  return WHY_ICONS[id] || PRACTICE_ICON_FALLBACK;
+}
+
 function brand(href = "/") {
   return `<a class="brand" href="${href}">${MARK}</a>`;
 }
@@ -222,7 +234,7 @@ function jsonLd(page) {
 function searchIndex() {
   const items = [
     { title: "Home", href: "/", type: "Page", text: site.masterLine },
-    { title: "Expertise", href: "/expertise/", type: "Page", text: "Private prosecutions, asset tracing, crypto fraud, regulatory defence, cross-border recovery and corporate intelligence." },
+    { title: "Expertise", href: "/expertise/", type: "Page", text: "Legal routes for fraud, investigations and recovery." },
     ...site.practices.map((item) => ({
       title: item.title,
       href: item.href,
@@ -259,7 +271,7 @@ function searchIndex() {
     { title: "About", href: "/about/", type: "Page", text: site.shortLine },
     {
       title: site.tools.cobraAi.name,
-      href: "/#cobra-ai",
+      href: "/investigations/#cobra-ai",
       type: "Page",
       text: `Investigative tool from ${site.tools.cobraAi.vendor}. Used on the file; output is reviewed here.`,
     },
@@ -276,7 +288,8 @@ function searchIndex() {
 
 export function documentPage(page, body) {
   const origin = site.canonicalOrigin.replace(/\/$/, "");
-  const canonical = `${origin}${page.path}`;
+  const canonicalPath = page.canonicalPath || page.path;
+  const canonical = `${origin}${canonicalPath}`;
   const title = esc(page.title);
   const description = esc(page.description);
   const ogImage = `${origin}/og-image.png`;
@@ -290,6 +303,7 @@ export function documentPage(page, body) {
   <title>${title}</title>
   <meta name="description" content="${description}">
   <meta name="robots" content="${robots}">
+  ${page.redirectTo ? `<meta http-equiv="refresh" content="0;url=${esc(page.redirectTo)}">` : ""}
   <meta name="author" content="${esc(site.name)}">
   <meta name="theme-color" content="${site.themeColor}">
   <meta name="msapplication-TileColor" content="${site.themeColor}">

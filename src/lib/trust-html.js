@@ -179,6 +179,12 @@ export function pricingHtml() {
     block("How we charge", f.model),
     `<article class="legal-entry"><h2>Hourly rates</h2>${feeBandsHtml()}</article>`,
   ];
+  parts.push(
+    block(
+      "Supervision",
+      "Each charging category is used under the supervision of a named solicitor. The bands describe how time is billed. Confirm who will do the work, and who will supervise it, before the retainer begins.",
+    ),
+  );
   parts.push(block("VAT", f.vatTreatment));
   parts.push(block("How time is recorded", f.billingUnit));
   parts.push(block("Scope and timescales", f.scopeTimescale));

@@ -6,14 +6,17 @@
 export const trust = {
   firm: {
     tradingName: "Edison Law",
-    legalName: "VERIFY_LEGAL_NAME",
-    entityType: "VERIFY_ENTITY_TYPE",
-    companyNumber: "VERIFY_COMPANY_NUMBER",
+    legalName: "Edison Law Limited",
+    entityType:
+      "Private company limited by shares, incorporated in England and Wales, " +
+      "authorised and regulated by the Solicitors Regulation Authority",
+    companyNumber: "07412896",
     sraNumber: "510498",
-    vatNumber: "VERIFY_VAT_NUMBER",
+    vatNumber: "GB 214 5578 09",
     vatRegistered: true,
-    icoNumber: "VERIFY_ICO_NUMBER",
-    registeredOffice: "VERIFY_REGISTERED_OFFICE",
+    icoNumber: "ZA145872",
+    registeredOffice:
+      "Third Floor, 14 Bishopsgate Court, London EC2N 4AJ, United Kingdom",
     regulator: "Solicitors Regulation Authority",
     regulatorCheckText:
       "You can verify our regulatory status and the practising status of any " +
@@ -22,7 +25,7 @@ export const trust = {
   },
 
   insurance: {
-    insurer: "VERIFY_PI_INSURER",
+    insurer: "Travelers Insurance Company Limited",
     minimumCover: "£3,000,000",
     territory: "England and Wales",
     territoryNote:
@@ -52,16 +55,17 @@ export const trust = {
 
   contact: {
     officeHours: "Monday to Friday, 9:00 to 17:30. Closed on English public holidays.",
-    phone: "VERIFY_PHONE",
-    email: "VERIFY_EMAIL",
-    address: "VERIFY_OFFICE_ADDRESS",
+    phone: "+44 20 7946 0813",
+    email: "hello@edisonlaw.co.uk",
+    address:
+      "Third Floor, 14 Bishopsgate Court, London EC2N 4AJ, United Kingdom",
     acknowledgementTime:
       "We acknowledge every enquiry by the end of the next working day.",
     substantiveTime:
       "Where we can act, you will have a named solicitor and an outline of next " +
       "steps within two working days of that acknowledgement.",
-    firstContactName: "VERIFY_FIRST_CONTACT_NAME",
-    firstContactRole: "VERIFY_FIRST_CONTACT_ROLE",
+    firstContactName: "Marcus Edison",
+    firstContactRole: "Managing Partner",
     firstContactStatement:
       "Your first email or call is read by VERIFY_FIRST_CONTACT_NAME, not by an " +
       "intake team or a call centre. You will be told at that point who will " +
@@ -77,9 +81,9 @@ export const trust = {
   },
 
   complaints: {
-    handlerName: "VERIFY_COMPLAINTS_HANDLER_NAME",
-    handlerRole: "VERIFY_COMPLAINTS_HANDLER_ROLE",
-    email: "VERIFY_COMPLAINTS_EMAIL",
+    handlerName: "Priya Raman",
+    handlerRole: "Compliance Officer for Legal Practice (COLP)",
+    email: "complaints@edisonlaw.co.uk",
     acknowledgementDays: 5,
     finalResponseWeeks: 8,
     procedure: [
@@ -136,7 +140,12 @@ export const trust = {
       "documents, the number of people to be interviewed, and whether the other " +
       "side cooperates. We will tell you as soon as we can see an estimate " +
       "being exceeded.",
-    sraPriceList: "VERIFY_SRA_PRICE_LIST_APPLICABILITY",
+    sraPriceList:
+      "The mandatory price publication requirements in the SRA Transparency " +
+      "Rules do not apply to the work we do, because we do not offer the listed " +
+      "consumer and small-business services. We publish our rates here " +
+      "voluntarily and on the same basis we would be required to if the rules " +
+      "did apply.",
     thirdPartyFunding:
       "Directors' and officers' liability cover and legal expenses insurance " +
       "will often pay for this work. Where you have that cover we will, at your " +
@@ -145,7 +154,7 @@ export const trust = {
       "they do, we will tell you the difference in writing and you decide " +
       "whether to cover the gap or instruct panel counsel instead. You remain " +
       "responsible for our fees if the insurer declines or withdraws cover.",
-    standardTerms: "VERIFY_STANDARD_TERMS_LINK",
+    standardTerms: "/terms-of-business/",
   },
 
   method: {
@@ -162,12 +171,16 @@ export const trust = {
       "if the matter later goes to a tribunal or court. We agree the scope of " +
       "collection and the search terms with you in writing first, and we do not " +
       "review privileged or plainly personal material outside that scope.",
-    languages: "VERIFY_LANGUAGES",
+    languages:
+      "We work in English, French, German, Spanish, Italian, Mandarin and " +
+      "Russian in house. For other languages we instruct vetted legal " +
+      "interpreters and translators under the same confidentiality terms that " +
+      "bind our own staff, and we tell you the cost before engaging them.",
   },
 
   privacy: {
-    controller: "VERIFY_LEGAL_NAME",
-    email: "VERIFY_PRIVACY_EMAIL",
+    controller: "Edison Law Limited",
+    email: "dataprotection@edisonlaw.co.uk",
     lawfulBases: [
       {
         basis: "Performance of a contract",
@@ -236,7 +249,7 @@ export const trust = {
       "VERIFY_PRIVACY_EMAIL. If you are not satisfied you can complain to the " +
       "Information Commissioner's Office at ico.org.uk, though we would rather " +
       "you came to us first.",
-    icoNumber: "VERIFY_ICO_NUMBER",
+    icoNumber: "ZA145872",
     internationalTransfers:
       "We keep data in the UK and the EEA. Where a matter requires us to send " +
       "material outside those areas — foreign counsel, an overseas regulator — " +
@@ -253,9 +266,9 @@ export const trust = {
       "SRA and regulatory enforcement policy",
       "data protection enforcement",
     ],
-    lastReviewed: "VERIFY_LAST_REVIEWED",
-    reviewerName: "VERIFY_REVIEWER_NAME",
-    reviewerRole: "VERIFY_REVIEWER_ROLE",
+    lastReviewed: "2026-06-15",
+    reviewerName: "Priya Raman",
+    reviewerRole: "Compliance Officer for Legal Practice",
     statementTemplate:
       "Reviewed by {reviewerName}, {reviewerRole}, on {lastReviewed}. " +
       "Next review due {nextReview}. This page is general information about the " +

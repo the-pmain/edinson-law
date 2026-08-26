@@ -10,9 +10,9 @@ export const site = {
   canonicalOrigin: "https://edisonlaw.co.uk",
   name: "Edison Law",
   descriptor: "Law Firm · London",
-  masterLine: "Following digital evidence. Building legal cases.",
+  masterLine: "Financial crime disputes demand clear evidence and sound judgment.",
   shortLine:
-    "A London SRA-regulated practice for financial crime investigation, private prosecution and asset recovery.",
+    "A London SRA-regulated sole practice for financial crime, private prosecution and asset recovery.",
   lang: "en-GB",
   locale: "en_GB",
   themeColor: "#0A2028",
@@ -54,7 +54,6 @@ export const site = {
 
   footerLinks: [
     { label: "Regulatory information", href: "/regulatory-information/" },
-    { label: "Legal & regulatory", href: "/legal-regulatory/" },
     { label: "How we work", href: "/how-we-work/" },
     { label: "Terms of business", href: "/terms-of-business/" },
     { label: "Pricing", href: "/pricing/" },
@@ -72,7 +71,7 @@ export const site = {
       title: "Private prosecutions",
       href: "/expertise/private-prosecutions/",
       summary:
-        "When public authorities decline to investigate or prosecute, we offer an alternative route to justice — from investigation through to trial.",
+        "Assessing and preparing privately brought criminal proceedings where the evidence and public-interest duties support that course.",
     },
     {
       id: "asset-tracing",
@@ -80,7 +79,7 @@ export const site = {
       title: "Asset tracing & recovery",
       href: "/expertise/asset-tracing-recovery/",
       summary:
-        "Locate misappropriated value — offshore structures, wallets, nominees — and say early whether pursuing it is worth the cost.",
+        "Identifying potentially recoverable value and selecting proportionate civil, criminal or insolvency remedies.",
     },
     {
       id: "crypto-fraud",
@@ -88,7 +87,7 @@ export const site = {
       title: "Crypto fraud & digital assets",
       href: "/expertise/crypto-fraud-digital-assets/",
       summary:
-        "Map wallets, exchanges and cash-outs, and state what on-chain data can and cannot prove.",
+        "Converting transaction data, platform records and device evidence into a legal case with clearly stated limits.",
     },
     {
       id: "regulatory",
@@ -96,7 +95,7 @@ export const site = {
       title: "Regulatory defence & investigations",
       href: "/expertise/regulatory-defence-investigations/",
       summary:
-        "Representation for individuals and corporates under investigation by the SFO, FCA, HMRC and other regulatory bodies.",
+        "Advising individuals and businesses on notices, interviews, internal reviews and engagement with investigating authorities.",
     },
     {
       id: "cross-border",
@@ -104,7 +103,7 @@ export const site = {
       title: "Cross-border fraud & corruption",
       href: "/expertise/cross-border-fraud-corruption/",
       summary:
-        "Evidence, freezing and enforcement where a UK-facing loss has its origins — or its proceeds — overseas, with local counsel where the money sits.",
+        "Coordinating English proceedings with appropriately qualified counsel where evidence, respondents or assets are overseas.",
     },
     {
       id: "corporate-intelligence",
@@ -112,7 +111,7 @@ export const site = {
       title: "Corporate intelligence & pre-litigation",
       href: "/expertise/corporate-intelligence/",
       summary:
-        "Confidential due diligence, background investigations and integrity monitoring before high-value transactions and appointments.",
+        "Lawful, confidential enquiries before litigation, investment, appointment or other material exposure.",
     },
   ],
 
@@ -123,7 +122,7 @@ export const site = {
       title: "Internal investigations",
       href: "/investigations/internal-investigations/",
       summary:
-        "Board-level, employee and whistleblower enquiries run so the file still holds if you later prosecute, report or litigate.",
+        "Help boards make defensible employment, governance and reporting decisions.",
       related: ["regulatory"],
     },
     {
@@ -132,7 +131,7 @@ export const site = {
       title: "Financial crime investigations",
       href: "/investigations/financial-crime/",
       summary:
-        "Who was involved, how the scheme ran, and what the documents actually prove — before anyone is asked to commit to a legal route.",
+        "Reconstruct conduct, participants and loss from documentary and witness evidence.",
       related: ["private-prosecutions"],
     },
     {
@@ -141,7 +140,7 @@ export const site = {
       title: "Digital and payments investigations",
       href: "/investigations/digital-crypto/",
       summary:
-        "Payment diversion, authorised push payment fraud, wallets and devices: hold the trail, then map it in a form a court will accept.",
+        "Preserve devices and accounts, then produce traceable transaction and communications records.",
       related: ["crypto-fraud", "private-prosecutions"],
     },
     {
@@ -150,7 +149,7 @@ export const site = {
       title: "Cross-border investigations",
       href: "/investigations/cross-border/",
       summary:
-        "Foreign registries, overseas subsidiaries, and people who have moved or gone to ground. The facts do not stop at the UK border.",
+        "Obtain and coordinate lawful enquiries across registries, courts and local professionals.",
       related: ["cross-border"],
     },
     {
@@ -159,7 +158,7 @@ export const site = {
       title: "Asset tracing investigations",
       href: "/investigations/asset-tracing/",
       summary:
-        "Where the money went, whether any of it is still there, and whether pursuing it is economically worthwhile.",
+        "Identify ownership, control and realistic enforcement targets.",
       related: ["asset-tracing", "crypto-fraud"],
     },
   ],

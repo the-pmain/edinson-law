@@ -5,7 +5,7 @@ import {
   media,
   practiceMedia,
 } from "../content/media.js";
-import { crumbs, documentPage, insightIcon, practiceIcon, signalGraphic } from "./layout.js";
+import { crumbs, documentPage, insightIcon, practiceIcon, signalGraphic, whyIcon } from "./layout.js";
 import { esc } from "./html.js";
 import { trust } from "../config/trust.js";
 import {
@@ -18,6 +18,7 @@ import {
   privacyHtml,
   regulatoryHtml,
   reviewFoot,
+  sraRegisterAnchor,
 } from "./trust-html.js";
 
 function personHref(person) {
@@ -126,15 +127,18 @@ function wrap(inner, band = "") {
   return `<div class="section ${band}"><div class="wrap">${inner}</div></div>`;
 }
 
-function titledStack(items) {
-  return `<div class="item-stack">
+function titledStack(items, marked = false) {
+  return `<div class="item-stack${marked ? " item-stack-marked" : ""}">
     ${items
-      .map(
-        (item) => `<article>
-          <h3>${esc(item.title)}</h3>
-          <p class="muted">${esc(item.text)}</p>
-        </article>`,
-      )
+      .map((item) => {
+        const body = `<h3>${esc(item.title)}</h3>
+          <p class="muted">${esc(item.text)}</p>`;
+        if (!marked) return `<article>${body}</article>`;
+        return `<article>
+          <span class="service-mark" aria-hidden="true">${whyIcon(item.icon)}</span>
+          <span>${body}</span>
+        </article>`;
+      })
       .join("")}
   </div>`;
 }
@@ -143,35 +147,78 @@ function bulletList(items) {
   return `<ul>${items.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`;
 }
 
+function actionButton(page, fallbackLabel = "Discuss a matter") {
+  const label = page?.cta?.label || fallbackLabel;
+  const href = page?.cta?.href || "/contact/";
+  return `<a class="btn btn-signal" href="${esc(href)}">${esc(label)}</a>`;
+}
+
+function enquiryBand(page, fallbackHeading = "Discuss this matter") {
+  const heading = page?.ctaBand?.heading || fallbackHeading;
+  const text =
+    page?.ctaBand?.text ||
+    "Give us a concise account of the matter. Do not send passwords, private keys, seed phrases or original identity documents.";
+  return `<div class="cta-band">
+          <h2>${esc(heading)}</h2>
+          <p class="muted">${esc(text)}</p>
+          ${actionButton(page)}
+        </div>`;
+}
+
 function matterProse(key) {
   const extra = serviceMatter[key];
   if (!extra) return "";
+  const whenHeading = extra.whenHeading || "When this work may be appropriate";
+  const altHeading = extra.alternativeHeading || "When another route may be better";
+  const processHeading = extra.processHeading || "How the work usually runs";
+  const alternative = extra.alternative
+    ? `<h2>${esc(altHeading)}</h2><p>${esc(extra.alternative)}</p>`
+    : extra.notFor?.length
+      ? `<h2>${esc(altHeading)}</h2>${bulletList(extra.notFor)}`
+      : "";
+  const authorities = extra.authorities?.length
+    ? extra.authorities
+        .filter((item) => isPublicText(item.heading) && isPublicText(item.text))
+        .map((item) => `<h3>${esc(item.heading)}</h3><p>${esc(item.text)}</p>`)
+        .join("")
+    : "";
+  const extraBlocks = (extra.extraBlocks || [])
+    .filter((item) => isPublicText(item.heading) && isPublicText(item.text))
+    .map((item) => {
+      const text = esc(item.text)
+        .replace("See the fraud warning.", 'See the <a href="/fraud-warning/">fraud warning</a>.')
+        .replace("See Pricing.", 'See <a href="/pricing/">Pricing</a>.');
+      return `<h2>${esc(item.heading)}</h2><p>${text}</p>`;
+    })
+    .join("");
+  const steps = extra.process.filter((step) => isPublicText(step.title) && isPublicText(step.text));
   return `
-    <h2>Who this is for</h2>
+    <h2>${esc(whenHeading)}</h2>
     ${bulletList(extra.forWhom)}
-    <h2>Who this is not for</h2>
-    ${bulletList(extra.notFor)}
+    ${alternative}
     <h2>${esc(extra.law.heading)}</h2>
     <p>${esc(extra.law.text)}</p>
-    <h2>How the work usually runs</h2>
+    ${authorities}
+    <h2>${esc(processHeading)}</h2>
     <ol>
-      ${extra.process
-        .filter(
-          (step) =>
-            isPublicText(step.title) && isPublicText(step.text) && isPublicText(step.timescale),
-        )
-        .map(
-          (step) =>
-            `<li><strong>${esc(step.title)}</strong> (${esc(step.timescale)}). ${esc(step.text)}</li>`,
-        )
+      ${steps
+        .map((step) => {
+          const time = isPublicText(step.timescale) ? ` (${esc(step.timescale)})` : "";
+          return `<li><strong>${esc(step.title)}</strong>${time}. ${esc(step.text)}</li>`;
+        })
         .join("")}
     </ol>
-    <h2>What it costs</h2>
-    <p>${esc(extra.costs)}</p>
-    <h2>What can go wrong</h2>
-    ${bulletList(extra.risks)}
-    <h2>Who handles your matter</h2>
-    <p>${htmlWithSraLinks(extra.handler)}</p>
+    ${extraBlocks}
+    ${
+      extra.risks?.length
+        ? `<h2>Principal risks</h2>
+    ${bulletList(extra.risks)}`
+        : ""
+    }
+    <h2>Fees</h2>
+    <p>We agree the scope and charging basis before substantive work begins. Most matters are charged by reference to time; a fixed fee may be available for a clearly defined preliminary review. Full rates and terms are on the <a href="/pricing/">Pricing</a> page.</p>
+    <h2>Who is responsible</h2>
+    <p>Each matter is supervised by a named solicitor. Specialist investigators and forensic professionals are introduced where their expertise is needed, with their role and status explained. Job titles on this site are not a reserved-activity authorisation. Confirm current authorised individuals on the <a href="/regulatory-information/">Regulatory information</a> page and the ${sraRegisterAnchor("public SRA record")}.</p>
   `;
 }
 
@@ -187,10 +234,7 @@ function cobraSection(band = "") {
           <p class="label">${esc(cobra.label)}</p>
           <h2>${esc(cobra.heading)}</h2>
           <p class="lead muted">${esc(cobra.lead)}</p>
-          <p>${esc(cobra.text)}</p>
-          ${titledStack(cobra.items)}
-          <p class="tool-source muted">${esc(cobra.sourceNote)} <a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(cobra.sourceLabel)}</a>.</p>
-          <p><a class="btn btn-ghost" href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(cobra.cta)}</a></p>
+          <p class="tool-source muted">${esc(cobra.text)} <a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(cobra.sourceLabel)}</a>.</p>
         </div>
       </section>`;
 }
@@ -200,14 +244,6 @@ function figure(item, className = "media-figure") {
   return `<figure class="${className}">
     <img src="${esc(item.src)}" width="${item.width}" height="${item.height}" alt="${esc(item.alt)}" decoding="async" loading="lazy">
   </figure>`;
-}
-
-function photoStrip(items, label) {
-  return `<section class="photo-strip-band" aria-label="${esc(label)}">
-    <div class="wrap photo-strip">
-      ${items.map((item) => figure(item, "media-figure")).join("")}
-    </div>
-  </section>`;
 }
 
 function cta(link) {
@@ -240,11 +276,14 @@ function homePage() {
         </div>
       </section>
 
-      <section class="section band-paper" id="people">
-        <div class="wrap people-home">
-          ${peopleCollective()}
-          <div class="people-home-foot">
-            <a class="btn btn-ghost" href="${home.sections.profile.cta.href}">${esc(home.sections.profile.cta.label)}</a>
+      <section class="section">
+        <div class="wrap split-visual who-visual">
+          ${figure(media.fileCorridor, "media-figure")}
+          <div class="who-copy">
+            <p class="label">${esc(who.label)}</p>
+            <h2>${esc(who.heading)}</h2>
+            <p class="lead muted method-lead">${htmlWithSraLinks(who.lead)}</p>
+            <p class="muted">${esc(who.text)}</p>
           </div>
         </div>
       </section>
@@ -267,40 +306,34 @@ function homePage() {
         </div>
       </section>
 
-      <section class="section">
-        <div class="wrap split-visual who-visual">
-          ${figure(media.fileCorridor, "media-figure")}
-          <div class="who-copy">
-            <p class="label">${esc(who.label)}</p>
-            <h2>${esc(who.heading)}</h2>
-            <p class="lead muted method-lead">${htmlWithSraLinks(who.lead)}</p>
-            <p class="muted">${esc(who.text)}</p>
-            <p class="label audience-label">${esc(who.actForLabel)}</p>
-            <ul class="audience-list">
-              ${who.actFor.map((item) => `<li>${esc(item)}</li>`).join("")}
-            </ul>
-            <p class="label audience-label">${esc(who.actNotForLabel)}</p>
-            <ul class="audience-list">
-              ${who.actNotFor.map((item) => `<li>${esc(item)}</li>`).join("")}
-            </ul>
+      <section class="section band-ink">
+        <div class="wrap">
+          <p class="label">${esc(standing.label)}</p>
+          <h2>${esc(standing.heading)}</h2>
+          <ul class="recognition-list">
+            ${standing.items.map((item) => `<li>${htmlWithSraLinks(item)}</li>`).join("")}
+          </ul>
+          <p class="standing-note">${htmlWithSraLinks(standing.note)}</p>
+          <p><a class="btn btn-ghost" href="${esc(site.sraUrl)}" target="_blank" rel="noopener noreferrer">${esc(standing.link)}</a></p>
+        </div>
+      </section>
+
+      <section class="section band-paper" id="people">
+        <div class="wrap people-home">
+          ${peopleCollective()}
+          <div class="people-home-foot">
+            <a class="btn btn-ghost" href="${home.sections.profile.cta.href}">${esc(home.sections.profile.cta.label)}</a>
           </div>
         </div>
       </section>
 
-      <section class="section band-paper">
+      <section class="section">
         <div class="wrap">
           <p class="label">${esc(why.label)}</p>
           <h2>${esc(why.heading)}</h2>
-          ${titledStack(why.items)}
+          ${titledStack(why.items, true)}
         </div>
       </section>
-
-      ${cobraSection()}
-
-      ${photoStrip(
-        [media.archiveBoxes, media.deskFiles, media.quietRoom],
-        "The rooms in which the work is done",
-      )}
 
       <section class="section">
         <div class="wrap">
@@ -319,18 +352,6 @@ function homePage() {
               )
               .join("")}
           </div>
-        </div>
-      </section>
-
-      <section class="section band-ink">
-        <div class="wrap">
-          <p class="label">${esc(standing.label)}</p>
-          <h2>${esc(standing.heading)}</h2>
-          <ul class="recognition-list">
-            ${standing.items.map((item) => `<li>${htmlWithSraLinks(item)}</li>`).join("")}
-          </ul>
-          <p class="standing-note">${esc(standing.note)}</p>
-          <p><a class="btn btn-ghost" href="${esc(site.sraUrl)}" target="_blank" rel="noopener noreferrer">${esc(standing.link)}</a></p>
         </div>
       </section>
 
@@ -386,7 +407,6 @@ function expertiseIndex() {
             (item) => `<a href="${item.href}">
               <span class="service-mark" aria-hidden="true">${practiceIcon(item.id)}</span>
               <span>
-                <p class="label">${item.index}</p>
                 <h2>${esc(item.title)}</h2>
                 <p class="muted">${esc(item.summary)}</p>
               </span>
@@ -412,7 +432,7 @@ function servicePage(key, practiceId) {
         ])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
-          <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
+          ${actionButton(page)}
       </div>
       ${wrap(`
         <div class="prose">
@@ -450,13 +470,7 @@ function servicePage(key, practiceId) {
           `)
           : ""
       }
-      ${wrap(`
-        <div class="cta-band">
-          <h2>Discuss this matter</h2>
-          <p class="muted">Write with the facts you already have. Do not send passwords, seed phrases or original identity documents.</p>
-          <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
-        </div>
-      `)}
+      ${wrap(enquiryBand(page, "Discuss this matter"))}
       ${reviewFoot(page)}
     </main>
   `;
@@ -487,7 +501,7 @@ function investigationIndex() {
         <nav class="page-jump" aria-label="On this page">
           ${page.jump.map((item) => `<a href="${item.href}">${esc(item.label)}</a>`).join("")}
         </nav>
-        <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
+        ${actionButton(page, "Speak to the investigations practice")}
       </div>
       <div class="wrap join-intro">
         ${page.intro.map((para) => `<p>${esc(para)}</p>`).join("")}
@@ -497,7 +511,7 @@ function investigationIndex() {
         <div class="wrap practice-bar-inner">
           <div class="practice-bar-head">
             <p class="label">What we investigate</p>
-            <h2>Five lines of enquiry.</h2>
+            <h2>Five categories of investigation.</h2>
           </div>
           <div class="practice-bar-list">
             ${site.investigations
@@ -515,7 +529,7 @@ function investigationIndex() {
         <div class="wrap">
           <p class="label">${esc(page.people.label)}</p>
           <h2>${esc(page.people.heading)}</h2>
-          <p class="lead profile-lead">${esc(page.people.text)}</p>
+          <p class="lead profile-lead">${htmlWithSraLinks(page.people.text)}</p>
           ${peopleCards(investigators, "compact")}
           <p><a class="btn btn-ghost" href="/people/">All profiles</a></p>
         </div>
@@ -536,10 +550,8 @@ function investigationIndex() {
           : ""
       }
       <section class="section" id="instruct">
-        <div class="wrap cta-band">
-          <h2>${esc(page.cta.heading)}</h2>
-          <p class="lead muted">${esc(page.cta.text)}</p>
-          <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
+        <div class="wrap">
+          ${enquiryBand(page, "Speak to the investigations practice")}
         </div>
       </section>
       ${reviewFoot(page)}
@@ -549,7 +561,11 @@ function investigationIndex() {
 }
 
 function investigationPage(item) {
-  const page = pages[item.copyKey];
+  const page = {
+    ...pages[item.copyKey],
+    cta: pages[item.copyKey].cta || pages.investigations.cta,
+    ctaBand: pages[item.copyKey].ctaBand || pages.investigations.ctaBand,
+  };
   const related = site.insights.filter((note) =>
     (item.related || []).some((id) => note.related.includes(id)),
   );
@@ -565,7 +581,7 @@ function investigationPage(item) {
         ])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
-        <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
+        ${actionButton(page, "Speak to the investigations practice")}
       </div>
       ${wrap(`
         <div class="prose">
@@ -621,13 +637,7 @@ function investigationPage(item) {
           `)
           : ""
       }
-      ${wrap(`
-        <div class="cta-band">
-          <h2>Discuss this investigation</h2>
-          <p class="muted">Write with the facts you already have. Do not send passwords, seed phrases or original identity documents.</p>
-          <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
-        </div>
-      `)}
+      ${wrap(enquiryBand(page, "Speak to the investigations practice"))}
       ${reviewFoot(page)}
     </main>
   `;
@@ -728,9 +738,11 @@ function joinUsPage() {
         <nav class="page-jump" aria-label="On this page">
           ${page.jump.map((item) => `<a href="${item.href}">${esc(item.label)}</a>`).join("")}
         </nav>
+        ${actionButton(page, "View current opportunities")}
       </div>
       <div class="wrap join-intro">
         ${page.intro.map((para) => `<p>${esc(para)}</p>`).join("")}
+        <p><a href="/people/">People at Edison Law</a></p>
       </div>
       <section class="section" id="careers">
         <div class="wrap">
@@ -753,19 +765,6 @@ function joinUsPage() {
           <p class="label">${esc(page.why.label)}</p>
           <h2>${esc(page.why.heading)}</h2>
           ${titledStack(page.why.items)}
-        </div>
-      </section>
-      <section class="section" id="people">
-        <div class="wrap">
-          <div class="join-people-head">
-            <div>
-              <p class="label">${esc(page.people.label)}</p>
-              <h2>${esc(page.people.heading)}</h2>
-              <p class="lead profile-lead">${esc(page.people.text)}</p>
-            </div>
-            <a class="btn btn-ghost" href="/people/">All profiles</a>
-          </div>
-          ${peopleCards(site.people, "compact")}
         </div>
       </section>
       <section class="section band-ink join-vacancies" id="vacancies">
@@ -807,7 +806,7 @@ function personPage(person) {
         <div class="prose">
           <h1>${esc(person.name)}</h1>
           <p class="mono">${esc(person.role)}</p>
-          <p class="muted">${htmlWithSraLinks(trust.firm.regulatorCheckText)}</p>
+          <p class="muted">Job titles on this site are not a reserved-activity authorisation. Confirm current authorised individuals on the <a href="/regulatory-information/">Regulatory information</a> page and the ${sraRegisterAnchor("public SRA record")}.</p>
           ${person.bio.map((para) => `<p>${htmlWithSraLinks(para)}</p>`).join("")}
           ${
             person.quotes?.length
@@ -828,7 +827,7 @@ function personPage(person) {
             <ul>${person.experience.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`
               : ""
           }
-          <p><a class="btn btn-signal" href="/contact/">Discuss a matter</a></p>
+          <p><a class="btn btn-signal" href="/contact/">Send an initial enquiry</a></p>
         </div>
       </div>
     </main>
@@ -842,11 +841,7 @@ function aboutPage() {
   const record = page.record;
   const clients = page.clients;
   const commitments = page.commitments;
-  const namedOnFile = String(site.people.filter((person) => !person.principal).length);
-  const facts = [
-    ...record.items,
-    { value: namedOnFile, label: "People on the file in these pages, besides the owner" },
-  ];
+  const facts = record.items;
   const body = `
     <main id="content">
       <div class="wrap page-head">
@@ -885,7 +880,7 @@ function aboutPage() {
         <div class="wrap">
           <p class="label">${esc(record.label)}</p>
           <h2>${esc(record.heading)}</h2>
-          <p class="lead muted">${esc(record.note)}</p>
+          <p class="lead muted">${htmlWithSraLinks(record.note)}</p>
           <div class="facts-strip">
             ${facts
               .map((item) => {
@@ -961,7 +956,7 @@ function contactPage() {
             </label>
             <p class="error" data-error-for="privacy">Confirm you have read the privacy notice.</p>
           </div>
-          <button class="btn btn-signal" type="submit">Discuss a matter</button>
+          <button class="btn btn-signal" type="submit">${esc(page.formButton || "Send an initial enquiry")}</button>
           <p class="form-status" data-form-status></p>
           <p class="small muted">${
             site.email
@@ -985,6 +980,22 @@ const TRUST_PAGE_HTML = {
 
 function legalPage(key) {
   const page = pages[key];
+  if (page.movedTo) {
+    const body = `
+    <main id="content">
+      <div class="wrap page-head">
+        ${crumbs([{ label: page.heading }])}
+        <h1>${esc(page.heading)}</h1>
+        ${page.intro && isPublicText(page.intro) ? `<p class="lead muted">${htmlWithSraLinks(page.intro)}</p>` : ""}
+        <p><a class="btn btn-signal" href="${esc(page.movedTo)}">Regulatory information</a></p>
+      </div>
+    </main>
+  `;
+    return documentPage(
+      { ...page, crumb: page.heading, canonicalPath: page.movedTo, redirectTo: page.movedTo },
+      body,
+    );
+  }
   const extra = TRUST_PAGE_HTML[page.trustPage]
     ? TRUST_PAGE_HTML[page.trustPage]()
     : (page.blocks || [])
