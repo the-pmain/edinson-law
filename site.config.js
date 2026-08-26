@@ -44,7 +44,6 @@ export const site = {
 
   rail: [
     { label: "Expertise", href: "/expertise/" },
-    { label: "Investigations", href: "/investigations/" },
     { label: "Insights", href: "/insights/" },
     { label: "People", href: "/people/" },
     { label: "Join us", href: "/join-us/" },

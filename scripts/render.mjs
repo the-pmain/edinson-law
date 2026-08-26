@@ -1,4 +1,12 @@
-import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { dirname, join } from "node:path";
 import { site } from "../site.config.js";
 import { formatOutstandingReport } from "../src/config/trust.js";
@@ -9,6 +17,21 @@ const PLACEHOLDER = /VERIFY_|NEEDS_CLIENT_INPUT/;
 const root = process.cwd();
 const pages = allPages();
 const leaks = [];
+
+const peopleDir = join(root, "people");
+const currentPeople = new Set(
+  pages
+    .map((page) => page.file.match(/^people\/([^/]+)\/index\.html$/)?.[1])
+    .filter(Boolean),
+);
+
+if (existsSync(peopleDir)) {
+  for (const entry of readdirSync(peopleDir, { withFileTypes: true })) {
+    if (!entry.isDirectory() || currentPeople.has(entry.name)) continue;
+    rmSync(join(peopleDir, entry.name), { recursive: true, force: true });
+    console.log(`removed stale people/${entry.name}/`);
+  }
+}
 
 for (const page of pages) {
   const dest = join(root, page.file);

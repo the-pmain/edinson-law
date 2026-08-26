@@ -10,9 +10,11 @@ export const home = {
   schema: "home",
   sections: {
     hero: {
-      descriptor: "Private prosecutions · Asset recovery · Financial crime",
-      heading: "Financial crime disputes demand clear evidence and sound judgment.",
-      lead: "Edison Law advises individuals, businesses and organisations facing fraud, asset-recovery and investigation matters. We establish the facts, identify the available legal routes and explain the commercial risks before substantial costs are incurred.",
+      descriptor: "Digital assets · investigations · recovery",
+      heading: "When assets move, follow the",
+      headingLines: ["When assets", "move,", "follow the"],
+      headingEmphasis: "evidence.",
+      lead: "Edison Law combines transaction tracing, evidence preservation and legal analysis for fraud, financial-crime and asset-recovery matters.",
       cta: { label: "Discuss a matter", href: "/contact/" },
       ctaSecondary: { label: "Explore our expertise", href: "/expertise/" },
     },
@@ -103,8 +105,38 @@ export const home = {
         `SRA number ${trust.firm.sraNumber} — authorised and regulated by the Solicitors Regulation Authority.`,
         trust.firm.regulatorCheckText,
       ],
-      note: "Confirm current authorised individuals on the public SRA organisation record. We do not publish recoveries, win rates or directory rankings.",
+      note: "Confirm current authorised individuals on the public SRA organisation record. We do not publish recoveries or win rates.",
       link: "Open the public SRA record",
+    },
+    awards: {
+      heading: "Our Awards",
+      text: "Edison Law has earned a number of significant industry plaudits, including the following.",
+      items: [
+        {
+          src: "/images/awards/legal-500.png",
+          alt: "The Legal 500 United Kingdom Top Tier 2023",
+          width: 148,
+          height: 214,
+        },
+        {
+          src: "/images/awards/global-awards.png",
+          alt: "Global Awards 2015 Corporate LiveWire Winner",
+          width: 380,
+          height: 192,
+        },
+        {
+          src: "/images/awards/ai-legal-awards.png",
+          alt: "AI Legal Awards 2015 Winner, Best City Boutique UK",
+          width: 354,
+          height: 283,
+        },
+        {
+          src: "/images/awards/the-lawyer-awards.png",
+          alt: "The Lawyer Awards 2014 Winner, Boutique Firm of the Year City",
+          width: 177,
+          height: 250,
+        },
+      ],
     },
     profile: {
       label: "The practice",

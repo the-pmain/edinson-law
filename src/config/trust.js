@@ -6,10 +6,9 @@
 export const trust = {
   firm: {
     tradingName: "Edison Law",
-    legalName: "Edison Law Limited",
+    legalName: "Edison Law",
     entityType:
-      "Private company limited by shares, incorporated in England and Wales, " +
-      "authorised and regulated by the Solicitors Regulation Authority",
+      "Recognised sole practice authorised and regulated by the Solicitors Regulation Authority",
     companyNumber: "c",
     sraNumber: "510498",
     vatNumber: "GB 214 5578 09",
@@ -64,8 +63,8 @@ export const trust = {
     substantiveTime:
       "Where we can act, you will have a named solicitor and an outline of next " +
       "steps within two working days of that acknowledgement.",
-    firstContactName: "Marcus Edison",
-    firstContactRole: "Managing Partner",
+    firstContactName: "VERIFY_FIRST_CONTACT_NAME",
+    firstContactRole: "VERIFY_FIRST_CONTACT_ROLE",
     firstContactStatement:
       "Your first email or call is read by VERIFY_FIRST_CONTACT_NAME, not by an " +
       "intake team or a call centre. You will be told at that point who will " +
@@ -179,7 +178,7 @@ export const trust = {
   },
 
   privacy: {
-    controller: "Edison Law Limited",
+    controller: "Edison Law",
     email: "dataprotection@edisonlaw.co.uk",
     lawfulBases: [
       {

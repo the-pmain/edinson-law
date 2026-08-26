@@ -56,6 +56,43 @@ export function whyIcon(id) {
 const MARK_ATTR = `viewBox="0 0 240 240" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round"`;
 
 const FIELD_MARKS = {
+  trace: `<svg ${MARK_ATTR}>
+    <rect width="240" height="240" fill="var(--mark-ground)"/>
+    <g stroke="var(--mark-line)" stroke-width="0.65" opacity="0.28">
+      <path d="M0 24h240M0 48h240M0 72h240M0 96h240M0 120h240M0 144h240M0 168h240M0 192h240M0 216h240"/>
+      <path d="M24 0v240M48 0v240M72 0v240M96 0v240M120 0v240M144 0v240M168 0v240M192 0v240M216 0v240"/>
+    </g>
+    <g fill="none" stroke="var(--mark-line)" opacity="0.24">
+      <circle cx="128" cy="126" r="72"/>
+      <circle cx="128" cy="126" r="50"/>
+      <circle cx="128" cy="126" r="34"/>
+    </g>
+    <g stroke="var(--mark-sheet)" stroke-width="1.2" opacity="0.78">
+      <path d="M128 126 48 72M128 126 198 48M128 126 208 112M128 126 70 202M128 126 192 204"/>
+    </g>
+    <g fill="var(--mark-ground)" stroke="var(--mark-sheet)" stroke-width="1.8">
+      <circle cx="48" cy="72" r="5"/>
+      <circle cx="198" cy="48" r="5"/>
+      <circle cx="208" cy="112" r="5"/>
+      <circle cx="70" cy="202" r="5"/>
+      <circle cx="192" cy="204" r="5"/>
+    </g>
+    <g fill="var(--mark-wash)" opacity="0.22">
+      <circle cx="48" cy="72" r="12"/>
+      <circle cx="198" cy="48" r="12"/>
+      <circle cx="208" cy="112" r="12"/>
+      <circle cx="70" cy="202" r="12"/>
+      <circle cx="192" cy="204" r="12"/>
+    </g>
+    <circle cx="128" cy="126" r="34" fill="var(--mark-signal)"/>
+    <text x="128" y="121" text-anchor="middle" fill="var(--mark-ink)" font-family="var(--font-mono)" font-size="6" letter-spacing="1.2">EVIDENCE</text>
+    <text x="128" y="132" text-anchor="middle" fill="var(--mark-ink)" font-family="var(--font-mono)" font-size="5">WALLET / RECORD</text>
+    <text x="14" y="18" fill="var(--mark-sheet)" font-family="var(--font-mono)" font-size="5" letter-spacing="1.4">TRACE MAP</text>
+    <text x="188" y="18" fill="var(--mark-sheet)" font-family="var(--font-mono)" font-size="5">METHOD / 01</text>
+    <text x="34" y="60" fill="var(--mark-sheet)" font-family="var(--font-mono)" font-size="4">SOURCE</text>
+    <text x="194" y="100" fill="var(--mark-sheet)" font-family="var(--font-mono)" font-size="4">EXCHANGE</text>
+    <text x="58" y="220" fill="var(--mark-sheet)" font-family="var(--font-mono)" font-size="4">BRIDGE</text>
+  </svg>`,
   evidence: `<svg ${MARK_ATTR}>
     <rect width="240" height="240" fill="var(--mark-ground)"/>
     <circle cx="252" cy="-6" r="120" fill="var(--mark-signal)" fill-opacity="0.12"/>
@@ -216,16 +253,16 @@ function jsonLd(page) {
 
   if (page.person) {
     const personUrl = `${origin}/people/${page.person.slug}/`;
+    const verifiedSraId = page.person.sraId && !isPending(page.person.sraId);
+    const canPublishJobTitle = !/lawyer|solicitor/i.test(page.person.role || "") || verifiedSraId;
     graph.push({
       "@type": "Person",
       name: page.person.name,
-      jobTitle: page.person.role,
+      ...(canPublishJobTitle ? { jobTitle: page.person.role } : {}),
       url: personUrl,
       worksFor: { "@id": `${origin}/#organisation` },
       ...(page.person.photo ? { image: `${origin}${page.person.photo}` } : {}),
-      ...(page.person.sraId && !isPending(page.person.sraId)
-        ? { identifier: page.person.sraId }
-        : {}),
+      ...(verifiedSraId ? { identifier: page.person.sraId } : {}),
     });
   }
 

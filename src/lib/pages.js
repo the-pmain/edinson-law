@@ -43,20 +43,35 @@ function personExpertise(person) {
   const role = (person.role || "").toLowerCase();
   const tags = [];
   if (/owner/.test(role)) tags.push("Practice");
-  if (/lawyer|prosecution|restraint|disclosure|freezing/.test(role)) tags.push("Private prosecutions");
-  if (/asset|recovery|confiscation|tracing|payments/.test(role)) tags.push("Asset tracing");
-  if (/crypto|digital forensics/.test(role)) tags.push("Crypto & digital");
   if (/regulatory|hmrc|tax/.test(role)) tags.push("Regulatory");
   if (/cross-border|corruption/.test(role)) tags.push("Cross-border");
-  if (/investigator|internal investigation|intelligence/.test(role)) tags.push("Investigations");
+  if (/crypto|digital asset/.test(role)) tags.push("Crypto & digital");
   if (/forensic accountant/.test(role)) tags.push("Forensic accounting");
+  if (/investigator|investigation|digital forensics|intelligence/.test(role)) {
+    tags.push("Investigations");
+  }
+  if (/asset|recovery|confiscation|tracing|payments/.test(role)) tags.push("Asset tracing");
+  if (/solicitor|lawyer|prosecution|restraint|disclosure|freezing/.test(role)) {
+    tags.push("Private prosecutions");
+  }
   return [...new Set(tags)];
+}
+
+function personGroup(person) {
+  const role = (person.role || "").toLowerCase();
+  if (person.principal) return "practice";
+  if (/solicitor|lawyer/.test(role)) return "legal";
+  if (/investigator|forensic accountant|digital forensics|internal investigation|intelligence/.test(role)) {
+    return "investigations";
+  }
+  return "recovery";
 }
 
 function personStatus(person) {
   if (person.principal) return "Owner · sole practice";
   const role = person.role || "";
-  if (/^Lawyer/i.test(role)) return "Lawyer";
+  if (/Solicitor/i.test(role)) return "Solicitor";
+  if (/Lawyer/i.test(role)) return "Lawyer";
   if (/Investigator/i.test(role)) return "Investigator";
   return "Specialist";
 }
@@ -135,15 +150,16 @@ function peopleCollective(options = {}) {
       ${shot}
       <div class="owner-row-copy">${copy}</div>
     </div>`;
-  return `
-    ${row}
-    ${peopleCards(
-      options.all
-        ? site.people.filter((person) => !person.principal)
-        : site.people.filter((person) => !person.principal).slice(0, 14),
-      "compact",
-    )}
-  `;
+  const cards =
+    options.includePeople === false
+      ? ""
+      : peopleCards(
+          options.all
+            ? site.people.filter((person) => !person.principal)
+            : site.people.filter((person) => !person.principal).slice(0, 14),
+          "compact",
+        );
+  return `${row}${cards}`;
 }
 
 function insightTopics(item) {
@@ -234,6 +250,22 @@ function titledStack(items, marked = false) {
       })
       .join("")}
   </div>`;
+}
+
+function numberedList(items) {
+  return `<ol class="numbered-list">
+    ${items
+      .map(
+        (item, index) => `<li>
+          <span class="numbered-list-index" aria-hidden="true">${index + 1}</span>
+          <div class="numbered-list-copy">
+            <h3>${esc(item.title)}</h3>
+            <p class="muted">${esc(item.text)}</p>
+          </div>
+        </li>`,
+      )
+      .join("")}
+  </ol>`;
 }
 
 function bulletList(items) {
@@ -346,40 +378,30 @@ function cta(link) {
 }
 
 function homePage() {
-  const featured = site.insights[0];
-  const who = home.sections.who;
   const why = home.sections.why;
   const cases = home.sections.cases;
   const standing = home.sections.standing;
-  const london = home.sections.london;
+  const awards = home.sections.awards;
   const body = `
     <main id="content">
-      <section class="section band-paper hero-band">
-        <div class="wrap hero">
+      <section class="section band-paper hero-band home-hero">
+        <div class="wrap hero home-hero-inner">
           <div class="hero-copy">
             <p class="hero-trust mono"><a href="${esc(site.sraUrl)}" target="_blank" rel="noopener noreferrer">SRA ${esc(site.sraNumber)}</a></p>
             <p class="label">${esc(home.sections.hero.descriptor)}</p>
-            <h1 class="display">${esc(home.sections.hero.heading)}</h1>
+            <h1 class="display">
+              ${home.sections.hero.headingLines
+                .map((line) => `<span>${esc(line)}</span>`)
+                .join("")}
+              <em>${esc(home.sections.hero.headingEmphasis)}</em>
+            </h1>
+            <p class="lead">${esc(home.sections.hero.lead)}</p>
             <div class="hero-actions">
               ${cta(home.sections.hero.cta)}
               <a class="btn btn-ghost" href="${home.sections.hero.ctaSecondary.href}">${esc(
                 home.sections.hero.ctaSecondary.label,
               )}</a>
             </div>
-            <p class="lead">${esc(home.sections.hero.lead)}</p>
-          </div>
-          ${fieldMark("evidence", "field-mark hero-visual")}
-        </div>
-      </section>
-
-      <section class="section band-paper">
-        <div class="wrap split-visual who-visual">
-          ${fieldMark("method", "field-mark")}
-          <div class="who-copy">
-            <p class="label">${esc(who.label)}</p>
-            <h2>${esc(who.heading)}</h2>
-            <p class="lead muted method-lead">${htmlWithSraLinks(who.lead)}</p>
-            <p class="muted">${esc(who.text)}</p>
           </div>
         </div>
       </section>
@@ -392,6 +414,24 @@ function homePage() {
           <a class="btn btn-ghost" href="${home.sections.practiceBar.cta.href}">${esc(
             home.sections.practiceBar.cta.label,
           )}</a>
+        </div>
+      </section>
+
+      <section class="section awards-section" aria-label="Awards">
+        <div class="wrap awards-band">
+          <div class="awards-copy">
+            <h2>${esc(awards.heading)}</h2>
+            <p class="muted">${esc(awards.text)}</p>
+          </div>
+          <ul class="awards-logos">
+            ${awards.items
+              .map(
+                (item) => `<li>
+                  <img src="${esc(item.src)}" alt="${esc(item.alt)}" width="${item.width}" height="${item.height}" loading="lazy" decoding="async">
+                </li>`,
+              )
+              .join("")}
+          </ul>
         </div>
       </section>
 
@@ -416,11 +456,11 @@ function homePage() {
         </div>
       </section>
 
-      <section class="section">
-        <div class="wrap">
+      <section class="section home-work-section">
+        <div class="wrap home-work">
           <p class="label">${esc(why.label)}</p>
           <h2>${esc(why.heading)}</h2>
-          ${titledStack(why.items, true)}
+          ${numberedList(why.items)}
         </div>
       </section>
 
@@ -440,39 +480,6 @@ function homePage() {
                 </article>`,
               )
               .join("")}
-          </div>
-        </div>
-      </section>
-
-      <section class="section band-paper">
-        <div class="wrap">
-          <p class="label">${esc(home.sections.insight.label)}</p>
-          <h2>${esc(home.sections.insight.heading)}</h2>
-          <div class="insight-list">
-            ${insightEntry(featured, true)}
-          </div>
-        </div>
-      </section>
-
-      <section class="section band-ink london-band">
-        <div class="wrap split-visual">
-          <div class="london-copy">
-            <h2>${esc(london.heading)}</h2>
-            <p class="lead muted london-lead">${esc(london.text)}</p>
-            <p class="mono">${esc(london.meta)}</p>
-            <a class="btn btn-ghost" href="${london.cta.href}">${esc(london.cta.label)}</a>
-          </div>
-          ${fieldMark("london", "field-mark")}
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="wrap split-visual cta-visual">
-          ${fieldMark("discuss", "field-mark")}
-          <div class="cta-band reading">
-            <h2>${esc(home.sections.cta.heading)}</h2>
-            <p class="lead muted">${esc(home.sections.cta.text)}</p>
-            <a class="btn btn-ink" href="${home.sections.cta.cta.href}">${esc(home.sections.cta.cta.label)}</a>
           </div>
         </div>
       </section>
@@ -579,9 +586,7 @@ function servicePage(key, practiceId) {
 
 function investigationIndex() {
   const page = pages.investigations;
-  const investigators = site.people.filter((person) =>
-    /investigator|forensic|tracing/i.test(person.role),
-  );
+  const investigators = site.people.filter((person) => personGroup(person) === "investigations");
   const notes = site.insights.filter((item) => item.type === "Investigation note");
   const body = `
     <main id="content">
@@ -819,6 +824,23 @@ function insightPage(item) {
 function peoplePage() {
   const page = pages.people;
   const filters = [...new Set(site.people.flatMap((person) => personExpertise(person)))];
+  const directoryGroups = [
+    {
+      id: "legal",
+      heading: "Legal strategy & proceedings",
+      text: "Solicitors working across fraud, private prosecutions, interim relief, disclosure and related financial-crime proceedings.",
+    },
+    {
+      id: "investigations",
+      heading: "Investigations & evidence",
+      text: "Investigators and forensic specialists who preserve, test and organise the factual record.",
+    },
+    {
+      id: "recovery",
+      heading: "Asset recovery & digital assets",
+      text: "Specialists focused on payment trails, asset ownership, proceeds of crime and digital-asset movement.",
+    },
+  ];
   const body = `
     <main id="content">
       <div class="wrap page-head page-head-tight">
@@ -831,7 +853,23 @@ function peoplePage() {
         <p class="lead muted">${htmlWithSraLinks(page.lead)}</p>
       </div>
       <div class="wrap people-index" data-people-index>
-        ${peopleCollective({ intro: false, all: true })}
+        ${peopleCollective({ intro: false, all: true, includePeople: false })}
+        <p class="people-status-note">Not every person shown is a solicitor. Profiles describe each person's role and the work associated with it. Regulated legal work is provided or supervised through the firm's regulated legal practice.</p>
+        ${directoryGroups
+          .map((group) => {
+            const members = site.people.filter(
+              (person) => !person.principal && personGroup(person) === group.id,
+            );
+            if (!members.length) return "";
+            return `<section class="people-directory-group" data-people-group>
+              <div class="people-directory-head">
+                <p class="label">${esc(group.heading)}</p>
+                <p class="muted">${esc(group.text)}</p>
+              </div>
+              ${peopleCards(members, "compact")}
+            </section>`;
+          })
+          .join("")}
       </div>
     </main>
   `;
@@ -901,6 +939,13 @@ function joinUsPage() {
 }
 
 function personPage(person) {
+  const isSolicitor = /Solicitor/i.test(person.role || "");
+  const profileStatusDetail = isSolicitor
+    ? "Solicitor in an SRA-regulated legal practice"
+    : "Legal work supervised by a named solicitor";
+  const profileRoleNote = isSolicitor
+    ? `This profile describes representative areas of work. Current practising status can be checked on the ${sraRegisterAnchor("public SRA record")}.`
+    : `This profile describes the person's role and representative areas of work. A job title is not a reserved-activity authorisation. Confirm authorised individuals on the <a href="/regulatory-information/">Regulatory information</a> page and the ${sraRegisterAnchor("public SRA record")}.`;
   const page = {
     path: personHref(person),
     title: `${person.name} | Edison Law`,
@@ -925,7 +970,13 @@ function personPage(person) {
         <div class="prose">
           <h1>${esc(person.name)}</h1>
           <p class="mono">${esc(person.role)}</p>
-          <p class="muted">Job titles on this site are not a reserved-activity authorisation. Confirm current authorised individuals on the <a href="/regulatory-information/">Regulatory information</a> page and the ${sraRegisterAnchor("public SRA record")}.</p>
+          <p class="profile-status">
+            <span>${esc(personStatus(person))}</span>
+            <span>London</span>
+            <span>${esc(profileStatusDetail)}</span>
+          </p>
+          <p class="muted profile-role-note">${profileRoleNote}</p>
+          <h2>Role and focus</h2>
           ${person.bio.map((para) => `<p>${htmlWithSraLinks(para)}</p>`).join("")}
           ${
             person.quotes?.length

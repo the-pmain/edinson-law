@@ -224,6 +224,10 @@ function peopleFilter() {
       const tags = (item.dataset.expertise || "").split("|");
       item.hidden = value !== "all" && !tags.includes(value);
     });
+    document.querySelectorAll("[data-people-group]").forEach((group) => {
+      const cards = [...group.querySelectorAll("[data-expertise]")];
+      group.hidden = cards.length > 0 && cards.every((card) => card.hidden);
+    });
   });
 }
 
