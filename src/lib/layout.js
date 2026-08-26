@@ -53,12 +53,84 @@ export function whyIcon(id) {
   return WHY_ICONS[id] || PRACTICE_ICON_FALLBACK;
 }
 
+const MARK_ATTR = `viewBox="0 0 240 240" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round"`;
+
+const FIELD_MARKS = {
+  evidence: `<svg ${MARK_ATTR}>
+    <rect width="240" height="240" fill="var(--mark-ground)"/>
+    <circle cx="252" cy="-6" r="120" fill="var(--mark-signal)" fill-opacity="0.12"/>
+    <rect x="40" y="52" width="138" height="168" rx="3" fill="var(--mark-ink)" fill-opacity="0.1"/>
+    <rect x="52" y="34" width="138" height="168" rx="3" fill="var(--mark-sheet)" stroke="var(--mark-ink)" stroke-width="1.6"/>
+    <rect x="98" y="16" width="46" height="30" rx="2" fill="var(--mark-signal)"/>
+    <path d="M72 68h98M72 90h98M72 112h70M72 134h90M72 156h54M72 178h82" stroke="var(--mark-signal)" stroke-width="2.1"/>
+    <rect x="8" y="112" width="56" height="42" rx="2" fill="var(--mark-signal)"/>
+    <path d="M18 126h36M18 140h22" stroke="var(--mark-sheet)" stroke-width="2"/>
+    <circle cx="198" cy="198" r="24" fill="var(--mark-wash)" stroke="var(--mark-signal)" stroke-width="1.6"/>
+    <circle cx="198" cy="198" r="7" fill="var(--mark-signal)"/>
+  </svg>`,
+  method: `<svg ${MARK_ATTR}>
+    <rect width="240" height="240" fill="var(--mark-ground)"/>
+    <g stroke="var(--mark-ink)" stroke-width="1.5">
+      <rect x="14" y="18" width="74" height="54" rx="2" fill="var(--mark-sheet)"/>
+      <rect x="14" y="88" width="74" height="54" rx="2" fill="var(--mark-sheet)"/>
+      <rect x="14" y="158" width="74" height="54" rx="2" fill="var(--mark-sheet)"/>
+    </g>
+    <g stroke="var(--mark-signal)" stroke-width="2">
+      <path d="M28 36h46M28 48h30"/>
+      <path d="M28 106h46M28 118h24"/>
+      <path d="M28 176h46M28 188h34"/>
+    </g>
+    <g fill="none" stroke="var(--mark-signal)" stroke-width="2">
+      <path d="M88 45c28 0 28 63 48 63"/>
+      <path d="M88 115h48"/>
+      <path d="M88 185c28 0 28-55 48-55"/>
+    </g>
+    <rect x="128" y="28" width="96" height="184" rx="3" fill="var(--mark-ink)" fill-opacity="0.1"/>
+    <rect x="138" y="16" width="88" height="184" rx="3" fill="var(--mark-sheet)" stroke="var(--mark-ink)" stroke-width="1.6"/>
+    <rect x="166" y="4" width="32" height="22" rx="2" fill="var(--mark-signal)"/>
+    <path d="M154 46h56M154 66h56M154 86h38M154 106h50M154 126h28M154 146h46M154 166h34" stroke="var(--mark-signal)" stroke-width="2"/>
+  </svg>`,
+  london: `<svg ${MARK_ATTR}>
+    <rect width="240" height="240" fill="var(--mark-ground)"/>
+    <circle cx="214" cy="18" r="88" fill="var(--mark-signal)" fill-opacity="0.12"/>
+    <circle cx="22" cy="228" r="64" fill="var(--mark-ink)" fill-opacity="0.1"/>
+    <path d="M84 118v-36a36 36 0 0 1 72 0v36" fill="none" stroke="var(--mark-ink)" stroke-width="12"/>
+    <path d="M84 118v-36a36 36 0 0 1 72 0v36" fill="none" stroke="var(--mark-signal)" stroke-width="6"/>
+    <rect x="62" y="112" width="116" height="96" rx="10" fill="var(--mark-ink)" fill-opacity="0.12"/>
+    <rect x="68" y="106" width="104" height="96" rx="10" fill="var(--mark-signal)"/>
+    <circle cx="120" cy="142" r="14" fill="var(--mark-sheet)"/>
+    <path d="M120 156v22" stroke="var(--mark-sheet)" stroke-width="6" stroke-linecap="round"/>
+  </svg>`,
+  discuss: `<svg ${MARK_ATTR}>
+    <rect width="240" height="240" fill="var(--mark-ground)"/>
+    <rect x="48" y="52" width="144" height="136" rx="3" fill="var(--mark-sheet)" stroke="var(--mark-ink)" stroke-width="1.6"/>
+    <rect x="64" y="76" width="52" height="72" rx="2" fill="var(--mark-signal)"/>
+    <rect x="124" y="84" width="48" height="64" rx="2" fill="var(--mark-wash)" stroke="var(--mark-signal)" stroke-width="1.5"/>
+    <path d="M74 92h32M74 106h32M74 120h18" stroke="var(--mark-sheet)" stroke-width="2"/>
+    <rect x="12" y="78" width="28" height="84" rx="3" fill="var(--mark-ink)"/>
+    <rect x="200" y="78" width="28" height="84" rx="3" fill="var(--mark-ink)"/>
+    <path d="M16 228h208" stroke="var(--mark-line)" stroke-width="1.4"/>
+  </svg>`,
+  investigate: `<svg ${MARK_ATTR}>
+    <rect width="240" height="240" fill="var(--mark-ground)"/>
+    <path d="M20 64h84l16 22h100v132H20z" fill="var(--mark-signal)"/>
+    <path d="M28 64 84 16h92l-16 48" fill="var(--mark-wash)" stroke="var(--mark-ink)" stroke-width="1.4"/>
+    <rect x="40" y="104" width="160" height="96" rx="2" fill="var(--mark-sheet)"/>
+    <path d="M56 124h128M56 144h128M56 164h84" stroke="var(--mark-signal)" stroke-width="2.1"/>
+  </svg>`,
+};
+
+export function fieldMark(kind, className = "field-mark") {
+  const svg = FIELD_MARKS[kind] || FIELD_MARKS.evidence;
+  return `<div class="${className}" role="presentation">${svg}</div>`;
+}
+
 function brand(href = "/") {
   return `<a class="brand" href="${href}">${MARK}</a>`;
 }
 
 export function trustBadges() {
-  return `<div class="trust-badges">
+  return `<div class="trust-badges" role="group" aria-label="Regulation and memberships">
     <a class="trust-badge" href="${esc(site.sraUrl)}" target="_blank" rel="noopener noreferrer">
       <img src="/brand/sra-badge.svg" width="275" height="88" alt="Regulated by Solicitors Regulation Authority">
     </a>
@@ -348,9 +420,9 @@ export function documentPage(page, body) {
 <body data-mode="${esc(site.mode)}" data-path="${esc(page.path)}">
   <!--
     THESIS: Edison turns fragmented digital and financial facts into a legal position. The site is an evidence desk, not a recovery-service landing or a chambers brochure.
-    OWN-WORLD: Midnight and paper fields, Signal reserved for action and nodes, Newsreader display with Manrope interface, IBM Plex Mono only for real metadata, 248px evidence rail from 1280px, hairline rules, node-path graphics.
+    OWN-WORLD: Midnight and paper fields, Signal reserved for action and nodes, Newsreader display with Manrope interface, IBM Plex Mono only for real metadata, 200px evidence rail from 1680px, hairline rules, node-path graphics.
     STORY: A visitor in a live matter sees a London SRA-regulated firm that investigates then advises, finds the named solicitor and SRA number, and can start a confidential discussion without being sold recovery.
-    FIRST VIEWPORT: Compact header or left rail; paper hero; specialist descriptor; master line at display scale; one Discuss a matter action; evidence-signal rings with three nodes; SRA standing already in the chrome.
+    FIRST VIEWPORT: Compact header or left rail; paper hero; SRA number; specialist descriptor; master line; Discuss a matter in the first viewport; evidence mark.
     FORM: Brief-pinned Direction 01 Evidence Signal and the August 2026 brand-book digital system. No concept-seed; the visual world is already approved.
     FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
   -->
@@ -377,6 +449,9 @@ export function documentPage(page, body) {
   <aside class="rail" aria-label="Evidence rail">
     ${brand("/")}
     ${navLinks(site.rail, page.path, "rail-nav")}
+    <div class="rail-badges">
+      ${trustBadges()}
+    </div>
     <div class="rail-utility">
       ${site.search.enabled ? `<button type="button" data-search-open>Search</button>` : ""}
       <a href="/accessibility/">Accessibility</a>
@@ -450,19 +525,4 @@ export function crumbs(items) {
       })
       .join("")}
   </nav>`;
-}
-
-export function signalGraphic() {
-  return `<svg class="signal-graphic" viewBox="0 0 320 320" role="img" aria-label="Evidence signal: three nodes on concentric rings">
-    <g fill="none" stroke="#008D7A" stroke-opacity="0.35" stroke-width="1.2">
-      <circle cx="160" cy="160" r="56"/>
-      <circle cx="160" cy="160" r="96"/>
-      <circle cx="160" cy="160" r="136"/>
-    </g>
-    <g fill="#008D7A">
-      <circle cx="296" cy="160" r="6"/>
-      <circle cx="78" cy="48" r="6"/>
-      <circle cx="92" cy="268" r="6"/>
-    </g>
-  </svg>`;
 }

@@ -145,6 +145,7 @@ export const pages = {
       "Private prosecutions, asset tracing, crypto fraud, regulatory defence, cross-border recovery and corporate intelligence — legal routes for fraud, investigations and recovery.",
     heading: "Legal routes for fraud, investigations and recovery.",
     lead: "A financial-crime matter can involve several possible routes at once: a criminal complaint, private prosecution, urgent injunction, civil recovery, regulatory response or a decision not to proceed. Our role is to establish which route the evidence supports and whether the likely benefit justifies the cost and disruption.",
+    cta: { label: "Discuss a matter", href: "/contact/" },
   },
   privateProsecutions: {
     path: "/expertise/private-prosecutions/",
@@ -387,12 +388,36 @@ export const pages = {
       { label: "What we investigate", href: "#work" },
       { label: "Technology", href: "#cobra-ai" },
       { label: "Who does the work", href: "#investigators" },
-      { label: "Instruct", href: "#instruct" },
+      { label: "Start an enquiry", href: "#instruct" },
     ],
     people: {
       label: "Who does the work",
       heading: "Investigators and forensic specialists.",
       text: "Solicitors direct the investigation and take the legal decisions. These are the specialists they work with from the first day. Confirm authorised individuals on the public SRA record.",
+    },
+    process: {
+      label: "How an investigation runs",
+      heading: "Three steps. One record.",
+      items: [
+        {
+          index: "01",
+          icon: "evidence",
+          title: "Scope the questions",
+          text: "We agree what must be established, what is out of scope, and what must be preserved before anyone starts collecting.",
+        },
+        {
+          index: "02",
+          icon: "fees",
+          title: "Gather and test",
+          text: "Documents, devices, accounts and witnesses are taken in a form that can later be disclosed, exhibited or discarded with a reason.",
+        },
+        {
+          index: "03",
+          icon: "solicitor",
+          title: "Report what is established",
+          text: "The product is a record the solicitor can rely on: what is proved, what remains inference, and what legal routes that supports.",
+        },
+      ],
     },
     cta: { label: "Speak to the investigations practice", href: "/contact/" },
     ctaBand: {
@@ -611,7 +636,7 @@ export const pages = {
     description:
       "Practical notes on evidence, investigations and recovery from Edison Law in London. General information, not advice on a particular case.",
     heading: "Practical notes on evidence, investigations and recovery.",
-    lead: "Our articles explain the decisions that commonly arise in financial-crime matters: what to preserve, what a source can establish, when urgent relief may be appropriate and where legal or evidential limits arise. They provide general information, not advice on a particular case.",
+    lead: "Notes on what to preserve, what a source can establish, when urgent relief may be appropriate, and where legal or evidential limits arise. General information, not advice on a particular case.",
   },
   people: {
     path: "/people/",
@@ -619,7 +644,7 @@ export const pages = {
     description:
       "The people responsible for work at Edison Law. Confirm current authorised individuals on the public SRA record.",
     heading: "The people responsible for your work.",
-    lead: "Legal responsibility should be easy to understand. Each profile explains the person's professional status, experience, role on a matter and who supervises their work. Where a specialist is an external consultant rather than an employee of Edison Law, that relationship should be stated expressly. Job titles on this site are not a reserved-activity authorisation. Confirm current authorised individuals on the public SRA record.",
+    lead: "Each profile states the person's role on a matter. Job titles are not a reserved-activity authorisation. Confirm current authorised individuals on the public SRA record.",
   },
   joinUs: {
     path: "/join-us/",
@@ -627,17 +652,18 @@ export const pages = {
     description:
       "Careers at Edison Law in London. Lawyers, investigators and forensic specialists in financial crime, private prosecutions and asset recovery.",
     heading: "Work on matters where method and judgment are visible.",
-    lead: "Edison Law is a small regulated practice. Lawyers, investigators and specialist professionals work closely on financial-crime matters, with responsibility and supervision made clear from the outset. We welcome direct approaches when a genuine role or consultancy requirement is available.",
+    lead: "Edison Law is a small regulated practice. Employee roles sit inside the firm, with named supervision. Consultancy is a defined instruction for a piece of work — not a job title on the SRA record. We welcome either route when a genuine requirement is available.",
     intro: [
-      "The people who work on matters are listed on the People page. This page is for careers and consultancy approaches.",
-      "Write when a vacancy is published, or with a concise account of the work you want to do if no role is listed. Do not send original identity documents.",
+      "Apply for an employed role when a vacancy is listed. For consultancy, write with the work you can take and the basis on which you would be instructed.",
+      "If no role is listed, a concise speculative approach is still welcome. Do not send original identity documents.",
     ],
+    openRoles: 0,
     jump: [
       { label: "Careers with us", href: "#careers" },
       { label: "Why Edison Law", href: "#why" },
       { label: "Current opportunities", href: "#vacancies" },
     ],
-    cta: { label: "View current opportunities", href: "#vacancies" },
+    cta: { label: "View current opportunities (0)", href: "#vacancies" },
     tracks: {
       label: "Careers with us",
       heading: "The work you would do.",
@@ -687,6 +713,27 @@ export const pages = {
       heading: "Who you would work with.",
       text: "The people on the files. Open a profile for the work they actually do.",
     },
+    benefits: {
+      label: "What you would join",
+      heading: "How the practice is run.",
+      items: [
+        {
+          icon: "solicitor",
+          title: "Named supervision",
+          text: "Every instruction has a named solicitor. Your work is visible on the file, not absorbed into a large team.",
+        },
+        {
+          icon: "evidence",
+          title: "The evidential file",
+          text: "Investigators, lawyers and forensic specialists sit on the same matter. Method is written down.",
+        },
+        {
+          icon: "discretion",
+          title: "Discretion as a habit",
+          text: "Financial crime is reputationally sensitive. We recruit people who can be trusted with incomplete facts.",
+        },
+      ],
+    },
     vacancies: {
       label: "Vacancies",
       heading: "Current opportunities.",
@@ -703,22 +750,26 @@ export const pages = {
       "Edison Law is an SRA-regulated sole practice in London for financial crime, private prosecution and asset recovery.",
     heading: "A specialist London practice for financial-crime matters.",
     lead: "Edison Law is an SRA-regulated sole practice based in London. The firm advises on criminal, investigative and recovery matters involving fraud and financial misconduct. Each instruction is supervised by a named solicitor, with external counsel and specialist professionals engaged where the matter requires them.",
+    cta: { label: "Discuss a matter", href: "/contact/" },
     lifecycle: {
       label: "How a matter is held",
       heading: "Three stages. One file.",
       items: [
         {
           index: "01",
+          icon: "evidence",
           title: "Define and preserve",
           text: "We agree the immediate questions, identify urgent risks and preserve the material most likely to matter. Conflict and identity checks are completed before a retainer begins.",
         },
         {
           index: "02",
+          icon: "fees",
           title: "Establish and assess",
           text: "The relevant documents, accounts and witness evidence are reviewed. We explain what is established, what remains uncertain and what further work is proportionate.",
         },
         {
           index: "03",
+          icon: "solicitor",
           title: "Decide and act",
           text: "We recommend the appropriate legal route, its likely cost and its principal risks. That may involve proceedings, an application for urgent relief, a report to an authority, negotiated resolution or no further action.",
         },

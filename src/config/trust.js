@@ -10,7 +10,7 @@ export const trust = {
     entityType:
       "Private company limited by shares, incorporated in England and Wales, " +
       "authorised and regulated by the Solicitors Regulation Authority",
-    companyNumber: "07412896",
+    companyNumber: "c",
     sraNumber: "510498",
     vatNumber: "GB 214 5578 09",
     vatRegistered: true,

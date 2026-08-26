@@ -12,6 +12,7 @@ html,
 body {
   margin: 0;
   padding: 0;
+  overflow-x: clip;
 }
 
 body {
@@ -54,6 +55,7 @@ h4,
 ul,
 ol {
   margin: 0;
+  overflow-wrap: break-word;
 }
 
 h1,
@@ -64,6 +66,7 @@ h3,
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: var(--leading-heading);
+  overflow-wrap: break-word;
 }
 
 .display {
@@ -86,7 +89,7 @@ h3 {
 .lead {
   font-size: var(--text-lead);
   line-height: 1.5;
-  max-width: 40rem;
+  max-width: min(40rem, 100%);
 }
 
 .muted {
@@ -98,13 +101,15 @@ h3 {
 }
 
 .label {
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-size: var(--text-label);
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: var(--tracking-label);
   line-height: 1.4;
   text-transform: uppercase;
   color: var(--edison-signal-deep);
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .mono {

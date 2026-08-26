@@ -30,13 +30,14 @@
   /* Typography */
   --font-display: "Newsreader", Georgia, "Times New Roman", serif;
   --font-body: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-ui: "Manrope", Arial, Helvetica, sans-serif;
   --font-mono: "IBM Plex Mono", Consolas, monospace;
 
-  --text-display: clamp(3.5rem, 7vw, 6rem);
-  --text-h1: clamp(2.75rem, 5vw, 4.5rem);
-  --text-h2: clamp(2.125rem, 4vw, 3.5rem);
-  --text-h3: clamp(1.625rem, 2.5vw, 2.25rem);
-  --text-lead: clamp(1.125rem, 1.5vw, 1.375rem);
+  --text-display: clamp(2rem, 3.6vw, 3.15rem);
+  --text-h1: clamp(1.75rem, 2.8vw, 2.5rem);
+  --text-h2: clamp(1.45rem, 2.1vw, 2.15rem);
+  --text-h3: clamp(1.2rem, 1.5vw, 1.5rem);
+  --text-lead: clamp(1.0625rem, 1.15vw, 1.1875rem);
   --text-body: 1rem;
   --text-small: 0.875rem;
   --text-label: 0.75rem;
@@ -51,20 +52,27 @@
   --space-2: 0.5rem;
   --space-3: 0.75rem;
   --space-4: 1rem;
+  --space-5: 1.25rem;
   --space-6: 1.5rem;
   --space-8: 2rem;
+  --space-10: 2.5rem;
   --space-12: 3rem;
   --space-16: 4rem;
   --space-24: 6rem;
   --space-32: 8rem;
 
-  /* Layout */
-  --content-max: 90rem;
-  --reading-max: 46rem;
-  --rail-width: 248px;
-  --brand-lockup-width: calc(var(--rail-width) - 140px);
-  --grid-gap: clamp(1rem, 2vw, 2rem);
-  --page-pad: clamp(1.25rem, 4vw, 5rem);
+  /* Layout: compact on small screens, desktop values from 768 / 1024 */
+  --content-max: 75rem;
+  --reading-max: 40rem;
+  --rail-width: 200px;
+  --brand-lockup-width: 6.75rem;
+  --grid-gap: clamp(1rem, 2vw, 1.5rem);
+  --page-pad: clamp(1.25rem, 3.2vw, 3rem);
+  --section-y: var(--space-8);
+  --stack-y: var(--space-5);
+  --cluster-gap: var(--space-6);
+  --head-y: var(--space-6);
+  --mark-size: 13.5rem;
 
   /* Shape and motion */
   --radius-sm: 0.25rem;
@@ -79,6 +87,23 @@
 :focus-visible {
   outline: 3px solid var(--color-focus);
   outline-offset: 3px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --section-y: var(--space-12);
+    --stack-y: var(--space-6);
+    --cluster-gap: var(--space-8);
+    --head-y: var(--space-8);
+    --mark-size: 14rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --section-y: var(--space-16);
+    --head-y: var(--space-10);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

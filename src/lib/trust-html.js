@@ -60,21 +60,21 @@ function blockHtml(heading, inner) {
   return `<article class="legal-entry"><h2>${esc(heading)}</h2>${inner}</article>`;
 }
 
+function isRecordedId(value) {
+  return isPublicText(value) && /[0-9]/.test(value);
+}
+
 export function regulatoryFooterHtml() {
   const f = trust.firm;
-  const lines = [`<p>${esc(f.tradingName)}</p>`];
-  if (isPublicText(f.legalName) && f.legalName !== f.tradingName) {
-    lines.push(`<p>${esc(f.legalName)}</p>`);
-  }
-  if (isPublicText(f.entityType)) lines.push(`<p>${esc(f.entityType)}</p>`);
-  if (isPublicText(f.companyNumber)) lines.push(`<p>Company number ${esc(f.companyNumber)}</p>`);
-  lines.push(
-    `<p>Authorised and regulated by the Solicitors Regulation Authority, SRA number ${esc(f.sraNumber)}.</p>`,
-  );
-  if (isPublicText(f.vatNumber)) lines.push(`<p>VAT number ${esc(f.vatNumber)}</p>`);
-  if (isPublicText(f.registeredOffice)) {
-    lines.push(`<p>Registered office: ${esc(f.registeredOffice)}</p>`);
-  }
+  const ids = [
+    `<a href="${esc(sraRegisterUrl())}" target="_blank" rel="noopener noreferrer">SRA ${esc(f.sraNumber)}</a>`,
+  ];
+  if (isRecordedId(f.companyNumber)) ids.push(`<span>Company ${esc(f.companyNumber)}</span>`);
+  if (isRecordedId(f.vatNumber)) ids.push(`<span>VAT ${esc(f.vatNumber)}</span>`);
+  if (isRecordedId(f.icoNumber)) ids.push(`<span>ICO ${esc(f.icoNumber)}</span>`);
+
+  const lines = [`<p class="footer-ids">${ids.join("")}</p>`];
+  if (isPublicText(f.registeredOffice)) lines.push(`<p>${esc(f.registeredOffice)}</p>`);
   lines.push(`<p><a href="/regulatory-information/">Regulatory information</a></p>`);
   return lines.join("");
 }

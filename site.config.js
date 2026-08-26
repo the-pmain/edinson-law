@@ -70,48 +70,48 @@ export const site = {
       index: "01",
       title: "Private prosecutions",
       href: "/expertise/private-prosecutions/",
-      summary:
-        "Assessing and preparing privately brought criminal proceedings where the evidence and public-interest duties support that course.",
+      problem: "A criminal complaint has been declined, or is going nowhere.",
+      summary: "Assess whether a private prosecution is the right legal route.",
     },
     {
       id: "asset-tracing",
       index: "02",
       title: "Asset tracing & recovery",
       href: "/expertise/asset-tracing-recovery/",
-      summary:
-        "Identifying potentially recoverable value and selecting proportionate civil, criminal or insolvency remedies.",
+      problem: "Funds or assets have been moved and may still be reachable.",
+      summary: "Find what remains, then choose a proportionate civil, criminal or insolvency remedy.",
     },
     {
       id: "crypto-fraud",
       index: "03",
       title: "Crypto fraud & digital assets",
       href: "/expertise/crypto-fraud-digital-assets/",
-      summary:
-        "Converting transaction data, platform records and device evidence into a legal case with clearly stated limits.",
+      problem: "Value has moved through wallets, exchanges or devices.",
+      summary: "Turn the trail into exhibits, with the limits of the records stated.",
     },
     {
       id: "regulatory",
       index: "04",
       title: "Regulatory defence & investigations",
       href: "/expertise/regulatory-defence-investigations/",
-      summary:
-        "Advising individuals and businesses on notices, interviews, internal reviews and engagement with investigating authorities.",
+      problem: "A notice, interview or internal investigation has started.",
+      summary: "Control the first response and the record that follows.",
     },
     {
       id: "cross-border",
       index: "05",
       title: "Cross-border fraud & corruption",
       href: "/expertise/cross-border-fraud-corruption/",
-      summary:
-        "Coordinating English proceedings with appropriately qualified counsel where evidence, respondents or assets are overseas.",
+      problem: "The loss, the people or the assets sit in more than one country.",
+      summary: "Hold the English file and instruct local counsel where foreign procedure is required.",
     },
     {
       id: "corporate-intelligence",
       index: "06",
       title: "Corporate intelligence & pre-litigation",
       href: "/expertise/corporate-intelligence/",
-      summary:
-        "Lawful, confidential enquiries before litigation, investment, appointment or other material exposure.",
+      problem: "You need to know who you are dealing with before you commit.",
+      summary: "Lawful, confidential enquiries before litigation, investment or appointment.",
     },
   ],
 

@@ -1,16 +1,11 @@
 import { site } from "../../site.config.js";
 import { home, pages, insightBodies } from "../content/copy.js";
 import { serviceMatter } from "../content/service-matter.js";
-import {
-  media,
-  practiceMedia,
-} from "../content/media.js";
-import { crumbs, documentPage, insightIcon, practiceIcon, signalGraphic, whyIcon } from "./layout.js";
+import { crumbs, documentPage, fieldMark, insightIcon, practiceIcon, whyIcon } from "./layout.js";
 import { esc } from "./html.js";
 import { trust } from "../config/trust.js";
 import {
   complaintsHtml,
-  contactDetailsHtml,
   filterPublicFaqs,
   htmlWithSraLinks,
   isPublicText,
@@ -44,6 +39,38 @@ function personPortrait(person, className = "person-photo") {
   return portraitSlot(person, className);
 }
 
+function personExpertise(person) {
+  const role = (person.role || "").toLowerCase();
+  const tags = [];
+  if (/owner/.test(role)) tags.push("Practice");
+  if (/lawyer|prosecution|restraint|disclosure|freezing/.test(role)) tags.push("Private prosecutions");
+  if (/asset|recovery|confiscation|tracing|payments/.test(role)) tags.push("Asset tracing");
+  if (/crypto|digital forensics/.test(role)) tags.push("Crypto & digital");
+  if (/regulatory|hmrc|tax/.test(role)) tags.push("Regulatory");
+  if (/cross-border|corruption/.test(role)) tags.push("Cross-border");
+  if (/investigator|internal investigation|intelligence/.test(role)) tags.push("Investigations");
+  if (/forensic accountant/.test(role)) tags.push("Forensic accounting");
+  return [...new Set(tags)];
+}
+
+function personStatus(person) {
+  if (person.principal) return "Owner · sole practice";
+  const role = person.role || "";
+  if (/^Lawyer/i.test(role)) return "Lawyer";
+  if (/Investigator/i.test(role)) return "Investigator";
+  return "Specialist";
+}
+
+function personChips(person) {
+  const status = personStatus(person);
+  const roleChip = person.principal ? "Owner" : status;
+  const second = person.principal ? "Sole practice" : personExpertise(person)[0];
+  return `<span class="chip-row">
+    <span class="chip">${esc(roleChip)}</span>
+    ${second ? `<span class="chip chip-status">${esc(second)}</span>` : ""}
+  </span>`;
+}
+
 function peopleCards(list = site.people, variant = "") {
   if (!list.length) return "";
   const compact = variant === "compact";
@@ -52,11 +79,12 @@ function peopleCards(list = site.people, variant = "") {
       .map(
         (person) => `<a class="person-card${compact ? " person-card-compact" : ""}${
           person.principal ? " person-card-lead" : ""
-        }" href="${personHref(person)}">
+        }" href="${personHref(person)}" data-expertise="${esc(personExpertise(person).join("|"))}">
           ${personPortrait(person)}
           <span class="person-card-copy">
             <h2>${esc(person.name)}</h2>
-            <p class="muted">${esc(person.role)}</p>
+            ${personChips(person)}
+            <p class="muted">${esc(person.summary || person.role)}</p>
           </span>
         </a>`,
       )
@@ -88,21 +116,27 @@ function peopleCollective(options = {}) {
   const profile = home.sections.profile;
   const lead = principalPerson();
   const showIntro = options.intro !== false;
-  return `
-    <div class="owner-row">
-      ${collectiveShot()}
-      <div class="owner-row-copy">
-        ${
-          showIntro
-            ? `<p class="label">${esc(profile.label)}</p>
+  const shot = options.all
+    ? `<span class="owner-row-photo">${personPortrait(lead, "person-photo")}</span>`
+    : collectiveShot();
+  const copy = showIntro
+    ? `<p class="label">${esc(profile.label)}</p>
             <h2>${esc(profile.heading)}</h2>
             <p class="lead profile-lead">${htmlWithSraLinks(profile.text)}</p>`
-            : `<p class="label">${esc(lead.role)}</p>
-            <h2>${esc(lead.name)}</h2>
-            <p class="lead profile-lead">${esc(lead.summary)}</p>`
-        }
-      </div>
-    </div>
+    : `<h2>${esc(lead.name)}</h2>
+            ${personChips(lead)}
+            <p class="lead profile-lead">${esc(lead.summary)}</p>`;
+  const row = options.all
+    ? `<a class="owner-row owner-row-link" href="${personHref(lead)}" data-expertise="${esc(personExpertise(lead).join("|"))}">
+      ${shot}
+      <div class="owner-row-copy">${copy}</div>
+    </a>`
+    : `<div class="owner-row">
+      ${shot}
+      <div class="owner-row-copy">${copy}</div>
+    </div>`;
+  return `
+    ${row}
     ${peopleCards(
       options.all
         ? site.people.filter((person) => !person.principal)
@@ -112,15 +146,74 @@ function peopleCollective(options = {}) {
   `;
 }
 
-function insightEntry(item, extra = "") {
-  return `<a href="/insights/${item.slug}/">
+function insightTopics(item) {
+  return (item.related || [])
+    .map((id) => site.practices.find((practice) => practice.id === id)?.title)
+    .filter(Boolean);
+}
+
+function insightReading(item) {
+  const blocks = insightBodies[item.slug] || [];
+  const words = blocks.reduce((count, block) => count + `${block.heading} ${block.text}`.split(/\s+/).length, 0);
+  const minutes = Math.max(1, Math.round(words / 200) || 1);
+  return `${minutes} min read`;
+}
+
+function insightEntry(item, featured = false) {
+  const topics = insightTopics(item);
+  return `<a class="${featured ? "insight-featured " : ""}insight-entry" href="/insights/${item.slug}/" data-type="${esc(item.type)}" data-topics="${esc(topics.join("|"))}" data-search="${esc(`${item.title} ${item.type} ${item.description}`)}">
     <span class="service-mark" aria-hidden="true">${insightIcon(item.slug)}</span>
-    <span>
-      <p class="label">${esc(item.type)} / ${esc(item.dateLabel)}</p>
+    <span class="insight-body">
+      <p class="label">${esc(item.type)} / ${esc(item.dateLabel)} / ${esc(insightReading(item))}</p>
       <h2>${esc(item.title)}</h2>
-      ${extra}
+      ${item.description ? `<p class="muted insight-deck">${esc(item.description)}</p>` : ""}
+      <span class="insight-foot">
+        ${topics.length ? `<span class="chip-row">${topics.map((topic) => `<span class="chip">${esc(topic)}</span>`).join("")}</span>` : ""}
+        <span class="service-more">Learn more</span>
+      </span>
     </span>
   </a>`;
+}
+
+function contactDirectHtml() {
+  const c = trust.contact;
+  const lines = [];
+  if (isPublicText(c.email)) {
+    lines.push(`<p class="mono"><a href="mailto:${esc(c.email)}">${esc(c.email)}</a></p>`);
+  }
+  if (isPublicText(c.phone)) {
+    lines.push(
+      `<p class="muted">Telephone: <a href="tel:${esc(c.phone.replace(/\s+/g, ""))}">${esc(c.phone)}</a></p>`,
+    );
+  }
+  return lines.join("");
+}
+
+function pageJump(items) {
+  if (!items?.length) return "";
+  return `<nav class="page-jump" aria-label="On this page">
+          ${items
+            .map(
+              (item, index) =>
+                `<a href="${item.href}"${index === 0 ? ' aria-current="true"' : ""}>${esc(item.label)}</a>`,
+            )
+            .join("")}
+        </nav>`;
+}
+
+function processCards(items) {
+  return `<div class="stage-grid">
+            ${items
+              .map(
+                (item) => `<article class="stage-card">
+                  <span class="service-mark" aria-hidden="true">${whyIcon(item.icon)}</span>
+                  ${item.index ? `<p class="label">${esc(item.index)}</p>` : ""}
+                  <h3>${esc(item.title)}</h3>
+                  <p class="muted">${esc(item.text)}</p>
+                </article>`,
+              )
+              .join("")}
+          </div>`;
 }
 
 function wrap(inner, band = "") {
@@ -239,11 +332,13 @@ function cobraSection(band = "") {
       </section>`;
 }
 
-function figure(item, className = "media-figure") {
-  if (!item) return "";
-  return `<figure class="${className}">
-    <img src="${esc(item.src)}" width="${item.width}" height="${item.height}" alt="${esc(item.alt)}" decoding="async" loading="lazy">
-  </figure>`;
+function practiceCard(item) {
+  return `<a class="practice-item" href="${item.href}">
+    ${item.problem ? `<p class="practice-problem">${esc(item.problem)}</p>` : ""}
+    <h2>${esc(item.title)}</h2>
+    <p>${esc(item.summary)}</p>
+    <span class="practice-more">Learn more</span>
+  </a>`;
 }
 
 function cta(link) {
@@ -259,26 +354,27 @@ function homePage() {
   const london = home.sections.london;
   const body = `
     <main id="content">
-      <section class="section band-paper">
+      <section class="section band-paper hero-band">
         <div class="wrap hero">
           <div class="hero-copy">
+            <p class="hero-trust mono"><a href="${esc(site.sraUrl)}" target="_blank" rel="noopener noreferrer">SRA ${esc(site.sraNumber)}</a></p>
             <p class="label">${esc(home.sections.hero.descriptor)}</p>
             <h1 class="display">${esc(home.sections.hero.heading)}</h1>
-            <p class="lead">${esc(home.sections.hero.lead)}</p>
             <div class="hero-actions">
               ${cta(home.sections.hero.cta)}
               <a class="btn btn-ghost" href="${home.sections.hero.ctaSecondary.href}">${esc(
                 home.sections.hero.ctaSecondary.label,
               )}</a>
             </div>
+            <p class="lead">${esc(home.sections.hero.lead)}</p>
           </div>
-          ${signalGraphic()}
+          ${fieldMark("evidence", "field-mark hero-visual")}
         </div>
       </section>
 
-      <section class="section">
+      <section class="section band-paper">
         <div class="wrap split-visual who-visual">
-          ${figure(media.fileCorridor, "media-figure")}
+          ${fieldMark("method", "field-mark")}
           <div class="who-copy">
             <p class="label">${esc(who.label)}</p>
             <h2>${esc(who.heading)}</h2>
@@ -291,14 +387,7 @@ function homePage() {
       <section class="practice-bar" aria-label="Practice areas">
         <div class="wrap practice-bar-inner">
           <div class="practice-bar-list">
-            ${site.practices
-              .map(
-                (item) => `<a class="practice-item" href="${item.href}">
-                  <h2>${esc(item.title)}</h2>
-                  <p>${esc(item.summary)}</p>
-                </a>`,
-              )
-              .join("")}
+            ${site.practices.map((item) => practiceCard(item)).join("")}
           </div>
           <a class="btn btn-ghost" href="${home.sections.practiceBar.cta.href}">${esc(
             home.sections.practiceBar.cta.label,
@@ -359,27 +448,27 @@ function homePage() {
         <div class="wrap">
           <p class="label">${esc(home.sections.insight.label)}</p>
           <h2>${esc(home.sections.insight.heading)}</h2>
-          <div class="service-index service-visual-index">
-            ${insightEntry(featured, `<p class="muted">${esc(featured.description)}</p>`)}
+          <div class="insight-list">
+            ${insightEntry(featured, true)}
           </div>
         </div>
       </section>
 
       <section class="section band-ink london-band">
         <div class="wrap split-visual">
-          ${figure(media.londonStreet, "media-figure")}
           <div class="london-copy">
             <h2>${esc(london.heading)}</h2>
             <p class="lead muted london-lead">${esc(london.text)}</p>
             <p class="mono">${esc(london.meta)}</p>
             <a class="btn btn-ghost" href="${london.cta.href}">${esc(london.cta.label)}</a>
           </div>
+          ${fieldMark("london", "field-mark")}
         </div>
       </section>
 
       <section class="section">
         <div class="wrap split-visual cta-visual">
-          ${figure(media.evidenceTable, "media-figure")}
+          ${fieldMark("discuss", "field-mark")}
           <div class="cta-band reading">
             <h2>${esc(home.sections.cta.heading)}</h2>
             <p class="lead muted">${esc(home.sections.cta.text)}</p>
@@ -400,6 +489,7 @@ function expertiseIndex() {
         ${crumbs([{ label: "Expertise" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
+        ${actionButton(page)}
       </div>
       <div class="wrap service-index service-visual-index">
         ${site.practices
@@ -410,6 +500,7 @@ function expertiseIndex() {
                 <h2>${esc(item.title)}</h2>
                 <p class="muted">${esc(item.summary)}</p>
               </span>
+              <span class="service-more">Learn more</span>
             </a>`,
           )
           .join("")}
@@ -461,7 +552,7 @@ function servicePage(key, practiceId) {
           ? wrap(`
             <div class="related">
               <p class="label">Related insights</p>
-              <div class="service-index service-visual-index">
+              <div class="insight-list">
               ${related
                 .map((item) => insightEntry(item))
                 .join("")}
@@ -494,37 +585,38 @@ function investigationIndex() {
   const notes = site.insights.filter((item) => item.type === "Investigation note");
   const body = `
     <main id="content">
-      <div class="wrap page-head">
-        ${crumbs([{ label: "Investigations" }])}
-        <h1>${esc(page.heading)}</h1>
-        <p class="lead muted">${esc(page.lead)}</p>
-        <nav class="page-jump" aria-label="On this page">
-          ${page.jump.map((item) => `<a href="${item.href}">${esc(item.label)}</a>`).join("")}
-        </nav>
-        ${actionButton(page, "Speak to the investigations practice")}
-      </div>
-      <div class="wrap join-intro">
-        ${page.intro.map((para) => `<p>${esc(para)}</p>`).join("")}
-      </div>
-      ${cobraSection("band-paper")}
+      <section class="section band-paper hero-band">
+        <div class="wrap split-visual page-open">
+          <div class="page-open-copy">
+            ${crumbs([{ label: "Investigations" }])}
+            <h1>${esc(page.heading)}</h1>
+            <p class="lead">${esc(page.lead)}</p>
+            ${pageJump(page.jump)}
+            ${actionButton(page)}
+          </div>
+          ${fieldMark("investigate", "field-mark")}
+        </div>
+      </section>
+      <section class="section" id="process">
+        <div class="wrap">
+          <p class="label">${esc(page.process.label)}</p>
+          <h2>${esc(page.process.heading)}</h2>
+          ${processCards(page.process.items)}
+        </div>
+      </section>
       <section class="practice-bar" id="work" aria-label="Investigation types">
         <div class="wrap practice-bar-inner">
           <div class="practice-bar-head">
             <p class="label">What we investigate</p>
             <h2>Five categories of investigation.</h2>
+            <p>${esc(page.intro[0])}</p>
           </div>
           <div class="practice-bar-list">
-            ${site.investigations
-              .map(
-                (item) => `<a class="practice-item" href="${item.href}">
-                  <h2>${esc(item.title)}</h2>
-                  <p>${esc(item.summary)}</p>
-                </a>`,
-              )
-              .join("")}
+            ${site.investigations.map((item) => practiceCard(item)).join("")}
           </div>
         </div>
       </section>
+      ${cobraSection("band-paper")}
       <section class="section" id="investigators">
         <div class="wrap">
           <p class="label">${esc(page.people.label)}</p>
@@ -540,9 +632,9 @@ function investigationIndex() {
         <div class="wrap">
           <p class="label">Investigation notes</p>
           <h2>Method, written down.</h2>
-          <div class="service-index service-visual-index">
+          <div class="insight-list">
           ${notes
-            .map((item) => insightEntry(item, `<p class="muted">${esc(item.description)}</p>`))
+            .map((item) => insightEntry(item))
             .join("")}
           </div>
         </div>
@@ -613,7 +705,7 @@ function investigationPage(item) {
               ${routes
                 .map(
                   (practice) => `<a class="insight-visual" href="${practice.href}">
-                    ${figure(practiceMedia(practice.id), "media-figure insight-photo")}
+                    <span class="service-mark" aria-hidden="true">${practiceIcon(practice.id)}</span>
                     <span class="insight-copy">
                       <h3>${esc(practice.title)}</h3>
                       <p class="muted">${esc(practice.summary)}</p>
@@ -630,7 +722,7 @@ function investigationPage(item) {
           ? wrap(`
             <div class="related">
               <p class="label">Related insights</p>
-              <div class="service-index service-visual-index">
+              <div class="insight-list">
               ${related.map((note) => insightEntry(note)).join("")}
               </div>
             </div>
@@ -654,17 +746,31 @@ function investigationPage(item) {
 
 function insightsIndex() {
   const page = pages.insights;
+  const types = [...new Set(site.insights.map((item) => item.type))];
+  const topics = [...new Set(site.insights.flatMap((item) => insightTopics(item)))];
   const body = `
     <main id="content">
       <div class="wrap page-head">
         ${crumbs([{ label: "Insights" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
+        <div class="insight-tools">
+          <label class="insight-search">
+            <span class="label">Search</span>
+            <input type="search" data-insight-search placeholder="Search notes" autocomplete="off">
+          </label>
+          <div class="chip-row chip-filters" data-insight-filters>
+            <button type="button" class="chip chip-filter" data-filter="all" aria-pressed="true">All</button>
+            ${types.map((type) => `<button type="button" class="chip chip-filter" data-filter="${esc(type)}">${esc(type)}</button>`).join("")}
+            ${topics.map((topic) => `<button type="button" class="chip chip-filter" data-filter="${esc(topic)}">${esc(topic)}</button>`).join("")}
+          </div>
+        </div>
       </div>
-      <div class="wrap service-index service-visual-index">
+      <div class="wrap insight-list">
         ${site.insights
-          .map((item) => insightEntry(item, `<p class="muted">${esc(item.description)}</p>`))
+          .map((item, index) => insightEntry(item, index === 0))
           .join("")}
+        <p class="insight-empty muted" data-insight-empty hidden>No notes match that filter.</p>
       </div>
       ${reviewFoot(page)}
     </main>
@@ -712,14 +818,19 @@ function insightPage(item) {
 
 function peoplePage() {
   const page = pages.people;
+  const filters = [...new Set(site.people.flatMap((person) => personExpertise(person)))];
   const body = `
     <main id="content">
-      <div class="wrap page-head">
+      <div class="wrap page-head page-head-tight">
         ${crumbs([{ label: "People" }])}
+        <div class="chip-row chip-filters" data-people-filters>
+          <button type="button" class="chip chip-filter" data-filter="all" aria-pressed="true">All</button>
+          ${filters.map((item) => `<button type="button" class="chip chip-filter" data-filter="${esc(item)}">${esc(item)}</button>`).join("")}
+        </div>
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${htmlWithSraLinks(page.lead)}</p>
       </div>
-      <div class="wrap people-index">
+      <div class="wrap people-index" data-people-index>
         ${peopleCollective({ intro: false, all: true })}
       </div>
     </main>
@@ -735,14 +846,12 @@ function joinUsPage() {
         ${crumbs([{ label: "Join us" }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
-        <nav class="page-jump" aria-label="On this page">
-          ${page.jump.map((item) => `<a href="${item.href}">${esc(item.label)}</a>`).join("")}
-        </nav>
-        ${actionButton(page, "View current opportunities")}
-      </div>
-      <div class="wrap join-intro">
-        ${page.intro.map((para) => `<p>${esc(para)}</p>`).join("")}
-        <p><a href="/people/">People at Edison Law</a></p>
+        ${pageJump(page.jump)}
+        ${actionButton(page)}
+        <div class="page-head-intro join-intro">
+          ${page.intro.map((para) => `<p>${esc(para)}</p>`).join("")}
+          <p><a href="/people/">People at Edison Law</a></p>
+        </div>
       </div>
       <section class="section" id="careers">
         <div class="wrap">
@@ -765,6 +874,16 @@ function joinUsPage() {
           <p class="label">${esc(page.why.label)}</p>
           <h2>${esc(page.why.heading)}</h2>
           ${titledStack(page.why.items)}
+        </div>
+      </section>
+      <section class="section" id="culture">
+        <div class="wrap split-visual">
+          <div>
+            <p class="label">${esc(page.benefits.label)}</p>
+            <h2>${esc(page.benefits.heading)}</h2>
+            ${titledStack(page.benefits.items, true)}
+          </div>
+          ${fieldMark("discuss", "field-mark")}
         </div>
       </section>
       <section class="section band-ink join-vacancies" id="vacancies">
@@ -844,10 +963,19 @@ function aboutPage() {
   const facts = record.items;
   const body = `
     <main id="content">
-      <div class="wrap page-head">
+      <div class="wrap page-head about-open">
         ${crumbs([{ label: "About" }])}
-        <h1>${esc(page.heading)}</h1>
-        <p class="lead muted">${esc(page.lead)}</p>
+        <div class="about-open-copy">
+          <h1>${esc(page.heading)}</h1>
+          <p class="trust-strip">
+            <a class="mono" href="${esc(site.sraUrl)}" target="_blank" rel="noopener noreferrer">SRA ${esc(site.sraNumber)}</a>
+            <span>London</span>
+            <span>Each matter is supervised by a named solicitor</span>
+          </p>
+          <p class="lead muted">${esc(page.lead)}</p>
+          ${actionButton(page)}
+        </div>
+        ${fieldMark("london", "field-mark")}
       </div>
       <section class="section-tight">
         <div class="wrap">
@@ -857,6 +985,7 @@ function aboutPage() {
             ${story.items
               .map(
                 (item) => `<article class="stage-card">
+                  <span class="service-mark" aria-hidden="true">${whyIcon(item.icon)}</span>
                   <p class="label">${esc(item.index)}</p>
                   <h3>${esc(item.title)}</h3>
                   <p class="muted">${esc(item.text)}</p>
@@ -917,17 +1046,24 @@ function contactPage() {
           <div class="contact-copy">
             <h1>${esc(page.heading)}</h1>
             <p class="lead muted">${esc(page.lead)}</p>
-            <p class="muted">${esc(page.urgent)}</p>
-            ${contactDetailsHtml()}
+            <aside class="safety-callout">
+              <p class="label">Safety</p>
+              <p>${esc(page.urgent)}</p>
+            </aside>
+            <div class="contact-direct">
+              <p class="label">Write or call</p>
+              ${contactDirectHtml()}
+            </div>
           </div>
           <form class="form" id="contact-form" novalidate data-mailto="${esc(site.email)}" data-ack="${esc(trust.contact.acknowledgementTime)}">
+          <p class="form-eta muted">${esc(trust.contact.acknowledgementTime)}</p>
           <div class="field">
-            <label for="full-name">Full name</label>
+            <label for="full-name">Full name <span class="req">required</span></label>
             <input id="full-name" name="name" type="text" autocomplete="name" required>
             <p class="error" data-error-for="name">Enter your name.</p>
           </div>
           <div class="field">
-            <label for="email">Email</label>
+            <label for="email">Email <span class="req">required</span></label>
             <input id="email" name="email" type="email" autocomplete="email" required>
             <p class="error" data-error-for="email">Enter a valid email address.</p>
           </div>
@@ -936,7 +1072,7 @@ function contactPage() {
             <input id="organisation" name="organisation" type="text" autocomplete="organization">
           </div>
           <div class="field">
-            <label for="matter">Matter type</label>
+            <label for="matter">Matter type <span class="req">required</span></label>
             <select id="matter" name="matter" required>
               <option value="">Select one</option>
               ${site.practices.map((item) => `<option>${esc(item.title)}</option>`).join("")}
@@ -945,7 +1081,7 @@ function contactPage() {
             <p class="error" data-error-for="matter">Choose a matter type.</p>
           </div>
           <div class="field">
-            <label for="message">How we can help</label>
+            <label for="message">How we can help <span class="req">required</span></label>
             <textarea id="message" name="message" required></textarea>
             <p class="error" data-error-for="message">Describe the situation in a few sentences.</p>
           </div>
@@ -956,7 +1092,7 @@ function contactPage() {
             </label>
             <p class="error" data-error-for="privacy">Confirm you have read the privacy notice.</p>
           </div>
-          <button class="btn btn-signal" type="submit">${esc(page.formButton || "Send an initial enquiry")}</button>
+          <button class="btn btn-signal form-submit" type="submit">${esc(page.formButton || "Send an initial enquiry")}</button>
           <p class="form-status" data-form-status></p>
           <p class="small muted">${
             site.email

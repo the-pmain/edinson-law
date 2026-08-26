@@ -144,10 +144,96 @@ function contactForm() {
   });
 }
 
+function pageJumpSpy() {
+  const nav = document.querySelector(".page-jump");
+  if (!nav) return;
+  const links = [...nav.querySelectorAll("a[href^='#']")];
+  const targets = links
+    .map((link) => document.querySelector(link.hash))
+    .filter(Boolean);
+  if (!targets.length) return;
+
+  const setCurrent = (id) => {
+    links.forEach((link) => {
+      if (link.hash === `#${id}`) link.setAttribute("aria-current", "true");
+      else link.removeAttribute("aria-current");
+    });
+  };
+
+  setCurrent(targets[0].id);
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible) setCurrent(visible.target.id);
+    },
+    { rootMargin: "-18% 0px -62% 0px", threshold: [0.15, 0.35, 0.6] },
+  );
+  targets.forEach((node) => observer.observe(node));
+}
+
+function insightTools() {
+  const search = document.querySelector("[data-insight-search]");
+  const filters = document.querySelector("[data-insight-filters]");
+  const empty = document.querySelector("[data-insight-empty]");
+  if (!search && !filters) return;
+  let active = "all";
+
+  const apply = () => {
+    const query = (search?.value || "").trim().toLowerCase();
+    const items = document.querySelectorAll(".insight-list .insight-entry");
+    let shown = 0;
+    items.forEach((item) => {
+      const type = item.dataset.type || "";
+      const topics = (item.dataset.topics || "").split("|");
+      const text = (item.dataset.search || "").toLowerCase();
+      const filterOk = active === "all" || type === active || topics.includes(active);
+      const searchOk = !query || text.includes(query);
+      const match = filterOk && searchOk;
+      item.hidden = !match;
+      if (match) shown += 1;
+    });
+    if (empty) empty.hidden = shown > 0;
+  };
+
+  filters?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-filter]");
+    if (!button) return;
+    active = button.dataset.filter;
+    filters.querySelectorAll("[data-filter]").forEach((node) => {
+      node.setAttribute("aria-pressed", node === button ? "true" : "false");
+    });
+    apply();
+  });
+  search?.addEventListener("input", apply);
+}
+
+function peopleFilter() {
+  const root = document.querySelector("[data-people-filters]");
+  if (!root) return;
+  root.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-filter]");
+    if (!button) return;
+    const value = button.dataset.filter;
+    root.querySelectorAll("[data-filter]").forEach((node) => {
+      node.setAttribute("aria-pressed", node === button ? "true" : "false");
+    });
+    document.querySelectorAll("[data-people-index] [data-expertise]").forEach((item) => {
+      const tags = (item.dataset.expertise || "").split("|");
+      item.hidden = value !== "all" && !tags.includes(value);
+    });
+  });
+}
+
 currentYear();
 menu();
 search();
 contactForm();
+pageJumpSpy();
+insightTools();
+peopleFilter();
 
 if (!reduced) {
   document.documentElement.style.scrollBehavior = "smooth";

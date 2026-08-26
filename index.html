@@ -51,9 +51,9 @@
 <body data-mode="development" data-path="/">
   <!--
     THESIS: Edison turns fragmented digital and financial facts into a legal position. The site is an evidence desk, not a recovery-service landing or a chambers brochure.
-    OWN-WORLD: Midnight and paper fields, Signal reserved for action and nodes, Newsreader display with Manrope interface, IBM Plex Mono only for real metadata, 248px evidence rail from 1280px, hairline rules, node-path graphics.
+    OWN-WORLD: Midnight and paper fields, Signal reserved for action and nodes, Newsreader display with Manrope interface, IBM Plex Mono only for real metadata, 200px evidence rail from 1680px, hairline rules, node-path graphics.
     STORY: A visitor in a live matter sees a London SRA-regulated firm that investigates then advises, finds the named solicitor and SRA number, and can start a confidential discussion without being sold recovery.
-    FIRST VIEWPORT: Compact header or left rail; paper hero; specialist descriptor; master line at display scale; one Discuss a matter action; evidence-signal rings with three nodes; SRA standing already in the chrome.
+    FIRST VIEWPORT: Compact header or left rail; paper hero; SRA number; specialist descriptor; master line; Discuss a matter in the first viewport; evidence mark.
     FORM: Brief-pinned Direction 01 Evidence Signal and the August 2026 brand-book digital system. No concept-seed; the visual world is already approved.
     FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
   -->
@@ -76,6 +76,19 @@
     <nav class="rail-nav" aria-label="Primary">
     <a href="/expertise/"><span class="rail-node" aria-hidden="true"></span><span class="rail-label">Expertise</span></a><a href="/investigations/"><span class="rail-node" aria-hidden="true"></span><span class="rail-label">Investigations</span></a><a href="/insights/"><span class="rail-node" aria-hidden="true"></span><span class="rail-label">Insights</span></a><a href="/people/"><span class="rail-node" aria-hidden="true"></span><span class="rail-label">People</span></a><a href="/join-us/"><span class="rail-node" aria-hidden="true"></span><span class="rail-label">Join us</span></a><a href="/about/"><span class="rail-node" aria-hidden="true"></span><span class="rail-label">About</span></a><a href="/contact/"><span class="rail-node" aria-hidden="true"></span><span class="rail-label">Contact</span></a>
   </nav>
+    <div class="rail-badges">
+      <div class="trust-badges" role="group" aria-label="Regulation and memberships">
+    <a class="trust-badge" href="https://www.sra.org.uk/consumers/register/organisation/?sraNumber=510498" target="_blank" rel="noopener noreferrer">
+      <img src="/brand/sra-badge.svg" width="275" height="88" alt="Regulated by Solicitors Regulation Authority">
+    </a>
+    <a class="trust-badge" href="https://www.laworld.com/" target="_blank" rel="noopener noreferrer">
+      <img src="/brand/laworld.jpg" width="275" height="178" alt="LAWORLD">
+    </a>
+    <a class="trust-badge" href="https://www.icc-ccs.org/" target="_blank" rel="noopener noreferrer">
+      <img src="/brand/icc-fraudnet.jpg" width="275" height="83" alt="ICC FraudNet Commercial Crime Services">
+    </a>
+  </div>
+    </div>
     <div class="rail-utility">
       <button type="button" data-search-open>Search</button>
       <a href="/accessibility/">Accessibility</a>
@@ -106,37 +119,57 @@
   <div class="site">
     
     <main id="content">
-      <section class="section band-paper">
+      <section class="section band-paper hero-band">
         <div class="wrap hero">
           <div class="hero-copy">
+            <p class="hero-trust mono"><a href="https://www.sra.org.uk/consumers/register/organisation/?sraNumber=510498" target="_blank" rel="noopener noreferrer">SRA 510498</a></p>
             <p class="label">Private prosecutions · Asset recovery · Financial crime</p>
             <h1 class="display">Financial crime disputes demand clear evidence and sound judgment.</h1>
-            <p class="lead">Edison Law advises individuals, businesses and organisations facing fraud, asset-recovery and investigation matters. We establish the facts, identify the available legal routes and explain the commercial risks before substantial costs are incurred.</p>
             <div class="hero-actions">
               <a class="btn btn-signal" href="/contact/">Discuss a matter</a>
               <a class="btn btn-ghost" href="/expertise/">Explore our expertise</a>
             </div>
+            <p class="lead">Edison Law advises individuals, businesses and organisations facing fraud, asset-recovery and investigation matters. We establish the facts, identify the available legal routes and explain the commercial risks before substantial costs are incurred.</p>
           </div>
-          <svg class="signal-graphic" viewBox="0 0 320 320" role="img" aria-label="Evidence signal: three nodes on concentric rings">
-    <g fill="none" stroke="#008D7A" stroke-opacity="0.35" stroke-width="1.2">
-      <circle cx="160" cy="160" r="56"/>
-      <circle cx="160" cy="160" r="96"/>
-      <circle cx="160" cy="160" r="136"/>
-    </g>
-    <g fill="#008D7A">
-      <circle cx="296" cy="160" r="6"/>
-      <circle cx="78" cy="48" r="6"/>
-      <circle cx="92" cy="268" r="6"/>
-    </g>
-  </svg>
+          <div class="field-mark hero-visual" role="presentation"><svg viewBox="0 0 240 240" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect width="240" height="240" fill="var(--mark-ground)"/>
+    <circle cx="252" cy="-6" r="120" fill="var(--mark-signal)" fill-opacity="0.12"/>
+    <rect x="40" y="52" width="138" height="168" rx="3" fill="var(--mark-ink)" fill-opacity="0.1"/>
+    <rect x="52" y="34" width="138" height="168" rx="3" fill="var(--mark-sheet)" stroke="var(--mark-ink)" stroke-width="1.6"/>
+    <rect x="98" y="16" width="46" height="30" rx="2" fill="var(--mark-signal)"/>
+    <path d="M72 68h98M72 90h98M72 112h70M72 134h90M72 156h54M72 178h82" stroke="var(--mark-signal)" stroke-width="2.1"/>
+    <rect x="8" y="112" width="56" height="42" rx="2" fill="var(--mark-signal)"/>
+    <path d="M18 126h36M18 140h22" stroke="var(--mark-sheet)" stroke-width="2"/>
+    <circle cx="198" cy="198" r="24" fill="var(--mark-wash)" stroke="var(--mark-signal)" stroke-width="1.6"/>
+    <circle cx="198" cy="198" r="7" fill="var(--mark-signal)"/>
+  </svg></div>
         </div>
       </section>
 
-      <section class="section">
+      <section class="section band-paper">
         <div class="wrap split-visual who-visual">
-          <figure class="media-figure">
-    <img src="/images/file-corridor.jpg" width="1536" height="1024" alt="Organised files and a palm in a quiet, daylit corridor" decoding="async" loading="lazy">
-  </figure>
+          <div class="field-mark" role="presentation"><svg viewBox="0 0 240 240" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect width="240" height="240" fill="var(--mark-ground)"/>
+    <g stroke="var(--mark-ink)" stroke-width="1.5">
+      <rect x="14" y="18" width="74" height="54" rx="2" fill="var(--mark-sheet)"/>
+      <rect x="14" y="88" width="74" height="54" rx="2" fill="var(--mark-sheet)"/>
+      <rect x="14" y="158" width="74" height="54" rx="2" fill="var(--mark-sheet)"/>
+    </g>
+    <g stroke="var(--mark-signal)" stroke-width="2">
+      <path d="M28 36h46M28 48h30"/>
+      <path d="M28 106h46M28 118h24"/>
+      <path d="M28 176h46M28 188h34"/>
+    </g>
+    <g fill="none" stroke="var(--mark-signal)" stroke-width="2">
+      <path d="M88 45c28 0 28 63 48 63"/>
+      <path d="M88 115h48"/>
+      <path d="M88 185c28 0 28-55 48-55"/>
+    </g>
+    <rect x="128" y="28" width="96" height="184" rx="3" fill="var(--mark-ink)" fill-opacity="0.1"/>
+    <rect x="138" y="16" width="88" height="184" rx="3" fill="var(--mark-sheet)" stroke="var(--mark-ink)" stroke-width="1.6"/>
+    <rect x="166" y="4" width="32" height="22" rx="2" fill="var(--mark-signal)"/>
+    <path d="M154 46h56M154 66h56M154 86h38M154 106h50M154 126h28M154 146h46M154 166h34" stroke="var(--mark-signal)" stroke-width="2"/>
+  </svg></div>
           <div class="who-copy">
             <p class="label">How we begin</p>
             <h2>When the facts are fragmented</h2>
@@ -150,24 +183,36 @@
         <div class="wrap practice-bar-inner">
           <div class="practice-bar-list">
             <a class="practice-item" href="/expertise/private-prosecutions/">
-                  <h2>Private prosecutions</h2>
-                  <p>Assessing and preparing privately brought criminal proceedings where the evidence and public-interest duties support that course.</p>
-                </a><a class="practice-item" href="/expertise/asset-tracing-recovery/">
-                  <h2>Asset tracing &amp; recovery</h2>
-                  <p>Identifying potentially recoverable value and selecting proportionate civil, criminal or insolvency remedies.</p>
-                </a><a class="practice-item" href="/expertise/crypto-fraud-digital-assets/">
-                  <h2>Crypto fraud &amp; digital assets</h2>
-                  <p>Converting transaction data, platform records and device evidence into a legal case with clearly stated limits.</p>
-                </a><a class="practice-item" href="/expertise/regulatory-defence-investigations/">
-                  <h2>Regulatory defence &amp; investigations</h2>
-                  <p>Advising individuals and businesses on notices, interviews, internal reviews and engagement with investigating authorities.</p>
-                </a><a class="practice-item" href="/expertise/cross-border-fraud-corruption/">
-                  <h2>Cross-border fraud &amp; corruption</h2>
-                  <p>Coordinating English proceedings with appropriately qualified counsel where evidence, respondents or assets are overseas.</p>
-                </a><a class="practice-item" href="/expertise/corporate-intelligence/">
-                  <h2>Corporate intelligence &amp; pre-litigation</h2>
-                  <p>Lawful, confidential enquiries before litigation, investment, appointment or other material exposure.</p>
-                </a>
+    <p class="practice-problem">A criminal complaint has been declined, or is going nowhere.</p>
+    <h2>Private prosecutions</h2>
+    <p>Assess whether a private prosecution is the right legal route.</p>
+    <span class="practice-more">Learn more</span>
+  </a><a class="practice-item" href="/expertise/asset-tracing-recovery/">
+    <p class="practice-problem">Funds or assets have been moved and may still be reachable.</p>
+    <h2>Asset tracing &amp; recovery</h2>
+    <p>Find what remains, then choose a proportionate civil, criminal or insolvency remedy.</p>
+    <span class="practice-more">Learn more</span>
+  </a><a class="practice-item" href="/expertise/crypto-fraud-digital-assets/">
+    <p class="practice-problem">Value has moved through wallets, exchanges or devices.</p>
+    <h2>Crypto fraud &amp; digital assets</h2>
+    <p>Turn the trail into exhibits, with the limits of the records stated.</p>
+    <span class="practice-more">Learn more</span>
+  </a><a class="practice-item" href="/expertise/regulatory-defence-investigations/">
+    <p class="practice-problem">A notice, interview or internal investigation has started.</p>
+    <h2>Regulatory defence &amp; investigations</h2>
+    <p>Control the first response and the record that follows.</p>
+    <span class="practice-more">Learn more</span>
+  </a><a class="practice-item" href="/expertise/cross-border-fraud-corruption/">
+    <p class="practice-problem">The loss, the people or the assets sit in more than one country.</p>
+    <h2>Cross-border fraud &amp; corruption</h2>
+    <p>Hold the English file and instruct local counsel where foreign procedure is required.</p>
+    <span class="practice-more">Learn more</span>
+  </a><a class="practice-item" href="/expertise/corporate-intelligence/">
+    <p class="practice-problem">You need to know who you are dealing with before you commit.</p>
+    <h2>Corporate intelligence &amp; pre-litigation</h2>
+    <p>Lawful, confidential enquiries before litigation, investment or appointment.</p>
+    <span class="practice-more">Learn more</span>
+  </a>
           </div>
           <a class="btn btn-ghost" href="/expertise/">Explore our expertise</a>
         </div>
@@ -196,96 +241,150 @@
         <span class="mono">Owner</span>
       </span>
     </a>
-      <div class="owner-row-copy">
-        <p class="label">The practice</p>
+      <div class="owner-row-copy"><p class="label">The practice</p>
             <h2>The people responsible for the work.</h2>
-            <p class="lead profile-lead">Profiles explain professional status, role on a matter and, where relevant, who supervises the work. Confirm authorised individuals on the <a href="https://www.sra.org.uk/consumers/register/organisation/?sraNumber=510498" target="_blank" rel="noopener noreferrer">public SRA record</a>.</p>
-      </div>
+            <p class="lead profile-lead">Profiles explain professional status, role on a matter and, where relevant, who supervises the work. Confirm authorised individuals on the <a href="https://www.sra.org.uk/consumers/register/organisation/?sraNumber=510498" target="_blank" rel="noopener noreferrer">public SRA record</a>.</p></div>
     </div>
     <div class="people-grid people-grid-collective">
-    <a class="person-card person-card-compact" href="/people/david-kerr/">
+    <a class="person-card person-card-compact" href="/people/david-kerr/" data-expertise="Private prosecutions">
           <img class="person-photo" src="/images/people/david-kerr.png" width="273" height="273" alt="David Kerr" decoding="async">
           <span class="person-card-copy">
             <h2>David Kerr</h2>
-            <p class="muted">Lawyer — Fraud, Financial Crime &amp; Private Prosecutions</p>
+            <span class="chip-row">
+    <span class="chip">Lawyer</span>
+    <span class="chip chip-status">Private prosecutions</span>
+  </span>
+            <p class="muted">Lawyer in the financial crime team. Runs large, document-heavy matters from first instruction through to trial.</p>
           </span>
-        </a><a class="person-card person-card-compact" href="/people/amelia-rowe/">
+        </a><a class="person-card person-card-compact" href="/people/amelia-rowe/" data-expertise="Private prosecutions">
           <img class="person-photo" src="/images/people/amelia-rowe.png" width="273" height="273" alt="Amelia Rowe" decoding="async">
           <span class="person-card-copy">
             <h2>Amelia Rowe</h2>
-            <p class="muted">Lawyer — Fraud, Financial Crime &amp; Private Prosecutions</p>
+            <span class="chip-row">
+    <span class="chip">Lawyer</span>
+    <span class="chip chip-status">Private prosecutions</span>
+  </span>
+            <p class="muted">Lawyer in the financial crime team. Day-to-day conduct of cases from first instruction through to trial, and often the client's principal point of contact.</p>
           </span>
-        </a><a class="person-card person-card-compact" href="/people/liam-brennan/">
+        </a><a class="person-card person-card-compact" href="/people/liam-brennan/" data-expertise="Investigations">
           <img class="person-photo" src="/images/people/liam-brennan.png" width="273" height="273" alt="Liam Brennan" decoding="async">
           <span class="person-card-copy">
             <h2>Liam Brennan</h2>
-            <p class="muted">Financial Crime Investigator</p>
+            <span class="chip-row">
+    <span class="chip">Investigator</span>
+    <span class="chip chip-status">Investigations</span>
+  </span>
+            <p class="muted">Financial crime investigator in the firm's team. Establishes what happened, with a particular focus on cross-border enquiry.</p>
           </span>
-        </a><a class="person-card person-card-compact" href="/people/sophie-lang/">
+        </a><a class="person-card person-card-compact" href="/people/sophie-lang/" data-expertise="Asset tracing">
           <img class="person-photo" src="/images/people/sophie-lang.png" width="273" height="273" alt="Sophie Lang" decoding="async">
           <span class="person-card-copy">
             <h2>Sophie Lang</h2>
-            <p class="muted">Payments Tracing Specialist</p>
+            <span class="chip-row">
+    <span class="chip">Specialist</span>
+    <span class="chip chip-status">Asset tracing</span>
+  </span>
+            <p class="muted">Payments tracing specialist in the financial crime team. Follows diverted funds through banks, PSPs and e-money accounts in the first hours of a matter.</p>
           </span>
-        </a><a class="person-card person-card-compact" href="/people/oliver-bennett/">
+        </a><a class="person-card person-card-compact" href="/people/oliver-bennett/" data-expertise="Private prosecutions">
           <img class="person-photo" src="/images/people/oliver-bennett.png" width="273" height="273" alt="Oliver Bennett" decoding="async">
           <span class="person-card-copy">
             <h2>Oliver Bennett</h2>
-            <p class="muted">Lawyer — Fraud, Financial Crime &amp; Private Prosecutions</p>
+            <span class="chip-row">
+    <span class="chip">Lawyer</span>
+    <span class="chip chip-status">Private prosecutions</span>
+  </span>
+            <p class="muted">Lawyer in the financial crime team. Often the first person a client speaks to once a fraud surfaces: get hold of the matter, say what can be achieved, push it forward.</p>
           </span>
-        </a><a class="person-card person-card-compact" href="/people/andrew-haddon/">
+        </a><a class="person-card person-card-compact" href="/people/andrew-haddon/" data-expertise="Asset tracing">
           <img class="person-photo" src="/images/people/andrew-haddon.png" width="273" height="273" alt="Andrew Haddon" decoding="async">
           <span class="person-card-copy">
             <h2>Andrew Haddon</h2>
-            <p class="muted">Asset Tracing Specialist</p>
+            <span class="chip-row">
+    <span class="chip">Specialist</span>
+    <span class="chip chip-status">Asset tracing</span>
+  </span>
+            <p class="muted">Asset tracing specialist in the financial crime team. Locates recoverable value and says, early, whether pursuing it is worth the cost.</p>
           </span>
-        </a><a class="person-card person-card-compact" href="/people/rosalind-keane/">
+        </a><a class="person-card person-card-compact" href="/people/rosalind-keane/" data-expertise="Asset tracing">
           <img class="person-photo" src="/images/people/rosalind-keane.png" width="273" height="273" alt="Rosalind Keane" decoding="async">
           <span class="person-card-copy">
             <h2>Rosalind Keane</h2>
-            <p class="muted">Confiscation Specialist</p>
+            <span class="chip-row">
+    <span class="chip">Specialist</span>
+    <span class="chip chip-status">Asset tracing</span>
+  </span>
+            <p class="muted">Confiscation specialist in the financial crime team. Turns a conviction or a settlement into a recoverable amount: benefit, available assets, and the orders that actually reach them.</p>
           </span>
-        </a><a class="person-card person-card-compact" href="/people/julian-vance/">
+        </a><a class="person-card person-card-compact" href="/people/julian-vance/" data-expertise="Forensic accounting">
           <img class="person-photo" src="/images/people/julian-vance.png" width="273" height="273" alt="Julian Vance" decoding="async">
           <span class="person-card-copy">
             <h2>Julian Vance</h2>
-            <p class="muted">Forensic Accountant</p>
+            <span class="chip-row">
+    <span class="chip">Specialist</span>
+    <span class="chip chip-status">Forensic accounting</span>
+  </span>
+            <p class="muted">Forensic accountant in the financial crime team. Rebuilds the books, states what the numbers prove, and writes reports that can be cross-examined.</p>
           </span>
-        </a><a class="person-card person-card-compact" href="/people/imogen-vale/">
+        </a><a class="person-card person-card-compact" href="/people/imogen-vale/" data-expertise="Crypto &amp; digital">
           <img class="person-photo" src="/images/people/imogen-vale.png" width="273" height="273" alt="Imogen Vale" decoding="async">
           <span class="person-card-copy">
             <h2>Imogen Vale</h2>
-            <p class="muted">Digital Forensics Analyst</p>
+            <span class="chip-row">
+    <span class="chip">Specialist</span>
+    <span class="chip chip-status">Crypto &amp; digital</span>
+  </span>
+            <p class="muted">Digital forensics analyst in the financial crime team. Preserves devices, mailboxes and logs so the digital record still exists when the legal route is chosen.</p>
           </span>
-        </a><a class="person-card person-card-compact" href="/people/caroline-reid/">
+        </a><a class="person-card person-card-compact" href="/people/caroline-reid/" data-expertise="Private prosecutions">
           <img class="person-photo" src="/images/people/caroline-reid.png" width="273" height="273" alt="Caroline Reid" decoding="async">
           <span class="person-card-copy">
             <h2>Caroline Reid</h2>
-            <p class="muted">Lawyer — Restraint &amp; Freezing</p>
+            <span class="chip-row">
+    <span class="chip">Lawyer</span>
+    <span class="chip chip-status">Private prosecutions</span>
+  </span>
+            <p class="muted">Lawyer in the financial crime team, focused on restraint and freezing. Prepares the application that stops the money moving, then keeps the order in place.</p>
           </span>
-        </a><a class="person-card person-card-compact" href="/people/marcus-quinn/">
+        </a><a class="person-card person-card-compact" href="/people/marcus-quinn/" data-expertise="Asset tracing|Crypto &amp; digital">
           <img class="person-photo" src="/images/people/marcus-quinn.png" width="273" height="273" alt="Marcus Quinn" decoding="async">
           <span class="person-card-copy">
             <h2>Marcus Quinn</h2>
-            <p class="muted">Crypto Tracing Analyst</p>
+            <span class="chip-row">
+    <span class="chip">Specialist</span>
+    <span class="chip chip-status">Asset tracing</span>
+  </span>
+            <p class="muted">Crypto tracing analyst in the financial crime team. Maps wallets, exchanges and cash-outs, and states what on-chain data can and cannot prove.</p>
           </span>
-        </a><a class="person-card person-card-compact" href="/people/robert-hale/">
+        </a><a class="person-card person-card-compact" href="/people/robert-hale/" data-expertise="Asset tracing">
           <img class="person-photo" src="/images/people/robert-hale.png" width="273" height="273" alt="Robert Hale" decoding="async">
           <span class="person-card-copy">
             <h2>Robert Hale</h2>
-            <p class="muted">Senior Asset Recovery Specialist</p>
+            <span class="chip-row">
+    <span class="chip">Specialist</span>
+    <span class="chip chip-status">Asset tracing</span>
+  </span>
+            <p class="muted">Senior asset recovery specialist in the financial crime team. Decides which assets are worth reaching, in which order, and by which remedy.</p>
           </span>
-        </a><a class="person-card person-card-compact" href="/people/clara-whitfield/">
+        </a><a class="person-card person-card-compact" href="/people/clara-whitfield/" data-expertise="Private prosecutions">
           <img class="person-photo" src="/images/people/clara-whitfield.png" width="273" height="273" alt="Clara Whitfield" decoding="async">
           <span class="person-card-copy">
             <h2>Clara Whitfield</h2>
-            <p class="muted">Lawyer — Disclosure &amp; Unused Material</p>
+            <span class="chip-row">
+    <span class="chip">Lawyer</span>
+    <span class="chip chip-status">Private prosecutions</span>
+  </span>
+            <p class="muted">Lawyer in the financial crime team. Builds the unused-material schedule so a private prosecution still holds when the defence tests it.</p>
           </span>
-        </a><a class="person-card person-card-compact" href="/people/thomas-ellery/">
+        </a><a class="person-card person-card-compact" href="/people/thomas-ellery/" data-expertise="Private prosecutions">
           <img class="person-photo" src="/images/people/thomas-ellery.png" width="273" height="273" alt="Thomas Ellery" decoding="async">
           <span class="person-card-copy">
             <h2>Thomas Ellery</h2>
-            <p class="muted">Lawyer — Fraud, Financial Crime &amp; Private Prosecutions</p>
+            <span class="chip-row">
+    <span class="chip">Lawyer</span>
+    <span class="chip chip-status">Private prosecutions</span>
+  </span>
+            <p class="muted">Lawyer in the financial crime team. Takes a new fraud file in hand, says what the evidence will carry, and runs it through to charge or a decision to stop.</p>
           </span>
         </a>
   </div>
@@ -361,13 +460,17 @@
         <div class="wrap">
           <p class="label">Insights</p>
           <h2>Practical notes on evidence and recovery.</h2>
-          <div class="service-index service-visual-index">
-            <a href="/insights/tracing-assets-across-wallets/">
+          <div class="insight-list">
+            <a class="insight-featured insight-entry" href="/insights/tracing-assets-across-wallets/" data-type="Investigation note" data-topics="Crypto fraud &amp; digital assets|Asset tracing &amp; recovery" data-search="Tracing assets across multiple wallets: an evidence-first approach Investigation note A practical overview of transaction mapping, evidence provenance and the legal decisions that follow.">
     <span class="service-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="7" r="2.2"/><circle cx="18" cy="7" r="2.2"/><circle cx="12" cy="18" r="2.2"/><path d="M7.8 8.4 10.4 16.1M16.2 8.4 13.6 16.1M8.2 7h7.6"/></svg></span>
-    <span>
-      <p class="label">Investigation note / 18.08.2026</p>
+    <span class="insight-body">
+      <p class="label">Investigation note / 18.08.2026 / 1 min read</p>
       <h2>Tracing assets across multiple wallets: an evidence-first approach</h2>
-      <p class="muted">A practical overview of transaction mapping, evidence provenance and the legal decisions that follow.</p>
+      <p class="muted insight-deck">A practical overview of transaction mapping, evidence provenance and the legal decisions that follow.</p>
+      <span class="insight-foot">
+        <span class="chip-row"><span class="chip">Crypto fraud &amp; digital assets</span><span class="chip">Asset tracing &amp; recovery</span></span>
+        <span class="service-more">Learn more</span>
+      </span>
     </span>
   </a>
           </div>
@@ -376,23 +479,38 @@
 
       <section class="section band-ink london-band">
         <div class="wrap split-visual">
-          <figure class="media-figure">
-    <img src="/images/london-street.jpg" width="1536" height="1024" alt="Looking from a quiet interior onto a wet London street of brick terraces" decoding="async" loading="lazy">
-  </figure>
           <div class="london-copy">
             <h2>A London practice.</h2>
             <p class="lead muted london-lead">Edison Law is an SRA-regulated solicitors' firm in London. Work that crosses borders is still held here: the evidential file, the English court, and local counsel where foreign procedure is required.</p>
             <p class="mono">London</p>
             <a class="btn btn-ghost" href="/about/">About the firm</a>
           </div>
+          <div class="field-mark" role="presentation"><svg viewBox="0 0 240 240" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect width="240" height="240" fill="var(--mark-ground)"/>
+    <circle cx="214" cy="18" r="88" fill="var(--mark-signal)" fill-opacity="0.12"/>
+    <circle cx="22" cy="228" r="64" fill="var(--mark-ink)" fill-opacity="0.1"/>
+    <path d="M84 118v-36a36 36 0 0 1 72 0v36" fill="none" stroke="var(--mark-ink)" stroke-width="12"/>
+    <path d="M84 118v-36a36 36 0 0 1 72 0v36" fill="none" stroke="var(--mark-signal)" stroke-width="6"/>
+    <rect x="62" y="112" width="116" height="96" rx="10" fill="var(--mark-ink)" fill-opacity="0.12"/>
+    <rect x="68" y="106" width="104" height="96" rx="10" fill="var(--mark-signal)"/>
+    <circle cx="120" cy="142" r="14" fill="var(--mark-sheet)"/>
+    <path d="M120 156v22" stroke="var(--mark-sheet)" stroke-width="6" stroke-linecap="round"/>
+  </svg></div>
         </div>
       </section>
 
       <section class="section">
         <div class="wrap split-visual cta-visual">
-          <figure class="media-figure">
-    <img src="/images/evidence-table.jpg" width="1536" height="1024" alt="A glass meeting table set with folders, ready for a confidential discussion" decoding="async" loading="lazy">
-  </figure>
+          <div class="field-mark" role="presentation"><svg viewBox="0 0 240 240" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect width="240" height="240" fill="var(--mark-ground)"/>
+    <rect x="48" y="52" width="144" height="136" rx="3" fill="var(--mark-sheet)" stroke="var(--mark-ink)" stroke-width="1.6"/>
+    <rect x="64" y="76" width="52" height="72" rx="2" fill="var(--mark-signal)"/>
+    <rect x="124" y="84" width="48" height="64" rx="2" fill="var(--mark-wash)" stroke="var(--mark-signal)" stroke-width="1.5"/>
+    <path d="M74 92h32M74 106h32M74 120h18" stroke="var(--mark-sheet)" stroke-width="2"/>
+    <rect x="12" y="78" width="28" height="84" rx="3" fill="var(--mark-ink)"/>
+    <rect x="200" y="78" width="28" height="84" rx="3" fill="var(--mark-ink)"/>
+    <path d="M16 228h208" stroke="var(--mark-line)" stroke-width="1.4"/>
+  </svg></div>
           <div class="cta-band reading">
             <h2>Discuss a matter.</h2>
             <p class="lead muted">Give us a concise account of what has happened, who is involved and any immediate deadline. Do not send passwords, private keys, seed phrases or original identity documents.</p>
@@ -413,7 +531,7 @@
           <nav class="footer-links" aria-label="Legal">
             <a href="/regulatory-information/">Regulatory information</a><a href="/how-we-work/">How we work</a><a href="/terms-of-business/">Terms of business</a><a href="/pricing/">Pricing</a><a href="/complaints/">Complaints</a><a href="/privacy/">Privacy</a><a href="/cookies/">Cookies</a><a href="/accessibility/">Accessibility</a><a href="/fraud-warning/">Fraud warning</a>
           </nav>
-          <div class="trust-badges">
+          <div class="trust-badges" role="group" aria-label="Regulation and memberships">
     <a class="trust-badge" href="https://www.sra.org.uk/consumers/register/organisation/?sraNumber=510498" target="_blank" rel="noopener noreferrer">
       <img src="/brand/sra-badge.svg" width="275" height="88" alt="Regulated by Solicitors Regulation Authority">
     </a>
@@ -426,14 +544,14 @@
   </div>
         </div>
         <div class="footer-base">
-          <p>Edison Law</p><p>Edison Law Limited</p><p>Private company limited by shares, incorporated in England and Wales, authorised and regulated by the Solicitors Regulation Authority</p><p>Company number 07412896</p><p>Authorised and regulated by the Solicitors Regulation Authority, SRA number 510498.</p><p>VAT number GB 214 5578 09</p><p>Registered office: Third Floor, 14 Bishopsgate Court, London EC2N 4AJ, United Kingdom</p><p><a href="/regulatory-information/">Regulatory information</a></p>
+          <p class="footer-ids"><a href="https://www.sra.org.uk/consumers/register/organisation/?sraNumber=510498" target="_blank" rel="noopener noreferrer">SRA 510498</a><span>VAT GB 214 5578 09</span><span>ICO ZA145872</span></p><p>Third Floor, 14 Bishopsgate Court, London EC2N 4AJ, United Kingdom</p><p><a href="/regulatory-information/">Regulatory information</a></p>
           <p>© <span data-year></span> Edison Law</p>
         </div>
       </div>
     </footer>
   </div>
 
-  <script type="application/json" id="edison-search-data">[{"title":"Home","href":"/","type":"Page","text":"Financial crime disputes demand clear evidence and sound judgment."},{"title":"Expertise","href":"/expertise/","type":"Page","text":"Legal routes for fraud, investigations and recovery."},{"title":"Private prosecutions","href":"/expertise/private-prosecutions/","type":"Expertise","text":"Assessing and preparing privately brought criminal proceedings where the evidence and public-interest duties support that course."},{"title":"Asset tracing & recovery","href":"/expertise/asset-tracing-recovery/","type":"Expertise","text":"Identifying potentially recoverable value and selecting proportionate civil, criminal or insolvency remedies."},{"title":"Crypto fraud & digital assets","href":"/expertise/crypto-fraud-digital-assets/","type":"Expertise","text":"Converting transaction data, platform records and device evidence into a legal case with clearly stated limits."},{"title":"Regulatory defence & investigations","href":"/expertise/regulatory-defence-investigations/","type":"Expertise","text":"Advising individuals and businesses on notices, interviews, internal reviews and engagement with investigating authorities."},{"title":"Cross-border fraud & corruption","href":"/expertise/cross-border-fraud-corruption/","type":"Expertise","text":"Coordinating English proceedings with appropriately qualified counsel where evidence, respondents or assets are overseas."},{"title":"Corporate intelligence & pre-litigation","href":"/expertise/corporate-intelligence/","type":"Expertise","text":"Lawful, confidential enquiries before litigation, investment, appointment or other material exposure."},{"title":"Investigations","href":"/investigations/","type":"Page","text":"Financial crime investigations, internal enquiries, digital tracing and asset location."},{"title":"Internal investigations","href":"/investigations/internal-investigations/","type":"Investigations","text":"Help boards make defensible employment, governance and reporting decisions."},{"title":"Financial crime investigations","href":"/investigations/financial-crime/","type":"Investigations","text":"Reconstruct conduct, participants and loss from documentary and witness evidence."},{"title":"Digital and payments investigations","href":"/investigations/digital-crypto/","type":"Investigations","text":"Preserve devices and accounts, then produce traceable transaction and communications records."},{"title":"Cross-border investigations","href":"/investigations/cross-border/","type":"Investigations","text":"Obtain and coordinate lawful enquiries across registries, courts and local professionals."},{"title":"Asset tracing investigations","href":"/investigations/asset-tracing/","type":"Investigations","text":"Identify ownership, control and realistic enforcement targets."},{"title":"Insights","href":"/insights/","type":"Page","text":"Investigation notes and legal explainers"},{"title":"Tracing assets across multiple wallets: an evidence-first approach","href":"/insights/tracing-assets-across-wallets/","type":"Investigation note","text":"A practical overview of transaction mapping, evidence provenance and the legal decisions that follow."},{"title":"What an HMRC enquiry actually needs from the file","href":"/insights/hmrc-enquiry-evidence/","type":"Legal explainer","text":"How to separate the documents that decide a tax dispute from the volume that merely surrounds it."},{"title":"Preserving digital evidence before the legal route is chosen","href":"/insights/preserving-digital-evidence/","type":"Investigation note","text":"What to hold, what not to alter, and why early method matters more than early accusation."},{"title":"People","href":"/people/","type":"Page","text":"Richard Edison, David Kerr, Amelia Rowe, Liam Brennan, Sophie Lang, Oliver Bennett, Andrew Haddon, Rosalind Keane, Julian Vance, Imogen Vale, Caroline Reid, Marcus Quinn, Robert Hale, Clara Whitfield, Thomas Ellery, Hannah Croft, Hugh Penton, Edward Langford, Daniel Crowe, Simon Blake, Helen Ashworth, Graham Holt"},{"title":"Richard Edison","href":"/people/richard-edison/","type":"People","text":"Owner. Owner of Edison Law, an SRA-regulated sole practice in London."},{"title":"David Kerr","href":"/people/david-kerr/","type":"People","text":"Lawyer — Fraud, Financial Crime & Private Prosecutions. Lawyer in the financial crime team. Runs large, document-heavy matters from first instruction through to trial."},{"title":"Amelia Rowe","href":"/people/amelia-rowe/","type":"People","text":"Lawyer — Fraud, Financial Crime & Private Prosecutions. Lawyer in the financial crime team. Day-to-day conduct of cases from first instruction through to trial, and often the client's principal point of contact."},{"title":"Liam Brennan","href":"/people/liam-brennan/","type":"People","text":"Financial Crime Investigator. Financial crime investigator in the firm's team. Establishes what happened, with a particular focus on cross-border enquiry."},{"title":"Sophie Lang","href":"/people/sophie-lang/","type":"People","text":"Payments Tracing Specialist. Payments tracing specialist in the financial crime team. Follows diverted funds through banks, PSPs and e-money accounts in the first hours of a matter."},{"title":"Oliver Bennett","href":"/people/oliver-bennett/","type":"People","text":"Lawyer — Fraud, Financial Crime & Private Prosecutions. Lawyer in the financial crime team. Often the first person a client speaks to once a fraud surfaces: get hold of the matter, say what can be achieved, push it forward."},{"title":"Andrew Haddon","href":"/people/andrew-haddon/","type":"People","text":"Asset Tracing Specialist. Asset tracing specialist in the financial crime team. Locates recoverable value and says, early, whether pursuing it is worth the cost."},{"title":"Rosalind Keane","href":"/people/rosalind-keane/","type":"People","text":"Confiscation Specialist. Confiscation specialist in the financial crime team. Turns a conviction or a settlement into a recoverable amount: benefit, available assets, and the orders that actually reach them."},{"title":"Julian Vance","href":"/people/julian-vance/","type":"People","text":"Forensic Accountant. Forensic accountant in the financial crime team. Rebuilds the books, states what the numbers prove, and writes reports that can be cross-examined."},{"title":"Imogen Vale","href":"/people/imogen-vale/","type":"People","text":"Digital Forensics Analyst. Digital forensics analyst in the financial crime team. Preserves devices, mailboxes and logs so the digital record still exists when the legal route is chosen."},{"title":"Caroline Reid","href":"/people/caroline-reid/","type":"People","text":"Lawyer — Restraint & Freezing. Lawyer in the financial crime team, focused on restraint and freezing. Prepares the application that stops the money moving, then keeps the order in place."},{"title":"Marcus Quinn","href":"/people/marcus-quinn/","type":"People","text":"Crypto Tracing Analyst. Crypto tracing analyst in the financial crime team. Maps wallets, exchanges and cash-outs, and states what on-chain data can and cannot prove."},{"title":"Robert Hale","href":"/people/robert-hale/","type":"People","text":"Senior Asset Recovery Specialist. Senior asset recovery specialist in the financial crime team. Decides which assets are worth reaching, in which order, and by which remedy."},{"title":"Clara Whitfield","href":"/people/clara-whitfield/","type":"People","text":"Lawyer — Disclosure & Unused Material. Lawyer in the financial crime team. Builds the unused-material schedule so a private prosecution still holds when the defence tests it."},{"title":"Thomas Ellery","href":"/people/thomas-ellery/","type":"People","text":"Lawyer — Fraud, Financial Crime & Private Prosecutions. Lawyer in the financial crime team. Takes a new fraud file in hand, says what the evidence will carry, and runs it through to charge or a decision to stop."},{"title":"Hannah Croft","href":"/people/hannah-croft/","type":"People","text":"Internal Investigations Specialist. Internal investigations specialist. Runs board-level, employee and whistleblower enquiries so the file still holds if you later prosecute, report or litigate."},{"title":"Hugh Penton","href":"/people/hugh-penton/","type":"People","text":"Lawyer — Regulatory Defence & Investigations. Lawyer in the financial crime team. Represents individuals and companies when an SFO, FCA or HMRC enquiry is already underway."},{"title":"Edward Langford","href":"/people/edward-langford/","type":"People","text":"Lawyer — Cross-Border Fraud & Corruption. Lawyer in the financial crime team. Holds the London file where a UK-facing loss has its origins, or its proceeds, overseas."},{"title":"Daniel Crowe","href":"/people/daniel-crowe/","type":"People","text":"Financial Crime Investigator. Financial crime investigator. Establishes who was involved, how the scheme ran, and what the documents actually prove — before anyone commits to a legal route."},{"title":"Simon Blake","href":"/people/simon-blake/","type":"People","text":"Lawyer — Crypto Fraud & Digital Assets. Lawyer in the financial crime team. Turns an on-chain picture into a legal decision: freeze, letter, claim — or a statement of what the records cannot prove."},{"title":"Helen Ashworth","href":"/people/helen-ashworth/","type":"People","text":"Lawyer — Tax Investigations & HMRC. Lawyer in the financial crime team. Separates the documents that decide an HMRC enquiry from the volume that merely surrounds it."},{"title":"Graham Holt","href":"/people/graham-holt/","type":"People","text":"Pre-Litigation Intelligence Specialist. Pre-litigation intelligence specialist. Establishes who a counterparty is, what they own, and whether a claim is worth the cost — before money is spent."},{"title":"Join us","href":"/join-us/","type":"Page","text":"Careers at Edison Law"},{"title":"About","href":"/about/","type":"Page","text":"A London SRA-regulated sole practice for financial crime, private prosecution and asset recovery."},{"title":"Cobra AI","href":"/investigations/#cobra-ai","type":"Page","text":"Investigative tool from IYE Global. Used on the file; output is reviewed here."},{"title":"Contact","href":"/contact/","type":"Page","text":"Write to the London office"},{"title":"Regulatory information","href":"/regulatory-information/","type":"Legal","text":"Regulatory information"},{"title":"How we work","href":"/how-we-work/","type":"Legal","text":"How we work"},{"title":"Terms of business","href":"/terms-of-business/","type":"Legal","text":"Terms of business"},{"title":"Pricing","href":"/pricing/","type":"Legal","text":"Pricing"},{"title":"Complaints","href":"/complaints/","type":"Legal","text":"Complaints"},{"title":"Privacy","href":"/privacy/","type":"Legal","text":"Privacy"},{"title":"Cookies","href":"/cookies/","type":"Legal","text":"Cookies"},{"title":"Accessibility","href":"/accessibility/","type":"Legal","text":"Accessibility"},{"title":"Fraud warning","href":"/fraud-warning/","type":"Legal","text":"Fraud warning"}]</script>
+  <script type="application/json" id="edison-search-data">[{"title":"Home","href":"/","type":"Page","text":"Financial crime disputes demand clear evidence and sound judgment."},{"title":"Expertise","href":"/expertise/","type":"Page","text":"Legal routes for fraud, investigations and recovery."},{"title":"Private prosecutions","href":"/expertise/private-prosecutions/","type":"Expertise","text":"Assess whether a private prosecution is the right legal route."},{"title":"Asset tracing & recovery","href":"/expertise/asset-tracing-recovery/","type":"Expertise","text":"Find what remains, then choose a proportionate civil, criminal or insolvency remedy."},{"title":"Crypto fraud & digital assets","href":"/expertise/crypto-fraud-digital-assets/","type":"Expertise","text":"Turn the trail into exhibits, with the limits of the records stated."},{"title":"Regulatory defence & investigations","href":"/expertise/regulatory-defence-investigations/","type":"Expertise","text":"Control the first response and the record that follows."},{"title":"Cross-border fraud & corruption","href":"/expertise/cross-border-fraud-corruption/","type":"Expertise","text":"Hold the English file and instruct local counsel where foreign procedure is required."},{"title":"Corporate intelligence & pre-litigation","href":"/expertise/corporate-intelligence/","type":"Expertise","text":"Lawful, confidential enquiries before litigation, investment or appointment."},{"title":"Investigations","href":"/investigations/","type":"Page","text":"Financial crime investigations, internal enquiries, digital tracing and asset location."},{"title":"Internal investigations","href":"/investigations/internal-investigations/","type":"Investigations","text":"Help boards make defensible employment, governance and reporting decisions."},{"title":"Financial crime investigations","href":"/investigations/financial-crime/","type":"Investigations","text":"Reconstruct conduct, participants and loss from documentary and witness evidence."},{"title":"Digital and payments investigations","href":"/investigations/digital-crypto/","type":"Investigations","text":"Preserve devices and accounts, then produce traceable transaction and communications records."},{"title":"Cross-border investigations","href":"/investigations/cross-border/","type":"Investigations","text":"Obtain and coordinate lawful enquiries across registries, courts and local professionals."},{"title":"Asset tracing investigations","href":"/investigations/asset-tracing/","type":"Investigations","text":"Identify ownership, control and realistic enforcement targets."},{"title":"Insights","href":"/insights/","type":"Page","text":"Investigation notes and legal explainers"},{"title":"Tracing assets across multiple wallets: an evidence-first approach","href":"/insights/tracing-assets-across-wallets/","type":"Investigation note","text":"A practical overview of transaction mapping, evidence provenance and the legal decisions that follow."},{"title":"What an HMRC enquiry actually needs from the file","href":"/insights/hmrc-enquiry-evidence/","type":"Legal explainer","text":"How to separate the documents that decide a tax dispute from the volume that merely surrounds it."},{"title":"Preserving digital evidence before the legal route is chosen","href":"/insights/preserving-digital-evidence/","type":"Investigation note","text":"What to hold, what not to alter, and why early method matters more than early accusation."},{"title":"People","href":"/people/","type":"Page","text":"Richard Edison, David Kerr, Amelia Rowe, Liam Brennan, Sophie Lang, Oliver Bennett, Andrew Haddon, Rosalind Keane, Julian Vance, Imogen Vale, Caroline Reid, Marcus Quinn, Robert Hale, Clara Whitfield, Thomas Ellery, Hannah Croft, Hugh Penton, Edward Langford, Daniel Crowe, Simon Blake, Helen Ashworth, Graham Holt"},{"title":"Richard Edison","href":"/people/richard-edison/","type":"People","text":"Owner. Owner of Edison Law, an SRA-regulated sole practice in London."},{"title":"David Kerr","href":"/people/david-kerr/","type":"People","text":"Lawyer — Fraud, Financial Crime & Private Prosecutions. Lawyer in the financial crime team. Runs large, document-heavy matters from first instruction through to trial."},{"title":"Amelia Rowe","href":"/people/amelia-rowe/","type":"People","text":"Lawyer — Fraud, Financial Crime & Private Prosecutions. Lawyer in the financial crime team. Day-to-day conduct of cases from first instruction through to trial, and often the client's principal point of contact."},{"title":"Liam Brennan","href":"/people/liam-brennan/","type":"People","text":"Financial Crime Investigator. Financial crime investigator in the firm's team. Establishes what happened, with a particular focus on cross-border enquiry."},{"title":"Sophie Lang","href":"/people/sophie-lang/","type":"People","text":"Payments Tracing Specialist. Payments tracing specialist in the financial crime team. Follows diverted funds through banks, PSPs and e-money accounts in the first hours of a matter."},{"title":"Oliver Bennett","href":"/people/oliver-bennett/","type":"People","text":"Lawyer — Fraud, Financial Crime & Private Prosecutions. Lawyer in the financial crime team. Often the first person a client speaks to once a fraud surfaces: get hold of the matter, say what can be achieved, push it forward."},{"title":"Andrew Haddon","href":"/people/andrew-haddon/","type":"People","text":"Asset Tracing Specialist. Asset tracing specialist in the financial crime team. Locates recoverable value and says, early, whether pursuing it is worth the cost."},{"title":"Rosalind Keane","href":"/people/rosalind-keane/","type":"People","text":"Confiscation Specialist. Confiscation specialist in the financial crime team. Turns a conviction or a settlement into a recoverable amount: benefit, available assets, and the orders that actually reach them."},{"title":"Julian Vance","href":"/people/julian-vance/","type":"People","text":"Forensic Accountant. Forensic accountant in the financial crime team. Rebuilds the books, states what the numbers prove, and writes reports that can be cross-examined."},{"title":"Imogen Vale","href":"/people/imogen-vale/","type":"People","text":"Digital Forensics Analyst. Digital forensics analyst in the financial crime team. Preserves devices, mailboxes and logs so the digital record still exists when the legal route is chosen."},{"title":"Caroline Reid","href":"/people/caroline-reid/","type":"People","text":"Lawyer — Restraint & Freezing. Lawyer in the financial crime team, focused on restraint and freezing. Prepares the application that stops the money moving, then keeps the order in place."},{"title":"Marcus Quinn","href":"/people/marcus-quinn/","type":"People","text":"Crypto Tracing Analyst. Crypto tracing analyst in the financial crime team. Maps wallets, exchanges and cash-outs, and states what on-chain data can and cannot prove."},{"title":"Robert Hale","href":"/people/robert-hale/","type":"People","text":"Senior Asset Recovery Specialist. Senior asset recovery specialist in the financial crime team. Decides which assets are worth reaching, in which order, and by which remedy."},{"title":"Clara Whitfield","href":"/people/clara-whitfield/","type":"People","text":"Lawyer — Disclosure & Unused Material. Lawyer in the financial crime team. Builds the unused-material schedule so a private prosecution still holds when the defence tests it."},{"title":"Thomas Ellery","href":"/people/thomas-ellery/","type":"People","text":"Lawyer — Fraud, Financial Crime & Private Prosecutions. Lawyer in the financial crime team. Takes a new fraud file in hand, says what the evidence will carry, and runs it through to charge or a decision to stop."},{"title":"Hannah Croft","href":"/people/hannah-croft/","type":"People","text":"Internal Investigations Specialist. Internal investigations specialist. Runs board-level, employee and whistleblower enquiries so the file still holds if you later prosecute, report or litigate."},{"title":"Hugh Penton","href":"/people/hugh-penton/","type":"People","text":"Lawyer — Regulatory Defence & Investigations. Lawyer in the financial crime team. Represents individuals and companies when an SFO, FCA or HMRC enquiry is already underway."},{"title":"Edward Langford","href":"/people/edward-langford/","type":"People","text":"Lawyer — Cross-Border Fraud & Corruption. Lawyer in the financial crime team. Holds the London file where a UK-facing loss has its origins, or its proceeds, overseas."},{"title":"Daniel Crowe","href":"/people/daniel-crowe/","type":"People","text":"Financial Crime Investigator. Financial crime investigator. Establishes who was involved, how the scheme ran, and what the documents actually prove — before anyone commits to a legal route."},{"title":"Simon Blake","href":"/people/simon-blake/","type":"People","text":"Lawyer — Crypto Fraud & Digital Assets. Lawyer in the financial crime team. Turns an on-chain picture into a legal decision: freeze, letter, claim — or a statement of what the records cannot prove."},{"title":"Helen Ashworth","href":"/people/helen-ashworth/","type":"People","text":"Lawyer — Tax Investigations & HMRC. Lawyer in the financial crime team. Separates the documents that decide an HMRC enquiry from the volume that merely surrounds it."},{"title":"Graham Holt","href":"/people/graham-holt/","type":"People","text":"Pre-Litigation Intelligence Specialist. Pre-litigation intelligence specialist. Establishes who a counterparty is, what they own, and whether a claim is worth the cost — before money is spent."},{"title":"Join us","href":"/join-us/","type":"Page","text":"Careers at Edison Law"},{"title":"About","href":"/about/","type":"Page","text":"A London SRA-regulated sole practice for financial crime, private prosecution and asset recovery."},{"title":"Cobra AI","href":"/investigations/#cobra-ai","type":"Page","text":"Investigative tool from IYE Global. Used on the file; output is reviewed here."},{"title":"Contact","href":"/contact/","type":"Page","text":"Write to the London office"},{"title":"Regulatory information","href":"/regulatory-information/","type":"Legal","text":"Regulatory information"},{"title":"How we work","href":"/how-we-work/","type":"Legal","text":"How we work"},{"title":"Terms of business","href":"/terms-of-business/","type":"Legal","text":"Terms of business"},{"title":"Pricing","href":"/pricing/","type":"Legal","text":"Pricing"},{"title":"Complaints","href":"/complaints/","type":"Legal","text":"Complaints"},{"title":"Privacy","href":"/privacy/","type":"Legal","text":"Privacy"},{"title":"Cookies","href":"/cookies/","type":"Legal","text":"Cookies"},{"title":"Accessibility","href":"/accessibility/","type":"Legal","text":"Accessibility"},{"title":"Fraud warning","href":"/fraud-warning/","type":"Legal","text":"Fraud warning"}]</script>
   <script type="module" src="/src/js/main.js"></script>
 </body>
 </html>
