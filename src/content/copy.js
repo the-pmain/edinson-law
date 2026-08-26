@@ -696,6 +696,7 @@ export const pages = {
       { label: "Current opportunities", href: "#vacancies" },
     ],
     cta: { label: "View current opportunities (0)", href: "#vacancies" },
+    cvCta: { label: "Send CV", href: "mailto:cv@example.com" },
     tracks: {
       label: "Careers with us",
       heading: "The work you would do.",
@@ -783,6 +784,16 @@ export const pages = {
     heading: "A specialist London practice for financial-crime matters.",
     lead: "Edison Law is an SRA-regulated sole practice based in London. The firm advises on criminal, investigative and recovery matters involving fraud and financial misconduct. Each instruction is supervised by a named solicitor, with external counsel and specialist professionals engaged where the matter requires them.",
     cta: { label: "Discuss a matter", href: "/contact/" },
+    jump: [
+      { label: "Who we are", href: "#who" },
+      { label: "What we do", href: "#what" },
+      { label: "Who instructs", href: "#clients" },
+      { label: "How the work is done", href: "#values" },
+      { label: "Talk to us", href: "#talk" },
+    ],
+    who: { heading: "Who we are" },
+    what: { heading: "What we do" },
+    talk: { heading: "Talk to us" },
     lifecycle: {
       label: "How a matter is held",
       heading: "Three stages. One file.",

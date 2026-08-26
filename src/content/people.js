@@ -34,7 +34,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Advises on financial-crime strategy and private prosecutions, from the first assessment of the evidence through to hearing.",
+      "Assesses evidence and advises on financial-crime strategy and private prosecutions.",
     bio: [
       "David is a solicitor specialising in financial-crime matters and private prosecutions. He assesses the available evidence, identifies the legal questions that must be resolved and advises whether criminal proceedings are realistic and proportionate.",
       "His work includes document-heavy fraud allegations, witness evidence, disclosure, instructions to counsel and coordination with investigators and forensic specialists. Where appropriate, he considers recovery options alongside the prosecution strategy so that each route supports the wider objectives of the matter.",
@@ -58,7 +58,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Advises on fraud investigations and coordinates the legal, evidential and recovery work needed to build a reliable case.",
+      "Coordinates legal, evidential and recovery work in fraud investigations.",
     bio: [
       "Amelia is a solicitor working on fraud and investigation matters. She reviews the available records at an early stage, identifies material that must be preserved and defines the factual questions that should be investigated first.",
       "Her work includes witness preparation, chronologies, document review, disclosure and coordination with tracing and forensic specialists. She keeps the legal strategy tied to evidence that can be tested rather than assumptions formed at the start of a matter.",
@@ -83,7 +83,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Establishes participants, events and sources in financial-crime matters, with a focus on producing a documented and testable record.",
+      "Builds testable records of participants and events in financial-crime matters.",
     bio: [
       "Liam's role is to establish what happened before a legal route is selected. He works from records, witnesses and lawful enquiries to identify participants, relationships, events and gaps in the available evidence.",
       "The resulting material is organised so that sources can be checked and findings can be distinguished from inference. Where facts or records sit overseas, enquiries are coordinated with appropriately qualified local professionals when required.",
@@ -107,7 +107,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Maps payment movement through banks, payment institutions and e-money services so the legal team can assess preservation, disclosure and recovery options.",
+      "Maps payment flows to support preservation, disclosure and recovery decisions.",
     bio: [
       "Sophie's role focuses on the movement of fiat payments after fraud, diversion or unauthorised activity. She works from transaction records, payment references and institution information to build a clear flow-of-funds picture.",
       "The output may include transaction schedules, institution lists, timelines and identified gaps in the record. It is prepared to support decisions about bank contact, evidence preservation, disclosure routes and possible urgent relief.",
@@ -131,7 +131,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Advises on fraud and asset-recovery matters, combining early legal assessment with practical decisions about preservation and recoverable value.",
+      "Advises on fraud, asset preservation and proportionate recovery options.",
     bio: [
       "Oliver is a solicitor advising on fraud and asset-recovery matters. He identifies the relevant parties, assesses the evidence already available and considers which assets may remain reachable before a client commits to substantial expenditure.",
       "His work may combine investigator findings, transaction tracing and disclosure applications with advice on civil, criminal and insolvency routes. Each option is assessed against the evidence, urgency, likely cost and practical prospects of enforcement.",
@@ -156,7 +156,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Develops asset and ownership information so the legal team can assess what may be reachable, by which route and at what proportionate cost.",
+      "Maps assets and ownership to assess reachability, routes and cost.",
     bio: [
       "Andrew's role is to identify potentially recoverable value and the people or entities that appear to own or control it. Enquiries may follow funds into companies, property, investments, goods or digital assets.",
       "Findings are organised as asset registers, ownership maps and source-referenced schedules. The work separates the existence of an asset from the separate legal questions of ownership, jurisdiction and enforceability.",
@@ -180,7 +180,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Supports confiscation, compensation and proceeds-of-crime work by organising benefit, available-amount and asset information for legal assessment.",
+      "Organises benefit, asset and available-amount evidence for proceeds-of-crime matters.",
     bio: [
       "Rosalind's role focuses on the financial record needed for confiscation and related proceeds-of-crime decisions. She works with accounting and tracing material to distinguish alleged benefit, identified assets and the amounts that may in fact be available.",
       "The work may include financial schedules, compensation material, asset information and coordination with those handling restraint or enforcement. Figures are tied back to source records and stated with their limitations.",
@@ -205,7 +205,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Reconstructs financial records, tests loss calculations and presents the accounting evidence in a form the legal team can assess and explain.",
+      "Reconstructs records and tests loss calculations for legal proceedings.",
     bio: [
       "Julian's role is to turn accounting records into a clear, source-referenced financial analysis. That can involve reconstructing ledgers, reviewing intercompany movements, testing transactions and distinguishing recorded loss from unsupported assumption.",
       "His schedules are prepared for use by the legal and investigative team in advice, pleadings, witness evidence, confiscation analysis or cross-examination. Where the records do not support a proposed conclusion, the limitation is stated.",
@@ -229,7 +229,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Focuses on preserving devices, accounts and metadata so digital material can be reviewed with provenance, continuity and limitations recorded.",
+      "Preserves digital evidence with provenance, continuity and limitations recorded.",
     bio: [
       "Imogen's role begins with preservation. Devices, mailboxes, cloud accounts and logs may need to be held before ordinary use, exports or account changes alter the available record.",
       "The work records how material was collected, what metadata remains and which limitations affect interpretation. Outputs may include preservation notes, device or account captures, timelines and exhibits for review by lawyers and investigators.",
@@ -253,7 +253,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Advises on restraint, freezing and related disclosure applications where urgency, evidence and the practical effect of an order require careful judgment.",
+      "Advises on urgent restraint, freezing and disclosure applications.",
     bio: [
       "Caroline is a solicitor specialising in restraint, freezing orders and related interim relief. She begins with the applicable legal test, the evidence available and the identity of each proposed respondent or institution.",
       "She coordinates tracing, accounting and witness material for freezing, proprietary and disclosure applications. Her advice also addresses the continuing obligations attached to an order, including service, undertakings, return dates and possible variation.",
@@ -278,7 +278,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Maps digital-asset movement across wallets and services while distinguishing confirmed transactions, service attribution and analytical inference.",
+      "Maps digital assets, separating confirmed transactions from analytical inference.",
     bio: [
       "Marcus's role focuses on what public blockchain records can establish about the movement of digital assets. Transactions may be mapped across wallets, bridges, swaps and identifiable services, including possible exchange deposit points.",
       "The analysis records transaction identifiers, timestamps and methodology. Confirmed transfers are separated from clustering, attribution and other inferences so the legal team can assess what additional platform, device or identity evidence is required.",
@@ -303,7 +303,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Coordinates the practical recovery picture: which identified assets may be reachable, which route could apply and whether the likely value justifies the next cost.",
+      "Coordinates asset reachability, recovery routes and cost-benefit decisions.",
     bio: [
       "Robert's role is to bring tracing, legal remedies and enforcement economics into one recovery plan. Identified assets are assessed by location, apparent ownership, security, liquidity and the process that may be required to reach them.",
       "The plan may involve disclosure, freezing, insolvency, receivership or enforcement steps, with local counsel engaged where foreign law or procedure is required. Each stage is reviewed against likely value, delay and cost.",
@@ -327,7 +327,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Advises on disclosure and unused material in private prosecutions and financial-crime matters, with continuing review built into the case from the outset.",
+      "Advises on disclosure and continuing review in financial-crime proceedings.",
     bio: [
       "Clara is a solicitor focusing on disclosure and unused material in private prosecutions and financial-crime matters. She treats disclosure as a continuing legal duty rather than an administrative exercise left until the end of a case.",
       "Her work includes disclosure strategy, unused-material schedules, continuity records and liaison with those collecting digital, financial and witness evidence. Material is reviewed against issues it may support or undermine as the case and defence position develop.",
@@ -351,7 +351,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Advises on private prosecutions and financial-crime matters, including the early merits assessment and the decision whether proceedings should begin.",
+      "Assesses evidence and advises whether private prosecution is justified.",
     bio: [
       "Thomas is a solicitor advising on private prosecutions and financial-crime matters. He assesses the alleged conduct, available evidence and legal test for commencing criminal proceedings before recommending a prosecution route.",
       "He coordinates preservation, witness material, unused material and the early case file with investigators, forensic specialists and counsel where required. Related civil or recovery steps are identified so that one route does not unintentionally compromise another.",
@@ -375,7 +375,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Supports internal investigations by defining the factual questions, preserving relevant material and separating investigation from employment or governance decisions.",
+      "Structures internal investigations, evidence preservation and factual findings.",
     bio: [
       "Hannah's role focuses on the structure and factual record of internal enquiries. The work begins by defining the questions, decision-makers, material to be preserved and relationship with any employment, regulatory or criminal process.",
       "She may coordinate document holds, interviews, timelines and reporting with lawyers and digital specialists. Findings identify what is established, what remains disputed and what material supports each conclusion.",
@@ -399,7 +399,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Advises on the first response to regulatory and financial-crime investigations, including preservation, privilege, notices and interviews.",
+      "Advises on early regulatory responses, privilege, notices and interviews.",
     bio: [
       "Hugh is a solicitor advising individuals and organisations when a regulator or enforcement authority has made contact or an investigation is expected. His initial advice addresses evidence preservation, privilege, communications and the scope of any compulsory power.",
       "His work includes information notices, interviews under caution, internal fact development and coordination with related civil or recovery issues. Advice is based on the named authority, the power being used and the documents actually available.",
@@ -423,7 +423,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Advises on fraud and recovery matters involving overseas evidence, respondents or assets, coordinating local counsel where foreign procedure is required.",
+      "Coordinates cross-border fraud and recovery matters with local counsel.",
     bio: [
       "Edward is a solicitor advising on fraud and corruption matters where important facts, people or assets sit in more than one jurisdiction. He assesses forum, service, evidence, interim relief and enforceability before proceedings are issued.",
       "He coordinates appropriately qualified local counsel for foreign-law advice and procedural steps, with the client's approval. Registry, tracing and investigative work is integrated into a single legal timetable.",
@@ -447,7 +447,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Develops the factual record in financial-crime matters by linking documents, transactions, witnesses and participants to defined investigative questions.",
+      "Links documents, transactions, witnesses and participants into a testable record.",
     bio: [
       "Daniel's role is to test an allegation against the records that still exist. He identifies relevant people, source documents, transaction information and missing material, then organises findings around the agreed investigative questions.",
       "The work may include witness enquiries, chronologies, continuity records and links between recipients, companies or accounts. Findings and unresolved inferences are kept separate.",
@@ -471,7 +471,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Advises on the legal implications of wallet tracing, platform records and digital-asset disputes, including preservation, disclosure and interim relief.",
+      "Advises on crypto tracing, preservation, disclosure and interim relief.",
     bio: [
       "Simon is a solicitor advising on crypto fraud and digital-asset disputes. He assesses on-chain transfers alongside platform correspondence, device evidence and identity material because a wallet trail alone rarely proves ownership or control.",
       "He works with tracing analysts on preservation requests, platform engagement, proprietary claims, interim relief and the choice between civil and criminal routes. Confirmed transactions are kept distinct from technical inference and attribution.",
@@ -495,7 +495,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Advises on the evidential and procedural response to HMRC enquiries and tax-related investigations, including notices, privilege and document scope.",
+      "Advises on HMRC enquiries, notices, privilege and document scope.",
     bio: [
       "Helen is a solicitor advising on HMRC enquiries and tax-related investigations. She identifies what a request requires, which records answer it and which legal or evidential issues arise from the proposed response.",
       "Her work includes document scoping, privilege review, chronology and coordination with specialist tax advisers where substantive tax advice is required. Civil enquiries, information notices and criminal investigations are treated as distinct processes.",
@@ -519,7 +519,7 @@ export const people = [
     photoWidth: 273,
     photoHeight: 273,
     summary:
-      "Develops lawful pre-litigation intelligence on counterparties, connected entities and apparent assets before a client commits to proceedings or exposure.",
+      "Develops lawful pre-litigation intelligence on counterparties, connections and assets.",
     bio: [
       "Graham's role sits before litigation, investment or another material decision. Public records, corporate filings, litigation information and lawful open-source research are used to clarify identity, control, connections and apparent enforceability.",
       "Findings are source-referenced and qualified. A corporate connection, shared address or online association is not treated as proof of ownership or misconduct.",

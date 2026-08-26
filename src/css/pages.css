@@ -831,6 +831,62 @@
   margin: 0;
 }
 
+.about-open-copy .lead {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: var(--leading-heading);
+  color: var(--edison-ink);
+  max-width: 22em;
+}
+
+.about-story {
+  display: grid;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: none;
+}
+
+.about-story .lead,
+.about-story p {
+  max-width: none;
+}
+
+.about-story h2,
+.about-record h3,
+#values h2,
+#talk h2 {
+  margin: 0;
+}
+
+.about-record {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-10);
+}
+
+.about-record h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.about-facts .fact-item {
+  padding: var(--space-6);
+  border: var(--border-width) solid var(--edison-line);
+  background: var(--edison-paper);
+}
+
+.about-facts .fact-label {
+  color: var(--color-text-muted);
+}
+
+.about-facts .fact-value a:hover {
+  color: var(--edison-signal-deep);
+}
+
 .insight-tools {
   display: grid;
   gap: var(--space-2);
@@ -1142,6 +1198,9 @@ body[data-path="/insights/"] .page-head .lead {
 }
 
 .join-intro {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: start;
   padding-bottom: var(--space-4);
 }
 
@@ -1170,7 +1229,8 @@ body[data-path="/insights/"] .page-head .lead {
   max-width: var(--reading-max);
 }
 
-body[data-path="/join-us/"] .footer {
+body[data-path="/join-us/"] .footer,
+body[data-path="/about/"] .footer {
   margin-top: 0;
   border-top: 0;
 }
@@ -1198,7 +1258,12 @@ body[data-path="/join-us/"] .footer {
 #instruct,
 #culture,
 #cobra-ai,
-#investigators {
+#investigators,
+#who,
+#what,
+#clients,
+#values,
+#talk {
   scroll-margin-top: 5.5rem;
 }
 

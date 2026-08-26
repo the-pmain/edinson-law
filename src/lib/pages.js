@@ -92,9 +92,7 @@ function peopleCards(list = site.people, variant = "") {
   return `<div class="people-grid${compact ? " people-grid-collective" : ""}">
     ${list
       .map(
-        (person) => `<a class="person-card${compact ? " person-card-compact" : ""}${
-          person.principal ? " person-card-lead" : ""
-        }" href="${personHref(person)}" data-expertise="${esc(personExpertise(person).join("|"))}">
+        (person) => `<a class="person-card${compact ? " person-card-compact" : ""}" href="${personHref(person)}" data-expertise="${esc(personExpertise(person).join("|"))}">
           ${personPortrait(person)}
           <span class="person-card-copy">
             <h2>${esc(person.name)}</h2>
@@ -131,6 +129,7 @@ function peopleCollective(options = {}) {
   const profile = home.sections.profile;
   const lead = principalPerson();
   const showIntro = options.intro !== false;
+  const hideRow = options.row === false;
   const shot = options.all
     ? `<span class="owner-row-photo">${personPortrait(lead, "person-photo")}</span>`
     : collectiveShot();
@@ -141,24 +140,23 @@ function peopleCollective(options = {}) {
     : `<h2>${esc(lead.name)}</h2>
             ${personChips(lead)}
             <p class="lead profile-lead">${esc(lead.summary)}</p>`;
-  const row = options.all
-    ? `<a class="owner-row owner-row-link" href="${personHref(lead)}" data-expertise="${esc(personExpertise(lead).join("|"))}">
+  const row = hideRow
+    ? showIntro
+      ? `<div class="people-home-head">${copy}</div>`
+      : ""
+    : options.all
+      ? `<a class="owner-row owner-row-link" href="${personHref(lead)}" data-expertise="${esc(personExpertise(lead).join("|"))}">
       ${shot}
       <div class="owner-row-copy">${copy}</div>
     </a>`
-    : `<div class="owner-row">
+      : `<div class="owner-row">
       ${shot}
       <div class="owner-row-copy">${copy}</div>
     </div>`;
+  const others = site.people.filter((person) => !person.principal);
+  const roster = options.all ? others : others.slice(0, 14);
   const cards =
-    options.includePeople === false
-      ? ""
-      : peopleCards(
-          options.all
-            ? site.people.filter((person) => !person.principal)
-            : site.people.filter((person) => !person.principal).slice(0, 14),
-          "compact",
-        );
+    options.includePeople === false ? "" : peopleCards(roster, "compact");
   return `${row}${cards}`;
 }
 
@@ -449,7 +447,7 @@ function homePage() {
 
       <section class="section band-paper" id="people">
         <div class="wrap people-home">
-          ${peopleCollective()}
+          ${peopleCollective({ row: false })}
           <div class="people-home-foot">
             <a class="btn btn-ghost" href="${home.sections.profile.cta.href}">${esc(home.sections.profile.cta.label)}</a>
           </div>
@@ -885,9 +883,9 @@ function joinUsPage() {
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
         ${pageJump(page.jump)}
-        ${actionButton(page)}
         <div class="page-head-intro join-intro">
           ${page.intro.map((para) => `<p>${esc(para)}</p>`).join("")}
+          <p><a class="btn btn-signal" href="${esc(page.cvCta.href)}">${esc(page.cvCta.label)}</a></p>
           <p><a href="/people/">People at Edison Law</a></p>
         </div>
       </div>
@@ -1007,81 +1005,84 @@ function personPage(person) {
 
 function aboutPage() {
   const page = pages.about;
-  const story = page.lifecycle;
   const record = page.record;
   const clients = page.clients;
   const commitments = page.commitments;
+  const difference = page.difference;
+  const heritage = page.heritage;
   const facts = record.items;
   const body = `
     <main id="content">
       <div class="wrap page-head about-open">
         ${crumbs([{ label: "About" }])}
         <div class="about-open-copy">
-          <h1>${esc(page.heading)}</h1>
+          <h1>About</h1>
+          <p class="lead">${esc(page.heading)}</p>
           <p class="trust-strip">
             <a class="mono" href="${esc(site.sraUrl)}" target="_blank" rel="noopener noreferrer">SRA ${esc(site.sraNumber)}</a>
             <span>London</span>
             <span>Each matter is supervised by a named solicitor</span>
           </p>
-          <p class="lead muted">${esc(page.lead)}</p>
+          ${pageJump(page.jump)}
           ${actionButton(page)}
         </div>
         ${fieldMark("london", "field-mark")}
       </div>
-      <section class="section-tight">
+      <section class="section" id="who">
+        <div class="wrap about-story">
+          <h2>${esc(page.who.heading)}</h2>
+          <p class="lead muted">${esc(page.lead)}</p>
+          <p>${htmlWithSraLinks(heritage.text)}</p>
+        </div>
+      </section>
+      <section class="section" id="what">
         <div class="wrap">
-          <p class="label">${esc(story.label)}</p>
-          <h2>${esc(story.heading)}</h2>
-          <div class="stage-grid">
-            ${story.items
-              .map(
-                (item) => `<article class="stage-card">
-                  <span class="service-mark" aria-hidden="true">${whyIcon(item.icon)}</span>
-                  <p class="label">${esc(item.index)}</p>
-                  <h3>${esc(item.title)}</h3>
-                  <p class="muted">${esc(item.text)}</p>
-                </article>`,
-              )
-              .join("")}
+          <div class="about-story">
+            <h2>${esc(page.what.heading)}</h2>
+            <p class="lead muted">${esc(difference.heading)}</p>
+          </div>
+          ${titledStack(difference.items)}
+          <div class="about-record">
+            <h3>${esc(record.heading)}</h3>
+            <p class="muted">${htmlWithSraLinks(record.note)}</p>
+            <div class="facts-strip about-facts">
+              ${facts
+                .map((item) => {
+                  const value =
+                    item.value === site.sraNumber
+                      ? `<a href="${esc(site.sraUrl)}" target="_blank" rel="noopener noreferrer">${esc(item.value)}</a>`
+                      : esc(item.value);
+                  return `<p class="fact-item"><span class="fact-value">${value}</span><span class="fact-label">${esc(item.label)}</span></p>`;
+                })
+                .join("")}
+            </div>
           </div>
         </div>
       </section>
-      <section class="section">
-        <div class="wrap">
-          <p class="label">${esc(clients.label)}</p>
-          <h2>${esc(clients.heading)}</h2>
-          <p class="lead muted method-lead">${esc(clients.note)}</p>
+      <section class="section" id="clients">
+        <div class="wrap about-story">
+          <h2>${esc(clients.label)}</h2>
+          <p class="lead muted">${esc(clients.heading)}</p>
+          <p class="muted">${esc(clients.note)}</p>
           <ul class="audience-list">
             ${clients.items.map((item) => `<li>${esc(item)}</li>`).join("")}
           </ul>
         </div>
       </section>
-      <section class="section band-ink">
+      <section class="section" id="values">
         <div class="wrap">
-          <p class="label">${esc(record.label)}</p>
-          <h2>${esc(record.heading)}</h2>
-          <p class="lead muted">${htmlWithSraLinks(record.note)}</p>
-          <div class="facts-strip">
-            ${facts
-              .map((item) => {
-                const value =
-                  item.value === site.sraNumber
-                    ? `<a href="${esc(site.sraUrl)}" target="_blank" rel="noopener noreferrer">${esc(item.value)}</a>`
-                    : esc(item.value);
-                return `<p class="fact-item"><span class="fact-value">${value}</span><span class="fact-label">${esc(item.label)}</span></p>`;
-              })
-              .join("")}
-          </div>
-        </div>
-      </section>
-      <section class="section">
-        <div class="wrap">
-          <p class="label">${esc(commitments.label)}</p>
           <h2>${esc(commitments.heading)}</h2>
           ${titledStack(commitments.items)}
         </div>
       </section>
-      ${reviewFoot(page)}
+      <section class="section band-ink" id="talk">
+        <div class="wrap cta-band">
+          <h2>${esc(page.talk.heading)}</h2>
+          <p class="lead muted">${esc(pages.contact.lead)}</p>
+          ${contactDirectHtml()}
+          ${actionButton(page)}
+        </div>
+      </section>
     </main>
   `;
   return documentPage({ ...page, crumb: "About" }, body);

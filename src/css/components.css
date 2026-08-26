@@ -436,8 +436,8 @@
 }
 
 .people-grid-collective {
-  gap: var(--space-4);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5) var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(9.75rem, 1fr));
 }
 
 .person-card {
@@ -482,7 +482,7 @@
   font-size: 1.0625rem;
 }
 
-.person-card-compact .muted {
+.person-card-copy .muted {
   font-size: 0.75rem;
   line-height: 1.4;
   overflow-wrap: break-word;
@@ -632,7 +632,7 @@
 
 .people-index {
   display: grid;
-  gap: var(--space-10);
+  gap: var(--space-12);
   padding-top: 0;
   padding-bottom: var(--section-y);
   min-width: 0;
@@ -649,7 +649,7 @@
 
 .people-directory-group {
   display: grid;
-  gap: var(--space-6);
+  gap: var(--space-8);
   min-width: 0;
 }
 
@@ -879,6 +879,10 @@
 }
 
 @media (min-width: 480px) {
+  .people-grid-collective {
+    grid-template-columns: repeat(auto-fill, minmax(9.75rem, 1fr));
+  }
+
   .person-card-lead {
     grid-column: 1 / -1;
   }
@@ -918,7 +922,7 @@
 
   .people-grid-collective {
     grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
-    gap: var(--space-6) var(--space-4);
+    gap: var(--space-8) var(--space-6);
   }
 
   .owner-row {
