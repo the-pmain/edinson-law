@@ -638,15 +638,6 @@
   min-width: 0;
 }
 
-.people-status-note {
-  max-width: var(--reading-max);
-  margin: 0;
-  padding: var(--space-5);
-  background: var(--edison-paper);
-  color: var(--color-text-muted);
-  font-size: var(--text-small);
-}
-
 .people-directory-group {
   display: grid;
   gap: var(--space-8);

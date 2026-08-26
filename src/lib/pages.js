@@ -852,7 +852,6 @@ function peoplePage() {
       </div>
       <div class="wrap people-index" data-people-index>
         ${peopleCollective({ intro: false, all: true, includePeople: false })}
-        <p class="people-status-note">Not every person shown is a solicitor. Profiles describe each person's role and the work associated with it. Regulated legal work is provided or supervised through the firm's regulated legal practice.</p>
         ${directoryGroups
           .map((group) => {
             const members = site.people.filter(
