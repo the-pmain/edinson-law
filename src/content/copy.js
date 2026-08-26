@@ -1056,6 +1056,72 @@ export const pages = {
 };
 
 export const insightBodies = {
+  "fake-crypto-recovery-services": [
+    {
+      heading: "Summary",
+      text: "After a digital-asset loss, a second fraud is common: someone offers to ‘recover’ the funds if you pay a fee, share a seed phrase, or grant remote access. That is not legal work. A regulated solicitors’ practice will not ask for those things.",
+    },
+    {
+      heading: "Context",
+      text: "Impersonation often happens on Telegram, WhatsApp or lookalike email domains. The message may use a firm’s name, a lawyer’s photograph, or the language of tracing and freezing. Genuine contact from Edison Law can be checked on this website and on the Fraud warning page. We do not begin instructions on messaging apps, and we do not ask for private keys, seed phrases, 2FA codes or remote control of a device.",
+    },
+    {
+      heading: "Method",
+      text: "If an unexpected recovery offer arrives, stop the conversation. Do not pay. Do not share credentials. Keep screenshots of the profile, usernames, payment requests, links and any wallet addresses used. Those records may later support a report or a civil file. Confirm any supposed solicitor against the public SRA record and a known contact channel, not the number in the same message.",
+    },
+    {
+      heading: "Legal options",
+      text: "A solicitor can assess whether tracing, preservation, disclosure or proceedings are realistic on the original loss. That is a scoped instruction with a written charging basis. It is not a promise to reverse a blockchain transfer. Anyone who guarantees recovery, or who needs your seed phrase to ‘unlock’ funds, is not offering a legal service you should use.",
+    },
+    {
+      heading: "Limitations",
+      text: "This note cannot identify every impersonation. If you are unsure whether a message is from Edison Law, use the contact form on this site or a number or address you already hold. See also the Fraud warning page.",
+    },
+  ],
+  "legal-routes-after-crypto-movement": [
+    {
+      heading: "Summary",
+      text: "There is no central authority that reverses a confirmed cryptocurrency transfer. The legal task is to identify the nature of the loss, what the records can prove, and whether any person, platform or converted proceeds can still be reached.",
+    },
+    {
+      heading: "Context",
+      text: "Networks are decentralised, addresses are pseudonymous, and hops across bridges or mixers can erase a useful trail quickly. Value is often cashed out through an exchange, a payment institution or a bank. Cross-border actors and overseas platforms complicate service, evidence and enforcement. Those facts limit what any English file can do. They do not, by themselves, decide that nothing should be attempted.",
+    },
+    {
+      heading: "Method",
+      text: "The first assessment separates theft, investment fraud, account compromise and a dispute over control of a wallet. On-chain mapping is treated as a record of transfers, not as proof of identity or of a recoverable defendant. Off-chain material — exchange correspondence, device logs, bank statements after conversion — is listed separately. Lost or forgotten keys are a different problem: a solicitor cannot reconstruct a seed phrase.",
+    },
+    {
+      heading: "Legal options",
+      text: "Where the evidence supports it, options may include preservation requests to a platform, disclosure against a known institution, a freezing or proprietary application in the English court, a report to law enforcement, or a decision that the likely cost exceeds any realistic recovery. If funds appear to have been converted to fiat, banks and payment institutions may be more relevant than the original wallet. Stablecoin issuers sometimes operate freeze programmes; that is not a court order and it is not available in every case. Foreign procedure is handled through local counsel with the client’s approval.",
+    },
+    {
+      heading: "Limitations",
+      text: "No profile or note can say that an order will be granted, that a platform will cooperate, or that identified value will be recovered. Interim relief is discretionary. An English order does not automatically operate overseas. Fees are for legal work, not a share of recovered assets described as a result.",
+    },
+  ],
+  "first-records-after-digital-asset-loss": [
+    {
+      heading: "Summary",
+      text: "The useful file is assembled in the first hours: transaction identifiers, wallet addresses, timestamps, platform names and the messages that induced the transfer. Informal ‘clean-up’ of devices and accounts often destroys more than it protects.",
+    },
+    {
+      heading: "Context",
+      text: "Phishing, fake investment platforms, SIM-swap access to accounts, wallet compromise and authorised payments into a fraudster’s address leave different traces. The later legal question is what can still be shown. Screenshots help. They are not a substitute for the underlying identifiers.",
+    },
+    {
+      heading: "Method",
+      text: "Write down every wallet address, transaction hash, exchange or broker name, date and amount you still have. Keep the emails, chats and invoices as they arrived. If a device or account may still be compromised, change passwords on remaining services and enable a second factor that is not SMS where you can. Do not send seed phrases, private keys or original identity documents through a website or a messaging app. Do not grant remote access to someone who offers to recover the funds.",
+    },
+    {
+      heading: "Legal options",
+      text: "Once the record is stable, a solicitor can say whether urgent preservation, a platform notice, a report to Action Fraud or the police, or an application for relief is realistic. Reporting creates a record. It does not, by itself, freeze value or produce a defendant. The first conversation is an assessment of the file you already have, not a request for keys.",
+    },
+    {
+      heading: "Limitations",
+      text: "Some losses leave almost no recoverable trail. Saying that early is part of the work. This note is general information. It is not a checklist that makes proceedings appropriate in every case.",
+    },
+  ],
   "tracing-assets-across-wallets": [
     {
       heading: "Summary",

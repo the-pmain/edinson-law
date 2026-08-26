@@ -166,6 +166,36 @@ export const site = {
 
   insights: [
     {
+      slug: "fake-crypto-recovery-services",
+      type: "Investigation note",
+      date: "2026-08-26",
+      dateLabel: "26.08.2026",
+      title: "Fake recovery services, impersonation and what a genuine firm will not ask for",
+      description:
+        "Unregulated ‘recovery agents’ often contact victims on messaging apps and ask for seed phrases, remote access or a further payment. A regulated practice does none of those things.",
+      related: ["crypto-fraud", "asset-tracing"],
+    },
+    {
+      slug: "legal-routes-after-crypto-movement",
+      type: "Legal explainer",
+      date: "2026-08-25",
+      dateLabel: "25.08.2026",
+      title: "What a solicitor can assess after cryptocurrency has already moved",
+      description:
+        "On-chain transfers are usually irreversible. The useful work is to establish what the records show, whether any value remains reachable, and which English legal route — if any — is proportionate.",
+      related: ["crypto-fraud", "asset-tracing", "cross-border"],
+    },
+    {
+      slug: "first-records-after-digital-asset-loss",
+      type: "Investigation note",
+      date: "2026-08-22",
+      dateLabel: "22.08.2026",
+      title: "The first records to keep after a digital-asset loss",
+      description:
+        "Wallet addresses, transaction identifiers and contemporaneous messages matter more than a later narrative. What not to send is as important as what to preserve.",
+      related: ["crypto-fraud", "private-prosecutions"],
+    },
+    {
       slug: "tracing-assets-across-wallets",
       type: "Investigation note",
       date: "2026-08-18",

@@ -32,6 +32,9 @@ export function practiceIcon(id) {
 }
 
 const INSIGHT_ICONS = {
+  "fake-crypto-recovery-services": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5.5" y="11" width="13" height="9" rx="1.5"/><path d="M8 11V8.2A4 4 0 0 1 16 8.2V11"/><path d="M12 14.2v2.2"/></svg>`,
+  "legal-routes-after-crypto-movement": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="8" r="2"/><circle cx="17" cy="8" r="2"/><circle cx="12" cy="17" r="2"/><path d="M8.7 9.4 10.8 15.2M15.3 9.4 13.2 15.2"/><path d="M4 20h16"/></svg>`,
+  "first-records-after-digital-asset-loss": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h7l4 4v12H8z"/><path d="M15 4v4h4"/><path d="M11 12h5M11 15h3.5"/></svg>`,
   "tracing-assets-across-wallets": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="7" r="2.2"/><circle cx="18" cy="7" r="2.2"/><circle cx="12" cy="18" r="2.2"/><path d="M7.8 8.4 10.4 16.1M16.2 8.4 13.6 16.1M8.2 7h7.6"/></svg>`,
   "hmrc-enquiry-evidence": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h8l4 4v12H7z"/><path d="M15 4v4h4"/><path d="M10 12h6M10 15h4"/></svg>`,
   "preserving-digital-evidence": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3.5" width="14" height="17" rx="1.5"/><path d="M9 7.5h6M9 11h6M9 14.5h3.5"/></svg>`,
