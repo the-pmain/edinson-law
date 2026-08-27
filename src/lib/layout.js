@@ -405,7 +405,7 @@ export function documentPage(page, body) {
   const title = esc(page.title);
   const description = esc(page.description);
   const ogImage = `${origin}/og-image.png`;
-  const robots = "noindex, nofollow";
+  const robots = page.path === "/404.html" ? "noindex, nofollow" : "index, follow";
 
   return `<!DOCTYPE html>
 <html lang="${site.lang}">

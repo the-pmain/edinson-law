@@ -59,10 +59,9 @@ const server = createServer(async (req, res) => {
     const file = await resolveFile(req.url);
     if (file) {
       const body = await readFile(file);
-      res.writeHead(200, {
-        "Content-Type": types[extname(file)] || "application/octet-stream",
-        "X-Robots-Tag": "noindex, nofollow",
-      });
+      const headers = { "Content-Type": types[extname(file)] || "application/octet-stream" };
+      if (file.endsWith("404.html")) headers["X-Robots-Tag"] = "noindex, nofollow";
+      res.writeHead(200, headers);
       res.end(body);
       return;
     }
@@ -75,16 +74,10 @@ const server = createServer(async (req, res) => {
       res.end(await readFile(fallback));
       return;
     }
-    res.writeHead(404, {
-      "Content-Type": "text/plain; charset=utf-8",
-      "X-Robots-Tag": "noindex, nofollow",
-    });
+    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
     res.end("Not found");
   } catch {
-    res.writeHead(500, {
-      "Content-Type": "text/plain; charset=utf-8",
-      "X-Robots-Tag": "noindex, nofollow",
-    });
+    res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
     res.end("Server error");
   }
 });
