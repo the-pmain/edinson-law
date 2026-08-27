@@ -55,7 +55,7 @@ export const trust = {
   contact: {
     officeHours: "Monday to Friday, 9:00 to 17:30. Closed on English public holidays.",
     phone: "+44 20 7946 0813",
-    email: "hello@edisonlaw.co.uk",
+    email: "support@edisonlawlegal.com",
     address:
       "Third Floor, 14 Bishopsgate Court, London EC2N 4AJ, United Kingdom",
     acknowledgementTime:
