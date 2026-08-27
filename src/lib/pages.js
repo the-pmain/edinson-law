@@ -90,7 +90,7 @@ function personChips(person) {
 function personMailto(person) {
   const email = personEmail(person);
   if (!email) return "";
-  return `<a class="mono person-email" href="mailto:${esc(email)}" title="${esc(email)}">${esc(email)}</a>`;
+  return `<a class="person-email" href="mailto:${esc(email)}" title="${esc(email)}">${esc(email)}</a>`;
 }
 
 function peopleCards(list = site.people, variant = "") {

@@ -465,6 +465,10 @@
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
+  font-family: var(--font-body);
+  font-size: inherit;
+  font-weight: 400;
+  letter-spacing: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--color-text-muted);
@@ -472,8 +476,8 @@
 }
 
 .person-card .person-email {
-  font-size: 0.6875rem;
-  line-height: 1.35;
+  font-size: 0.75rem;
+  line-height: 1.4;
 }
 
 .person-email:hover,
