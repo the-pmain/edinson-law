@@ -459,22 +459,24 @@ function languageMenu(pagePath, variant) {
   </details>`;
 }
 
-function i18nPayload(pagePath) {
+function i18nPayload(pagePath, page) {
   return JSON.stringify({
     locale: loc().id,
     path: pagePath,
-    locales: LOCALES.filter((item) => item.id !== "en").map((item) => {
-      const ui = UI[item.id];
-      return {
-        id: item.id,
-        hreflang: item.hreflang,
-        match: item.match,
-        href: localizePath(pagePath, item),
-        prompt: ui["suggest.prompt"].replaceAll("{name}", item.nativeName),
-        go: ui["suggest.go"].replaceAll("{name}", item.nativeName),
-        stay: ui["suggest.stay"],
-      };
-    }),
+    locales: page?.unlisted
+      ? []
+      : LOCALES.filter((item) => item.id !== "en").map((item) => {
+          const ui = UI[item.id];
+          return {
+            id: item.id,
+            hreflang: item.hreflang,
+            match: item.match,
+            href: localizePath(pagePath, item),
+            prompt: ui["suggest.prompt"].replaceAll("{name}", item.nativeName),
+            go: ui["suggest.go"].replaceAll("{name}", item.nativeName),
+            stay: ui["suggest.stay"],
+          };
+        }),
   });
 }
 
@@ -486,14 +488,16 @@ export function documentPage(page, body) {
   const title = esc(page.title);
   const description = esc(page.description);
   const ogImage = `${origin}/og-image.png`;
-  const robots = page.path === "/404.html" ? "noindex, nofollow" : "index, follow";
+  const robots = page.noindex || page.unlisted || page.path === "/404.html" ? "noindex, nofollow" : "index, follow";
   const current = loc();
   const redirect = page.redirectTo ? localizePath(page.redirectTo) : "";
+  const languageChrome = (variant) => (page.unlisted ? "" : languageMenu(sourcePath, variant));
 
   const html = `<!DOCTYPE html>
 <html lang="${esc(current.htmlLang)}" data-locale="${esc(current.id)}">
 <head>
   <meta charset="utf-8">
+  ${page.bootScript ? `<script>${page.bootScript}</script>` : ""}
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${title}</title>
   <meta name="description" content="${description}">
@@ -507,7 +511,7 @@ export function documentPage(page, body) {
   <meta name="format-detection" content="telephone=no">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="canonical" href="${canonical}">
-  ${alternateLinks(sourcePath)}
+  ${page.unlisted ? "" : alternateLinks(sourcePath)}
 
   <link rel="icon" href="/brand/edison-law-logo.png" type="image/png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -525,7 +529,7 @@ export function documentPage(page, body) {
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="${esc(page.heading || site.name)}">
-  ${ogLocaleTags()}
+  ${page.unlisted ? "" : ogLocaleTags()}
   ${page.article ? `<meta property="article:published_time" content="${page.article.date}">` : ""}
 
   <meta name="twitter:card" content="summary_large_image">
@@ -537,7 +541,7 @@ export function documentPage(page, body) {
   <link rel="preload" href="/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/src/css/main.css">
-  <script type="application/ld+json">${jsonLd(page)}</script>
+  ${page.unlisted ? "" : `<script type="application/ld+json">${jsonLd(page)}</script>`}
 </head>
 <body data-mode="${esc(site.mode)}" data-path="${esc(page.path)}" data-locale="${esc(current.id)}">
   <!--
@@ -550,11 +554,15 @@ export function documentPage(page, body) {
   -->
   <a class="skip-link" href="#content">${esc(t("skip"))}</a>
 
-  <div class="lang-suggest" data-lang-suggest hidden>
+  ${
+    page.unlisted
+      ? ""
+      : `<div class="lang-suggest" data-lang-suggest hidden>
     <p data-lang-suggest-text></p>
     <a class="btn btn-signal" data-lang-suggest-go></a>
     <button type="button" class="btn btn-ghost" data-lang-suggest-dismiss></button>
-  </div>
+  </div>`
+  }
 
   <header class="compact-header">
     ${brand("/")}
@@ -564,7 +572,7 @@ export function documentPage(page, body) {
       "header-nav",
     )}
     <div class="header-tools">
-      ${languageMenu(sourcePath, "header")}
+      ${languageChrome("header")}
       ${
         site.search.enabled
           ? `<button class="icon-btn" type="button" data-search-open aria-label="${esc(t("searchSite"))}">${ICONS.search}</button>`
@@ -582,7 +590,7 @@ export function documentPage(page, body) {
       ${trustBadges()}
     </div>
     <div class="rail-utility">
-      ${languageMenu(sourcePath, "rail")}
+      ${languageChrome("rail")}
       ${site.search.enabled ? `<button type="button" data-search-open>${esc(t("search"))}</button>` : ""}
       <a href="/accessibility/">${esc(t("accessibility"))}</a>
       <a href="/contact/">${esc(t("contact"))}</a>
@@ -596,7 +604,7 @@ export function documentPage(page, body) {
         <button class="icon-btn" type="button" data-menu-close aria-label="${esc(t("closeMenu"))}">${ICONS.close}</button>
       </div>
       ${navLinks([...site.rail, ...site.footerLinks], page.path, "drawer-nav")}
-      ${languageMenu(sourcePath, "drawer")}
+      ${languageChrome("drawer")}
     </div>
   </div>
 
@@ -638,7 +646,7 @@ export function documentPage(page, body) {
   </div>
 
   <script type="application/json" id="edison-search-data">${searchIndex()}</script>
-  <script type="application/json" id="edison-i18n">${i18nPayload(sourcePath)}</script>
+  <script type="application/json" id="edison-i18n">${i18nPayload(sourcePath, page)}</script>
   <script type="module" src="/src/js/main.js"></script>
 </body>
 </html>

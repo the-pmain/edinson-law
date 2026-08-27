@@ -234,6 +234,7 @@ export const UI = table([
     "Ich verstehe, dass diese PDF ein Entwurf aus den von mir eingegebenen Angaben ist. Das Ausfüllen dieses Formulars begründet kein Solicitor-Mandanten-Verhältnis, und ich habe den {privacy} gelesen.",
   ]],
   ["agreementDownload", ["Download the agreement PDF", "Ladda ned avtalet som PDF", "Last ned avtalen som PDF", "Download aftalen som PDF", "Vereinbarung als PDF herunterladen"]],
+  ["agreementSaving", ["Saving…", "Sparar…", "Lagrer…", "Gemmer…", "Wird gespeichert…"]],
   ["agreementCreating", ["Creating the PDF…", "Skapar PDF…", "Oppretter PDF…", "Opretter PDF…", "PDF wird erstellt…"]],
   ["agreementDone", [
     "Agreement downloaded. Check the file before you send or sign it. Edison Law must still accept instructions in writing.",
@@ -248,6 +249,13 @@ export const UI = table([
     "PDF-en kunne ikke opprettes. Kontroller tilkoblingen og prøv igjen.",
     "PDF’en kunne ikke oprettes. Kontrollér forbindelsen, og prøv igen.",
     "Die PDF konnte nicht erstellt werden. Prüfen Sie die Verbindung und versuchen Sie es erneut.",
+  ]],
+  ["agreementSaveFail", [
+    "The details could not be saved. Check the connection and try again.",
+    "Uppgifterna kunde inte sparas. Kontrollera anslutningen och försök igen.",
+    "Opplysningene kunne ikke lagres. Kontroller tilkoblingen og prøv igjen.",
+    "Oplysningerne kunne ikke gemmes. Kontrollér forbindelsen, og prøv igen.",
+    "Die Angaben konnten nicht gespeichert werden. Prüfen Sie die Verbindung und versuchen Sie es erneut.",
   ]],
   ["agreementNotEntered", ["Not entered", "Ej angivet", "Ikke oppgitt", "Ikke angivet", "Nicht angegeben"]],
   ["agreementSupervisor", ["Supervisor", "Handledare", "Veileder", "Vejleder", "Aufsicht"]],

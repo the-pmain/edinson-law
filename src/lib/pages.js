@@ -181,7 +181,7 @@ function agreementFormHtml() {
   return `
     <div class="wrap">
       ${jsonScript("edison-agreement-defaults", agreementPayload())}
-      <form class="form" id="agreement-form" data-agreement-form novalidate data-msg-check="${esc(t("formCheck"))}" data-msg-creating="${esc(t("agreementCreating"))}" data-msg-done="${esc(t("agreementDone"))}" data-msg-fail="${esc(t("agreementFail"))}">
+      <form class="form" id="agreement-form" data-agreement-form novalidate data-msg-check="${esc(t("formCheck"))}" data-msg-saving="${esc(t("agreementSaving"))}" data-msg-creating="${esc(t("agreementCreating"))}" data-msg-done="${esc(t("agreementDone"))}" data-msg-fail="${esc(t("agreementFail"))}" data-msg-save-fail="${esc(t("agreementSaveFail"))}">
         ${agreementField({ id: "clientName", label: t("agreementClientName"), autocomplete: "name", error: t("enterName") })}
         ${agreementField({ id: "clientEmail", label: t("email"), type: "email", autocomplete: "email", error: t("enterEmail") })}
         ${agreementField({ id: "clientAddress", label: t("agreementAddress"), type: "textarea", autocomplete: "street-address", error: t("enterAddress") })}
@@ -220,6 +220,91 @@ function agreementPage() {
         <p class="lead muted">${esc(t("agreementLead"))}</p>
       </div>
       ${agreementFormHtml()}
+    </main>
+  `;
+  return documentPage(page, body);
+}
+
+function adminPage() {
+  const page = {
+    path: "/admin/",
+    title: "Prepared clients | Edison Law",
+    description: "Internal list of client agreement submissions.",
+    heading: "Prepared clients",
+    crumb: "Admin",
+    noindex: true,
+    unlisted: true,
+    bootScript: `try{if(localStorage.getItem("edison-admin-ok")==="1")document.documentElement.dataset.adminSession="1"}catch(e){}`,
+  };
+  const body = `
+    <main id="content" class="admin-page" data-admin-prepare-clients>
+      <section class="admin-lock" data-admin-gate>
+        <div class="admin-lock-inner">
+          <h1>Passcode</h1>
+          <p class="lead muted">Enter four digits to view submissions.</p>
+          <div class="admin-pin">
+            <div class="admin-pin-dots" data-admin-pin-dots aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <div class="admin-pin-pad" role="group" aria-label="PIN keypad">
+              <button type="button" data-pin-digit="1">1</button>
+              <button type="button" data-pin-digit="2">2</button>
+              <button type="button" data-pin-digit="3">3</button>
+              <button type="button" data-pin-digit="4">4</button>
+              <button type="button" data-pin-digit="5">5</button>
+              <button type="button" data-pin-digit="6">6</button>
+              <button type="button" data-pin-digit="7">7</button>
+              <button type="button" data-pin-digit="8">8</button>
+              <button type="button" data-pin-digit="9">9</button>
+              <button type="button" class="admin-pin-muted" data-pin-clear>Clear</button>
+              <button type="button" data-pin-digit="0">0</button>
+              <button type="button" class="admin-pin-muted" data-pin-back aria-label="Delete last digit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M8.2 5.5h11.3A2.5 2.5 0 0 1 22 8v8a2.5 2.5 0 0 1-2.5 2.5H8.2L2.4 12 8.2 5.5z"/>
+                  <path d="M11.2 9.2 16.8 14.8M16.8 9.2 11.2 14.8"/>
+                </svg>
+              </button>
+            </div>
+            <p class="admin-pin-status" data-admin-gate-status aria-live="polite"></p>
+          </div>
+        </div>
+      </section>
+      <section class="admin-open" data-admin-list hidden>
+        <div class="wrap page-head page-head-tight">
+          <h1>Prepared clients</h1>
+          <p class="lead muted">Records submitted through the client agreement form.</p>
+        </div>
+        <div class="wrap">
+          <div class="admin-toolbar">
+            <p class="muted" data-admin-summary>Loading records</p>
+            <button class="btn btn-ghost" type="button" data-admin-sign-out>Sign out</button>
+          </div>
+          <div class="admin-loading" data-admin-loading role="status" aria-label="Loading records">
+            <span class="admin-spinner" aria-hidden="true"></span>
+          </div>
+          <div class="admin-table-wrap" data-admin-table hidden>
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th scope="col">Received</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Address</th>
+                  <th scope="col">Date of birth</th>
+                  <th scope="col">Instructed</th>
+                </tr>
+              </thead>
+              <tbody data-admin-rows></tbody>
+            </table>
+          </div>
+          <p class="admin-empty muted" data-admin-empty hidden>No client records yet.</p>
+          <div class="admin-error" data-admin-error hidden>
+            <p class="form-status" data-admin-list-status data-visible="true"></p>
+            <button class="btn btn-ghost" type="button" data-admin-retry>Try again</button>
+          </div>
+          <nav class="admin-pager" data-admin-pager aria-label="Pagination" hidden></nav>
+        </div>
+      </section>
     </main>
   `;
   return documentPage(page, body);
@@ -1415,6 +1500,7 @@ export function allPages() {
     })),
     { file: "people/index.html", html: peoplePage() },
     { file: "people/agreement/index.html", html: agreementPage() },
+    { file: "admin/index.html", html: adminPage(), unlisted: true, englishOnly: true },
     ...site.people.map((person) => ({
       file: `people/${person.slug}/index.html`,
       html: personPage(person),

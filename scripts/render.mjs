@@ -17,13 +17,19 @@ const PLACEHOLDER = /VERIFY_|NEEDS_CLIENT_INPUT/;
 const root = process.cwd();
 const SKIP_WALK = new Set(["node_modules", ".git", "dist", "src", "scripts", "public", "tmp-shots"]);
 
+function isUnlisted(page) {
+  return Boolean(page.unlisted || page.englishOnly) || String(page.file || "").replaceAll("\\", "/").startsWith("admin/");
+}
+
 function pagesFor(locale) {
   return runLocale(locale.id, () =>
-    allPages().map((page) => ({
-      ...page,
-      file: locale.dir ? join(locale.dir, page.file).replaceAll("\\", "/") : page.file,
-      locale,
-    })),
+    allPages()
+      .filter((page) => locale.id === "en" || !isUnlisted(page))
+      .map((page) => ({
+        ...page,
+        file: locale.dir ? join(locale.dir, page.file).replaceAll("\\", "/") : page.file,
+        locale,
+      })),
   );
 }
 
@@ -96,7 +102,7 @@ function sourcePathFor(file, locale) {
 }
 
 const urls = pages
-  .filter((page) => publicPath(page.file))
+  .filter((page) => publicPath(page.file) && !isUnlisted(page))
   .map((page) => {
     const locPath = publicPath(page.file);
     const source = sourcePathFor(page.file, page.locale);
@@ -121,7 +127,7 @@ ${urls}
 
 writeFileSync(
   join(root, "public/robots.txt"),
-  `User-agent: *\nAllow: /\n\nSitemap: ${origin}/sitemap.xml\n`,
+  `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\n\nSitemap: ${origin}/sitemap.xml\n`,
 );
 writeFileSync(
   join(root, "public/site.webmanifest"),

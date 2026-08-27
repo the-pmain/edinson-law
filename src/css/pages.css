@@ -1712,3 +1712,310 @@ body[data-path="/about/"] .footer {
   margin-top: 0;
 }
 
+.admin-page {
+  padding-bottom: var(--section-y);
+}
+
+.admin-lock[hidden],
+.admin-open[hidden],
+.admin-table-wrap[hidden],
+.admin-loading[hidden],
+.admin-empty[hidden],
+.admin-error[hidden],
+.admin-pager[hidden] {
+  display: none !important;
+}
+
+html[data-admin-session="1"] .admin-lock {
+  display: none !important;
+}
+
+html[data-admin-session="1"] .admin-open[hidden] {
+  display: block !important;
+}
+
+.admin-lock {
+  display: grid;
+  justify-items: center;
+  padding: var(--space-12) var(--page-pad) var(--space-24);
+}
+
+.admin-lock-inner {
+  width: min(21.5rem, 100%);
+}
+
+.admin-lock h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: var(--leading-heading);
+}
+
+.admin-lock .lead {
+  margin: var(--space-3) 0 0;
+  padding-bottom: var(--space-8);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.admin-pin {
+  display: grid;
+  gap: var(--space-8);
+  width: 100%;
+  margin-top: var(--space-8);
+}
+
+.admin-pin-dots {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.admin-pin-dots span {
+  min-height: 4.25rem;
+  display: grid;
+  place-items: center;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--edison-paper);
+  transition: border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.admin-pin-dots span.is-filled {
+  background: var(--edison-white);
+  border-color: var(--edison-ink);
+}
+
+.admin-pin-dots span::after {
+  content: "";
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--edison-signal-deep);
+  opacity: 0;
+  transform: scale(0.65);
+  transition: opacity var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+
+.admin-pin-dots span.is-filled::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.admin-pin-dots.is-error {
+  animation: admin-pin-shake var(--duration-base) var(--ease-standard);
+}
+
+.admin-pin-dots.is-error span {
+  border-color: var(--edison-copper);
+  background: var(--edison-copper-soft);
+}
+
+.admin-pin-dots.is-error span::after {
+  background: var(--edison-copper);
+}
+
+@keyframes admin-pin-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  30% {
+    transform: translateX(-0.35rem);
+  }
+  70% {
+    transform: translateX(0.35rem);
+  }
+}
+
+.admin-pin-pad {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.admin-pin-pad.is-busy {
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+.admin-pin-pad button {
+  min-height: 3.85rem;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--edison-white);
+  color: var(--edison-ink);
+  font-family: var(--font-ui);
+  font-size: 1.2rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.admin-pin-pad button:hover {
+  border-color: var(--edison-ink);
+  background: var(--edison-paper);
+}
+
+.admin-pin-pad button:active {
+  background: var(--edison-ink);
+  border-color: var(--edison-ink);
+  color: var(--edison-white);
+}
+
+.admin-pin-pad .admin-pin-muted {
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--edison-slate);
+  background: transparent;
+}
+
+.admin-pin-pad .admin-pin-muted:hover {
+  color: var(--edison-ink);
+  background: var(--edison-paper);
+}
+
+.admin-pin-pad .admin-pin-muted:active {
+  background: var(--edison-ink);
+  color: var(--edison-white);
+}
+
+.admin-pin-pad .admin-pin-muted svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  display: block;
+  margin: 0 auto;
+}
+
+.admin-pin-status {
+  min-height: 1.35rem;
+  margin: 0;
+  color: var(--edison-copper);
+  font-size: var(--text-small);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-pin-dots.is-error {
+    animation: none;
+  }
+}
+
+.admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.admin-toolbar .muted {
+  margin: 0;
+}
+
+.admin-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 10rem;
+  padding: var(--space-8) 0;
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+.admin-spinner {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: var(--border-width) solid var(--edison-line);
+  border-top-color: var(--edison-signal-deep);
+  border-radius: 50%;
+  animation: admin-spin 0.7s linear infinite;
+}
+
+@keyframes admin-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-spinner {
+    animation: none;
+    border-color: var(--edison-signal-deep);
+    opacity: 0.55;
+  }
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-small);
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.85rem 0.9rem 0.85rem 0;
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.admin-table th {
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.admin-table td:nth-child(4) {
+  min-width: 12rem;
+}
+
+.admin-empty {
+  margin-top: var(--space-5);
+}
+
+.admin-error {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: start;
+  margin-top: var(--space-5);
+}
+
+.admin-error .form-status {
+  width: 100%;
+}
+
+.admin-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.admin-pager p {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+}
+
+.admin-pager [aria-disabled="true"] {
+  opacity: 0.45;
+  pointer-events: none;
+}
+

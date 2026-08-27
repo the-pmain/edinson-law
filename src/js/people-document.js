@@ -162,11 +162,27 @@ export function peopleDocumentForm() {
     if (submit) submit.disabled = true;
     if (status) {
       status.dataset.visible = "true";
-      status.textContent = form.dataset.msgCreating || "Creating the PDF...";
+      status.textContent = form.dataset.msgSaving || "Saving...";
     }
 
     try {
       const data = buildAgreement(form, payload);
+      const saved = await fetch("/api/prepare-clients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          full_name: data.clientName,
+          email: data.clientEmail,
+          address: data.clientAddress,
+          date_of_birth: data.clientDob,
+          instructed_person_slug: instructSlug() || null,
+        }),
+      });
+      if (!saved.ok) {
+        throw new Error(form.dataset.msgSaveFail || "The details could not be saved.");
+      }
+
+      if (status) status.textContent = form.dataset.msgCreating || "Creating the PDF...";
       const { generateAgreementPdf } = await import("./agreement-pdf.js");
       const bytes = await generateAgreementPdf(data);
       const safeReference = data.matterReference.replace(/[^a-z0-9-_]+/gi, "-").replace(/^-|-$/g, "");

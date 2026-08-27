@@ -1,6 +1,11 @@
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { extname, join, normalize, resolve, sep } from "node:path";
+import { loadEnvFile } from "./server/env.js";
+import { handleAdminPrepareClients, isAdminPrepareClientsRequest } from "./server/admin-prepare-clients.js";
+import { handlePrepareClients, isPrepareClientsRequest } from "./server/prepare-clients.js";
+
+loadEnvFile();
 
 const root = resolve("dist");
 const host = "0.0.0.0";
@@ -62,11 +67,30 @@ async function resolveFile(url) {
 
 const server = createServer(async (req, res) => {
   try {
+    const path = requestedPath(req.url);
+    if (path === "/admin") {
+      const search = (req.url || "").includes("?") ? req.url.slice(req.url.indexOf("?")) : "";
+      res.writeHead(302, { Location: `/admin/${search}` });
+      res.end();
+      return;
+    }
+    if (isAdminPrepareClientsRequest(req)) {
+      await handleAdminPrepareClients(req, res);
+      return;
+    }
+    if (isPrepareClientsRequest(req)) {
+      await handlePrepareClients(req, res);
+      return;
+    }
     const resolved = await resolveFile(req.url);
     if (resolved) {
       const body = await readFile(resolved.file);
       const headers = { "Content-Type": types[extname(resolved.file)] || "application/octet-stream" };
-      if (resolved.file.endsWith("404.html")) headers["X-Robots-Tag"] = "noindex, nofollow";
+      const path = requestedPath(req.url);
+      if (resolved.file.endsWith("404.html") || path === "/admin" || path.startsWith("/admin/")) {
+        headers["X-Robots-Tag"] = "noindex, nofollow";
+      }
+      if (path === "/admin" || path.startsWith("/admin/")) headers["Cache-Control"] = "no-store";
       res.writeHead(resolved.status, headers);
       res.end(body);
       return;

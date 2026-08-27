@@ -1,4 +1,5 @@
 import { config } from "../../config.js";
+import { adminPrepareClients } from "./admin-prepare-clients.js";
 import { peopleDocumentForm } from "./people-document.js";
 
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -363,6 +364,7 @@ pageJumpSpy();
 insightTools();
 peopleFilter();
 peopleDocumentForm();
+adminPrepareClients();
 
 if (!reduced) {
   document.documentElement.style.scrollBehavior = "smooth";
