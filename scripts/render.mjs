@@ -56,27 +56,18 @@ for (const file of walkHtml(root)) {
   if (PLACEHOLDER.test(html)) leaks.push(file.replace(`${root}\\`, "").replace(`${root}/`, ""));
 }
 
-const origin = site.canonicalOrigin.replace(/\/$/, "");
-const urls = pages
-  .filter((page) => page.file !== "404.html")
-  .map((page) => {
-    const path = page.file === "index.html" ? "/" : `/${page.file.replace(/index\.html$/, "")}`;
-    return `  <url><loc>${origin}${path}</loc></url>`;
-  })
-  .join("\n");
-
 writeFileSync(
   join(root, "public/sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls}
 </urlset>
 `,
 );
 
-const robots = `User-agent: *\nDisallow: /\n\nSitemap: ${origin}/sitemap.xml\n`;
-
-writeFileSync(join(root, "public/robots.txt"), robots);
+writeFileSync(
+  join(root, "public/robots.txt"),
+  "User-agent: *\nDisallow: /\n",
+);
 writeFileSync(
   join(root, "public/site.webmanifest"),
   JSON.stringify(
