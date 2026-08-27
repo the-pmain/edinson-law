@@ -353,8 +353,8 @@ export function outstandingVerify() {
   return [...byToken.values()];
 }
 
-function formatDate(date) {
-  return date.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+function formatDate(date, dateLocale = "en-GB") {
+  return date.toLocaleDateString(dateLocale, { day: "numeric", month: "long", year: "numeric" });
 }
 
 function addMonths(iso, months) {
@@ -373,8 +373,8 @@ export function reviewCadenceMonths(topic) {
   return trust.reviews.cadenceMonths;
 }
 
-export function reviewStatement(topic) {
-  const { reviewerName, reviewerRole, lastReviewed, statementTemplate } = trust.reviews;
+export function reviewStatement(topic, dateLocale = "en-GB", data = trust) {
+  const { reviewerName, reviewerRole, lastReviewed, statementTemplate } = data.reviews;
   if (isPending(reviewerName) || isPending(reviewerRole) || isPending(lastReviewed)) return "";
   const next = addMonths(lastReviewed, reviewCadenceMonths(topic));
   if (!next) return "";
@@ -382,19 +382,19 @@ export function reviewStatement(topic) {
   return statementTemplate
     .replaceAll("{reviewerName}", reviewerName)
     .replaceAll("{reviewerRole}", reviewerRole)
-    .replaceAll("{lastReviewed}", lastDate ? formatDate(lastDate) : lastReviewed)
-    .replaceAll("{nextReview}", formatDate(next));
+    .replaceAll("{lastReviewed}", lastDate ? formatDate(lastDate, dateLocale) : lastReviewed)
+    .replaceAll("{nextReview}", formatDate(next, dateLocale));
 }
 
-export function firstContactStatement() {
-  const { firstContactName, firstContactRole, firstContactStatement } = trust.contact;
+export function firstContactStatement(data = trust) {
+  const { firstContactName, firstContactRole, firstContactStatement } = data.contact;
   if (isPending(firstContactName) || isPending(firstContactRole)) return "";
   const text = firstContactStatement.replaceAll("VERIFY_FIRST_CONTACT_NAME", firstContactName);
   return isPending(text) ? "" : text;
 }
 
-export function complaintsProcedure() {
-  const { handlerName, email, procedure } = trust.complaints;
+export function complaintsProcedure(data = trust) {
+  const { handlerName, email, procedure } = data.complaints;
   return procedure
     .map((step) => {
       let text = step;
@@ -405,8 +405,8 @@ export function complaintsProcedure() {
     .filter((step) => !isPending(step));
 }
 
-export function firstContactLine() {
-  const { firstContactName, firstContactRole } = trust.contact;
+export function firstContactLine(data = trust) {
+  const { firstContactName, firstContactRole } = data.contact;
   if (isPending(firstContactName) || isPending(firstContactRole)) return "";
   return `${firstContactName}, ${firstContactRole}`;
 }
@@ -430,8 +430,8 @@ export function formatOutstandingReport() {
   return lines.join("\n");
 }
 
-export function privacyRightsText() {
-  const { rightsText, email } = trust.privacy;
+export function privacyRightsText(data = trust) {
+  const { rightsText, email } = data.privacy;
   if (isPending(email)) return "";
   const text = rightsText.replaceAll("VERIFY_PRIVACY_EMAIL", email);
   return isPending(text) ? "" : text;

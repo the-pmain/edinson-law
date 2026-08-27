@@ -1145,6 +1145,12 @@ body[data-path="/insights/"] .page-head .lead {
   max-width: 46rem;
 }
 
+.legal-doc > .legal-note:first-child {
+  padding: 0 0 var(--space-6);
+  border-top: 0;
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
 .legal-note + .legal-note {
   border-top: 0;
   padding-top: var(--space-4);

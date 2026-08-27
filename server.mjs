@@ -47,21 +47,27 @@ async function existingFile(file) {
 async function resolveFile(url) {
   const path = requestedPath(url);
   const direct = await existingFile(join(root, path));
-  if (direct) return direct;
+  if (direct) return { file: direct, status: 200 };
   if (!extname(path)) {
-    return existingFile(join(root, path, "index.html"));
+    const nested = await existingFile(join(root, path, "index.html"));
+    if (nested) return { file: nested, status: 200 };
+  }
+  const first = path.split("/").filter(Boolean)[0];
+  if (first && ["sv", "nb", "da", "de"].includes(first)) {
+    const localized = await existingFile(join(root, first, "404.html"));
+    if (localized) return { file: localized, status: 404 };
   }
   return null;
 }
 
 const server = createServer(async (req, res) => {
   try {
-    const file = await resolveFile(req.url);
-    if (file) {
-      const body = await readFile(file);
-      const headers = { "Content-Type": types[extname(file)] || "application/octet-stream" };
-      if (file.endsWith("404.html")) headers["X-Robots-Tag"] = "noindex, nofollow";
-      res.writeHead(200, headers);
+    const resolved = await resolveFile(req.url);
+    if (resolved) {
+      const body = await readFile(resolved.file);
+      const headers = { "Content-Type": types[extname(resolved.file)] || "application/octet-stream" };
+      if (resolved.file.endsWith("404.html")) headers["X-Robots-Tag"] = "noindex, nofollow";
+      res.writeHead(resolved.status, headers);
       res.end(body);
       return;
     }

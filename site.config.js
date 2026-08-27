@@ -167,6 +167,7 @@ export const site = {
   insights: [
     {
       slug: "fake-crypto-recovery-services",
+      typeKey: "note",
       type: "Investigation note",
       date: "2026-08-26",
       dateLabel: "26.08.2026",
@@ -177,6 +178,7 @@ export const site = {
     },
     {
       slug: "legal-routes-after-crypto-movement",
+      typeKey: "explainer",
       type: "Legal explainer",
       date: "2026-08-25",
       dateLabel: "25.08.2026",
@@ -187,6 +189,7 @@ export const site = {
     },
     {
       slug: "first-records-after-digital-asset-loss",
+      typeKey: "note",
       type: "Investigation note",
       date: "2026-08-22",
       dateLabel: "22.08.2026",
@@ -197,6 +200,7 @@ export const site = {
     },
     {
       slug: "tracing-assets-across-wallets",
+      typeKey: "note",
       type: "Investigation note",
       date: "2026-08-18",
       dateLabel: "18.08.2026",
@@ -207,6 +211,7 @@ export const site = {
     },
     {
       slug: "hmrc-enquiry-evidence",
+      typeKey: "explainer",
       type: "Legal explainer",
       date: "2026-07-09",
       dateLabel: "09.07.2026",
@@ -217,6 +222,7 @@ export const site = {
     },
     {
       slug: "preserving-digital-evidence",
+      typeKey: "note",
       type: "Investigation note",
       date: "2026-06-12",
       dateLabel: "12.06.2026",

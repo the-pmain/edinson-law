@@ -1,10 +1,7 @@
-import { site } from "../../site.config.js";
 import { personEmail } from "../content/people.js";
-import { home, pages, insightBodies } from "../content/copy.js";
-import { serviceMatter } from "../content/service-matter.js";
+import { site, home, pages, insightBodies, serviceMatter, trust, t, loc } from "../i18n/catalog.js";
 import { crumbs, documentPage, fieldMark, insightIcon, practiceIcon, whyIcon } from "./layout.js";
 import { esc } from "./html.js";
-import { trust } from "../config/trust.js";
 import {
   complaintsHtml,
   filterPublicFaqs,
@@ -22,11 +19,11 @@ function personHref(person) {
 }
 
 function portraitSlot(person, className = "") {
-  const label = `${person.name}, portrait to follow`;
+  const label = t("portraitLabel", { name: person.name });
   return `<div class="portrait-slot ${className}" role="img" aria-label="${esc(label)}">
     <span class="portrait-slot-ring" aria-hidden="true"></span>
     <span class="portrait-slot-initials">${esc(person.initials)}</span>
-    <span class="portrait-slot-mark">Portrait to follow</span>
+    <span class="portrait-slot-mark">${esc(t("portraitFollow"))}</span>
   </div>`;
 }
 
@@ -41,25 +38,29 @@ function personPortrait(person, className = "person-photo") {
 }
 
 function personExpertise(person) {
-  const role = (person.role || "").toLowerCase();
+  const role = (person.roleEn || person.role || "").toLowerCase();
   const tags = [];
-  if (/owner/.test(role)) tags.push("Practice");
-  if (/regulatory|hmrc|tax/.test(role)) tags.push("Regulatory");
-  if (/cross-border|corruption/.test(role)) tags.push("Cross-border");
-  if (/crypto|digital asset/.test(role)) tags.push("Crypto & digital");
-  if (/forensic accountant/.test(role)) tags.push("Forensic accounting");
+  if (/owner/.test(role)) tags.push("practice");
+  if (/regulatory|hmrc|tax/.test(role)) tags.push("regulatory");
+  if (/cross-border|corruption/.test(role)) tags.push("cross-border");
+  if (/crypto|digital asset/.test(role)) tags.push("crypto-digital");
+  if (/forensic accountant/.test(role)) tags.push("forensic-accounting");
   if (/investigator|investigation|digital forensics|intelligence/.test(role)) {
-    tags.push("Investigations");
+    tags.push("investigations");
   }
-  if (/asset|recovery|confiscation|tracing|payments/.test(role)) tags.push("Asset tracing");
+  if (/asset|recovery|confiscation|tracing|payments/.test(role)) tags.push("asset-tracing");
   if (/solicitor|lawyer|prosecution|restraint|disclosure|freezing/.test(role)) {
-    tags.push("Private prosecutions");
+    tags.push("private-prosecutions");
   }
   return [...new Set(tags)];
 }
 
+function expertiseLabel(key) {
+  return t(`tag.${key}`);
+}
+
 function personGroup(person) {
-  const role = (person.role || "").toLowerCase();
+  const role = (person.roleEn || person.role || "").toLowerCase();
   if (person.principal) return "practice";
   if (/solicitor|lawyer/.test(role)) return "legal";
   if (/investigator|forensic accountant|digital forensics|internal investigation|intelligence/.test(role)) {
@@ -69,18 +70,18 @@ function personGroup(person) {
 }
 
 function personStatus(person) {
-  if (person.principal) return "Owner · sole practice";
-  const role = person.role || "";
-  if (/Solicitor/i.test(role)) return "Solicitor";
-  if (/Lawyer/i.test(role)) return "Lawyer";
-  if (/Investigator/i.test(role)) return "Investigator";
-  return "Specialist";
+  if (person.principal) return t("ownerSole");
+  const role = person.roleEn || person.role || "";
+  if (/Solicitor/i.test(role)) return t("solicitor");
+  if (/Lawyer/i.test(role)) return t("lawyer");
+  if (/Investigator/i.test(role)) return t("investigator");
+  return t("specialist");
 }
 
 function personChips(person) {
   const status = personStatus(person);
-  const roleChip = person.principal ? "Owner" : status;
-  const second = person.principal ? "Sole practice" : personExpertise(person)[0];
+  const roleChip = person.principal ? t("owner") : status;
+  const second = person.principal ? t("solePractice") : expertiseLabel(personExpertise(person)[0]);
   return `<span class="chip-row">
     <span class="chip">${esc(roleChip)}</span>
     ${second ? `<span class="chip chip-status">${esc(second)}</span>` : ""}
@@ -183,7 +184,7 @@ function insightReading(item) {
   const blocks = insightBodies[item.slug] || [];
   const words = blocks.reduce((count, block) => count + `${block.heading} ${block.text}`.split(/\s+/).length, 0);
   const minutes = Math.max(1, Math.round(words / 200) || 1);
-  return `${minutes} min read`;
+  return `${minutes === 1 ? t("minRead", { n: minutes }) : t("minRead", { n: minutes })}`;
 }
 
 function insightEntry(item, featured = false) {
@@ -196,7 +197,7 @@ function insightEntry(item, featured = false) {
       ${item.description ? `<p class="muted insight-deck">${esc(item.description)}</p>` : ""}
       <span class="insight-foot">
         ${topics.length ? `<span class="chip-row">${topics.map((topic) => `<span class="chip">${esc(topic)}</span>`).join("")}</span>` : ""}
-        <span class="service-more">Learn more</span>
+        <span class="service-more">${esc(t("learnMore"))}</span>
       </span>
     </span>
   </a>`;
@@ -210,7 +211,7 @@ function contactDirectHtml() {
   }
   if (isPublicText(c.phone)) {
     lines.push(
-      `<p class="muted">Telephone: <a href="tel:${esc(c.phone.replace(/\s+/g, ""))}">${esc(c.phone)}</a></p>`,
+      `<p class="muted">${esc(t("telephone"))}: <a href="tel:${esc(c.phone.replace(/\s+/g, ""))}">${esc(c.phone)}</a></p>`,
     );
   }
   return lines.join("");
@@ -218,7 +219,7 @@ function contactDirectHtml() {
 
 function pageJump(items) {
   if (!items?.length) return "";
-  return `<nav class="page-jump" aria-label="On this page">
+  return `<nav class="page-jump" aria-label="${esc(t("onThisPage"))}">
           ${items
             .map(
               (item, index) =>
@@ -283,17 +284,16 @@ function bulletList(items) {
   return `<ul>${items.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`;
 }
 
-function actionButton(page, fallbackLabel = "Discuss a matter") {
+function actionButton(page, fallbackLabel) {
+  fallbackLabel = fallbackLabel || t("discussMatter");
   const label = page?.cta?.label || fallbackLabel;
   const href = page?.cta?.href || "/contact/";
   return `<a class="btn btn-signal" href="${esc(href)}">${esc(label)}</a>`;
 }
 
-function enquiryBand(page, fallbackHeading = "Discuss this matter") {
-  const heading = page?.ctaBand?.heading || fallbackHeading;
-  const text =
-    page?.ctaBand?.text ||
-    "Give us a concise account of the matter. Do not send passwords, private keys, seed phrases or original identity documents.";
+function enquiryBand(page, fallbackHeading) {
+  const heading = page?.ctaBand?.heading || fallbackHeading || t("discussThisMatter");
+  const text = page?.ctaBand?.text || t("enquiryDefault");
   return `<div class="cta-band">
           <h2>${esc(heading)}</h2>
           <p class="muted">${esc(text)}</p>
@@ -301,12 +301,40 @@ function enquiryBand(page, fallbackHeading = "Discuss this matter") {
         </div>`;
 }
 
+function linkedPhrase(template, map) {
+  let html = esc(template);
+  for (const [token, inner] of Object.entries(map)) {
+    html = html.replaceAll(`{${token}}`, inner);
+  }
+  return html;
+}
+
+function linkKnownPhrases(text) {
+  let html = esc(text);
+  const pairs = [
+    [
+      t("seeFraudWarning"),
+      t("seeFraudWarning").replace(t("fraudWarning"), `<a href="/fraud-warning/">${esc(t("fraudWarning"))}</a>`),
+    ],
+    ["See the fraud warning.", `See the <a href="/fraud-warning/">${esc(t("fraudWarning"))}</a>.`],
+    [
+      t("seePricing"),
+      t("seePricing").replace(t("pricing"), `<a href="/pricing/">${esc(t("pricing"))}</a>`),
+    ],
+    ["See Pricing.", `See <a href="/pricing/">${esc(t("pricing"))}</a>.`],
+  ];
+  for (const [plain, linked] of pairs) {
+    html = html.replaceAll(esc(plain), linked);
+  }
+  return html;
+}
+
 function matterProse(key) {
   const extra = serviceMatter[key];
   if (!extra) return "";
-  const whenHeading = extra.whenHeading || "When this work may be appropriate";
-  const altHeading = extra.alternativeHeading || "When another route may be better";
-  const processHeading = extra.processHeading || "How the work usually runs";
+  const whenHeading = extra.whenHeading || t("whenWorkAppropriate");
+  const altHeading = extra.alternativeHeading || t("whenAnotherRoute");
+  const processHeading = extra.processHeading || t("howWorkRuns");
   const alternative = extra.alternative
     ? `<h2>${esc(altHeading)}</h2><p>${esc(extra.alternative)}</p>`
     : extra.notFor?.length
@@ -321,10 +349,7 @@ function matterProse(key) {
   const extraBlocks = (extra.extraBlocks || [])
     .filter((item) => isPublicText(item.heading) && isPublicText(item.text))
     .map((item) => {
-      const text = esc(item.text)
-        .replace("See the fraud warning.", 'See the <a href="/fraud-warning/">fraud warning</a>.')
-        .replace("See Pricing.", 'See <a href="/pricing/">Pricing</a>.');
-      return `<h2>${esc(item.heading)}</h2><p>${text}</p>`;
+      return `<h2>${esc(item.heading)}</h2><p>${linkKnownPhrases(item.text)}</p>`;
     })
     .join("");
   const steps = extra.process.filter((step) => isPublicText(step.title) && isPublicText(step.text));
@@ -347,14 +372,19 @@ function matterProse(key) {
     ${extraBlocks}
     ${
       extra.risks?.length
-        ? `<h2>Principal risks</h2>
+        ? `<h2>${esc(t("principalRisks"))}</h2>
     ${bulletList(extra.risks)}`
         : ""
     }
-    <h2>Fees</h2>
-    <p>We agree the scope and charging basis before substantive work begins. Most matters are charged by reference to time; a fixed fee may be available for a clearly defined preliminary review. Full rates and terms are on the <a href="/pricing/">Pricing</a> page.</p>
-    <h2>Who is responsible</h2>
-    <p>Each matter is supervised by a named solicitor. Specialist investigators and forensic professionals are introduced where their expertise is needed, with their role and status explained. Job titles on this site are not a reserved-activity authorisation. Confirm current authorised individuals on the <a href="/regulatory-information/">Regulatory information</a> page and the ${sraRegisterAnchor("public SRA record")}.</p>
+    <h2>${esc(t("fees"))}</h2>
+    <p>${linkedPhrase(t("feesMatterText"), {
+      pricing: `<a href="/pricing/">${esc(t("pricing"))}</a>`,
+    })}</p>
+    <h2>${esc(t("whoResponsible"))}</h2>
+    <p>${linkedPhrase(t("whoResponsibleText"), {
+      regulatory: `<a href="/regulatory-information/">${esc(t("regulatoryInformation"))}</a>`,
+      sra: sraRegisterAnchor(t("publicSraRecord")),
+    })}</p>
   `;
 }
 
@@ -380,7 +410,7 @@ function practiceCard(item) {
     ${item.problem ? `<p class="practice-problem">${esc(item.problem)}</p>` : ""}
     <h2>${esc(item.title)}</h2>
     <p>${esc(item.summary)}</p>
-    <span class="practice-more">Learn more</span>
+    <span class="practice-more">${esc(t("learnMore"))}</span>
   </a>`;
 }
 
@@ -417,7 +447,7 @@ function homePage() {
         </div>
       </section>
 
-      <section class="practice-bar" aria-label="Practice areas">
+      <section class="practice-bar" aria-label="${esc(t("practiceAreas"))}">
         <div class="wrap practice-bar-inner">
           <div class="practice-bar-list">
             ${site.practices.map((item) => practiceCard(item)).join("")}
@@ -496,7 +526,7 @@ function homePage() {
       </section>
     </main>
   `;
-  return documentPage({ ...home, heading: "Home" }, body);
+  return documentPage({ ...home, heading: t("home") }, body);
 }
 
 function expertiseIndex() {
@@ -504,7 +534,7 @@ function expertiseIndex() {
   const body = `
     <main id="content">
       <div class="wrap page-head">
-        ${crumbs([{ label: "Expertise" }])}
+        ${crumbs([{ label: t("nav.expertise") }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
         ${actionButton(page)}
@@ -518,7 +548,7 @@ function expertiseIndex() {
                 <h2>${esc(item.title)}</h2>
                 <p class="muted">${esc(item.summary)}</p>
               </span>
-              <span class="service-more">Learn more</span>
+              <span class="service-more">${esc(t("learnMore"))}</span>
             </a>`,
           )
           .join("")}
@@ -526,7 +556,7 @@ function expertiseIndex() {
       ${reviewFoot(page)}
     </main>
   `;
-  return documentPage({ ...page, crumb: "Expertise" }, body);
+  return documentPage({ ...page, crumb: t("nav.expertise") }, body);
 }
 
 function servicePage(key, practiceId) {
@@ -536,7 +566,7 @@ function servicePage(key, practiceId) {
     <main id="content">
       <div class="wrap page-head">
         ${crumbs([
-          { label: "Expertise", href: "/expertise/" },
+          { label: t("nav.expertise"), href: "/expertise/" },
           { label: page.heading },
         ])}
         <h1>${esc(page.heading)}</h1>
@@ -551,7 +581,7 @@ function servicePage(key, practiceId) {
       ${
         matterFaqs(page, key).length
           ? wrap(`
-        <h2>Questions we are asked</h2>
+        <h2>${esc(t("questionsAsked"))}</h2>
         <div class="faq">
           ${matterFaqs(page, key)
             .map(
@@ -569,7 +599,7 @@ function servicePage(key, practiceId) {
         related.length
           ? wrap(`
             <div class="related">
-              <p class="label">Related insights</p>
+              <p class="label">${esc(t("relatedInsights"))}</p>
               <div class="insight-list">
               ${related
                 .map((item) => insightEntry(item))
@@ -579,7 +609,7 @@ function servicePage(key, practiceId) {
           `)
           : ""
       }
-      ${wrap(enquiryBand(page, "Discuss this matter"))}
+      ${wrap(enquiryBand(page, t("discussThisMatter")))}
       ${reviewFoot(page)}
     </main>
   `;
@@ -598,13 +628,13 @@ function servicePage(key, practiceId) {
 function investigationIndex() {
   const page = pages.investigations;
   const investigators = site.people.filter((person) => personGroup(person) === "investigations");
-  const notes = site.insights.filter((item) => item.type === "Investigation note");
+  const notes = site.insights.filter((item) => item.typeKey === "note");
   const body = `
     <main id="content">
       <section class="section band-paper hero-band">
         <div class="wrap split-visual page-open">
           <div class="page-open-copy">
-            ${crumbs([{ label: "Investigations" }])}
+            ${crumbs([{ label: t("nav.investigations") }])}
             <h1>${esc(page.heading)}</h1>
             <p class="lead">${esc(page.lead)}</p>
             ${pageJump(page.jump)}
@@ -620,11 +650,11 @@ function investigationIndex() {
           ${processCards(page.process.items)}
         </div>
       </section>
-      <section class="practice-bar" id="work" aria-label="Investigation types">
+      <section class="practice-bar" id="work" aria-label="${esc(t("investigationTypes"))}">
         <div class="wrap practice-bar-inner">
           <div class="practice-bar-head">
-            <p class="label">What we investigate</p>
-            <h2>Five categories of investigation.</h2>
+            <p class="label">${esc(t("whatWeInvestigate"))}</p>
+            <h2>${esc(t("fiveCategories"))}</h2>
             <p>${esc(page.intro[0])}</p>
           </div>
           <div class="practice-bar-list">
@@ -639,15 +669,15 @@ function investigationIndex() {
           <h2>${esc(page.people.heading)}</h2>
           <p class="lead profile-lead">${htmlWithSraLinks(page.people.text)}</p>
           ${peopleCards(investigators, "compact")}
-          <p><a class="btn btn-ghost" href="/people/">All profiles</a></p>
+          <p><a class="btn btn-ghost" href="/people/">${esc(t("allProfiles"))}</a></p>
         </div>
       </section>
       ${
         notes.length
           ? `<section class="section band-paper">
         <div class="wrap">
-          <p class="label">Investigation notes</p>
-          <h2>Method, written down.</h2>
+          <p class="label">${esc(t("investigationNotes"))}</p>
+          <h2>${esc(t("methodWritten"))}</h2>
           <div class="insight-list">
           ${notes
             .map((item) => insightEntry(item))
@@ -659,13 +689,13 @@ function investigationIndex() {
       }
       <section class="section" id="instruct">
         <div class="wrap">
-          ${enquiryBand(page, "Speak to the investigations practice")}
+          ${enquiryBand(page)}
         </div>
       </section>
       ${reviewFoot(page)}
     </main>
   `;
-  return documentPage({ ...page, crumb: "Investigations" }, body);
+  return documentPage({ ...page, crumb: t("nav.investigations") }, body);
 }
 
 function investigationPage(item) {
@@ -684,12 +714,12 @@ function investigationPage(item) {
     <main id="content">
       <div class="wrap page-head">
         ${crumbs([
-          { label: "Investigations", href: "/investigations/" },
+          { label: t("nav.investigations"), href: "/investigations/" },
           { label: page.heading },
         ])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
-        ${actionButton(page, "Speak to the investigations practice")}
+        ${actionButton(page)}
       </div>
       ${wrap(`
         <div class="prose">
@@ -699,7 +729,7 @@ function investigationPage(item) {
       ${
         matterFaqs(page, item.copyKey).length
           ? wrap(`
-        <h2>Questions we are asked</h2>
+        <h2>${esc(t("questionsAsked"))}</h2>
         <div class="faq">
           ${matterFaqs(page, item.copyKey)
             .map(
@@ -717,7 +747,7 @@ function investigationPage(item) {
         routes.length
           ? wrap(`
             <div class="related">
-              <p class="label">Legal routes this work supports</p>
+              <p class="label">${esc(t("legalRoutesSupport"))}</p>
               ${routes
                 .map(
                   (practice) => `<a class="insight-visual" href="${practice.href}">
@@ -737,7 +767,7 @@ function investigationPage(item) {
         related.length
           ? wrap(`
             <div class="related">
-              <p class="label">Related insights</p>
+              <p class="label">${esc(t("relatedInsights"))}</p>
               <div class="insight-list">
               ${related.map((note) => insightEntry(note)).join("")}
               </div>
@@ -745,7 +775,7 @@ function investigationPage(item) {
           `)
           : ""
       }
-      ${wrap(enquiryBand(page, "Speak to the investigations practice"))}
+      ${wrap(enquiryBand(page))}
       ${reviewFoot(page)}
     </main>
   `;
@@ -767,16 +797,16 @@ function insightsIndex() {
   const body = `
     <main id="content">
       <div class="wrap page-head">
-        ${crumbs([{ label: "Insights" }])}
+        ${crumbs([{ label: t("nav.insights") }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
         <div class="insight-tools">
           <label class="insight-search">
-            <span class="label">Search</span>
-            <input type="search" data-insight-search placeholder="Search notes" autocomplete="off">
+            <span class="label">${esc(t("search"))}</span>
+            <input type="search" data-insight-search placeholder="${esc(t("searchNotes"))}" autocomplete="off">
           </label>
           <div class="chip-row chip-filters" data-insight-filters>
-            <button type="button" class="chip chip-filter" data-filter="all" aria-pressed="true">All</button>
+            <button type="button" class="chip chip-filter" data-filter="all" aria-pressed="true">${esc(t("all"))}</button>
             ${types.map((type) => `<button type="button" class="chip chip-filter" data-filter="${esc(type)}">${esc(type)}</button>`).join("")}
             ${topics.map((topic) => `<button type="button" class="chip chip-filter" data-filter="${esc(topic)}">${esc(topic)}</button>`).join("")}
           </div>
@@ -786,12 +816,12 @@ function insightsIndex() {
         ${site.insights
           .map((item, index) => insightEntry(item, index === 0))
           .join("")}
-        <p class="insight-empty muted" data-insight-empty hidden>No notes match that filter.</p>
+        <p class="insight-empty muted" data-insight-empty hidden>${esc(t("noNotes"))}</p>
       </div>
       ${reviewFoot(page)}
     </main>
   `;
-  return documentPage({ ...page, crumb: "Insights" }, body);
+  return documentPage({ ...page, crumb: t("nav.insights") }, body);
 }
 
 function insightPage(item) {
@@ -802,14 +832,14 @@ function insightPage(item) {
     description: item.description,
     heading: item.title,
     article: item,
-    breadcrumbs: [{ label: "Insights", href: "/insights/" }],
+    breadcrumbs: [{ label: t("nav.insights"), href: "/insights/" }],
     crumb: item.title,
   };
   const body = `
     <main id="content">
       <article class="wrap page-head">
         ${crumbs([
-          { label: "Insights", href: "/insights/" },
+          { label: t("nav.insights"), href: "/insights/" },
           { label: item.title },
         ])}
         <p class="mono">${esc(item.type)} / ${esc(item.dateLabel)}</p>
@@ -821,10 +851,10 @@ function insightPage(item) {
           .map((block) => `<h2>${esc(block.heading)}</h2><p>${esc(block.text)}</p>`)
           .join("")}
         <div class="evidence-note">
-          <p class="mono">Disclaimer</p>
-          <p>This note is general information about method. It is not advice on a specific matter and it does not describe a client result.</p>
+          <p class="mono">${esc(t("disclaimer"))}</p>
+          <p>${esc(t("disclaimerText"))}</p>
         </div>
-        <p><a href="/contact/">Discuss a related matter</a></p>
+        <p><a href="/contact/">${esc(t("discussRelated"))}</a></p>
       </div>
       ${reviewFoot(page)}
     </main>
@@ -838,27 +868,27 @@ function peoplePage() {
   const directoryGroups = [
     {
       id: "legal",
-      heading: "Legal strategy & proceedings",
-      text: "Solicitors working across fraud, private prosecutions, interim relief, disclosure and related financial-crime proceedings.",
+      heading: t("peopleLegalHeading"),
+      text: t("peopleLegalText"),
     },
     {
       id: "investigations",
-      heading: "Investigations & evidence",
-      text: "Investigators and forensic specialists who preserve, test and organise the factual record.",
+      heading: t("peopleInvestHeading"),
+      text: t("peopleInvestText"),
     },
     {
       id: "recovery",
-      heading: "Asset recovery & digital assets",
-      text: "Specialists focused on payment trails, asset ownership, proceeds of crime and digital-asset movement.",
+      heading: t("peopleRecoveryHeading"),
+      text: t("peopleRecoveryText"),
     },
   ];
   const body = `
     <main id="content">
       <div class="wrap page-head page-head-tight">
-        ${crumbs([{ label: "People" }])}
+        ${crumbs([{ label: t("nav.people") }])}
         <div class="chip-row chip-filters" data-people-filters>
-          <button type="button" class="chip chip-filter" data-filter="all" aria-pressed="true">All</button>
-          ${filters.map((item) => `<button type="button" class="chip chip-filter" data-filter="${esc(item)}">${esc(item)}</button>`).join("")}
+          <button type="button" class="chip chip-filter" data-filter="all" aria-pressed="true">${esc(t("all"))}</button>
+          ${filters.map((item) => `<button type="button" class="chip chip-filter" data-filter="${esc(item)}">${esc(expertiseLabel(item))}</button>`).join("")}
         </div>
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${htmlWithSraLinks(page.lead)}</p>
@@ -883,7 +913,7 @@ function peoplePage() {
       </div>
     </main>
   `;
-  return documentPage({ ...page, crumb: "People" }, body);
+  return documentPage({ ...page, crumb: t("nav.people") }, body);
 }
 
 function joinUsPage() {
@@ -891,14 +921,14 @@ function joinUsPage() {
   const body = `
     <main id="content">
       <div class="wrap page-head">
-        ${crumbs([{ label: "Join us" }])}
+        ${crumbs([{ label: t("nav.joinUs") }])}
         <h1>${esc(page.heading)}</h1>
         <p class="lead muted">${esc(page.lead)}</p>
         ${pageJump(page.jump)}
         <div class="page-head-intro join-intro">
           ${page.intro.map((para) => `<p>${esc(para)}</p>`).join("")}
           <p><a class="btn btn-signal" href="${esc(page.cvCta.href)}">${esc(page.cvCta.label)}</a></p>
-          <p><a href="/people/">People at Edison Law</a></p>
+          <p><a href="/people/">${esc(t("peopleAtEdison"))}</a></p>
         </div>
       </div>
       <section class="section" id="careers">
@@ -945,31 +975,32 @@ function joinUsPage() {
       </section>
     </main>
   `;
-  return documentPage({ ...page, crumb: "Join us" }, body);
+  return documentPage({ ...page, crumb: t("nav.joinUs") }, body);
 }
 
 function personPage(person) {
-  const isSolicitor = /Solicitor/i.test(person.role || "");
-  const profileStatusDetail = isSolicitor
-    ? "Solicitor in an SRA-regulated legal practice"
-    : "Legal work supervised by a named solicitor";
+  const isSolicitor = /Solicitor/i.test(person.roleEn || person.role || "");
+  const profileStatusDetail = isSolicitor ? t("solicitorStatus") : t("supervisedStatus");
   const profileRoleNote = isSolicitor
-    ? `This profile describes representative areas of work. Current practising status can be checked on the ${sraRegisterAnchor("public SRA record")}.`
-    : `This profile describes the person's role and representative areas of work. A job title is not a reserved-activity authorisation. Confirm authorised individuals on the <a href="/regulatory-information/">Regulatory information</a> page and the ${sraRegisterAnchor("public SRA record")}.`;
+    ? linkedPhrase(t("solicitorRoleNote"), { sra: sraRegisterAnchor(t("publicSraRecord")) })
+    : linkedPhrase(t("otherRoleNote"), {
+        regulatory: `<a href="/regulatory-information/">${esc(t("regulatoryInformation"))}</a>`,
+        sra: sraRegisterAnchor(t("publicSraRecord")),
+      });
   const page = {
     path: personHref(person),
     title: `${person.name} | Edison Law`,
     description: person.summary,
     heading: person.name,
     person,
-    breadcrumbs: [{ label: "People", href: "/people/" }],
+    breadcrumbs: [{ label: t("nav.people"), href: "/people/" }],
     crumb: person.name,
   };
   const body = `
     <main id="content">
       <div class="wrap page-head">
         ${crumbs([
-          { label: "People", href: "/people/" },
+          { label: t("nav.people"), href: "/people/" },
           { label: person.name },
         ])}
       </div>
@@ -987,7 +1018,7 @@ function personPage(person) {
             <span>${esc(profileStatusDetail)}</span>
           </p>
           <p class="muted profile-role-note">${profileRoleNote}</p>
-          <h2>Role and focus</h2>
+          <h2>${esc(t("roleAndFocus"))}</h2>
           ${person.bio.map((para) => `<p>${htmlWithSraLinks(para)}</p>`).join("")}
           ${
             person.quotes?.length
@@ -997,18 +1028,18 @@ function personPage(person) {
           ${person.closing ? `<p>${htmlWithSraLinks(person.closing)}</p>` : ""}
           ${
             person.areas?.length
-              ? `<h2>Key areas of work</h2>
+              ? `<h2>${esc(t("keyAreas"))}</h2>
             <ul>${person.areas.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`
               : ""
           }
           ${
             person.experience?.length
-              ? `<h2>Work of this kind</h2>
-            <p class="muted">These items describe the kinds of file this person works on. They are not published client results.</p>
+              ? `<h2>${esc(t("workOfThisKind"))}</h2>
+            <p class="muted">${esc(t("workOfThisKindNote"))}</p>
             <ul>${person.experience.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`
               : ""
           }
-          <p><a class="btn btn-signal" href="/contact/">Send an initial enquiry</a></p>
+          <p><a class="btn btn-signal" href="/contact/">${esc(t("sendEnquiry"))}</a></p>
         </div>
       </div>
     </main>
@@ -1027,14 +1058,14 @@ function aboutPage() {
   const body = `
     <main id="content">
       <div class="wrap page-head about-open">
-        ${crumbs([{ label: "About" }])}
+        ${crumbs([{ label: t("nav.about") }])}
         <div class="about-open-copy">
-          <h1>About</h1>
+          <h1>${esc(t("aboutTitle"))}</h1>
           <p class="lead">${esc(page.heading)}</p>
           <p class="trust-strip">
             <a class="mono" href="${esc(site.sraUrl)}" target="_blank" rel="noopener noreferrer">SRA ${esc(site.sraNumber)}</a>
             <span>London</span>
-            <span>Each matter is supervised by a named solicitor</span>
+            <span>${esc(t("supervisedBySolicitor"))}</span>
           </p>
           ${pageJump(page.jump)}
           ${actionButton(page)}
@@ -1098,7 +1129,7 @@ function aboutPage() {
       </section>
     </main>
   `;
-  return documentPage({ ...page, crumb: "About" }, body);
+  return documentPage({ ...page, crumb: t("nav.about") }, body);
 }
 
 function contactPage() {
@@ -1106,62 +1137,62 @@ function contactPage() {
   const body = `
     <main id="content">
       <div class="wrap contact-page">
-        ${crumbs([{ label: "Contact" }])}
+        ${crumbs([{ label: t("nav.contact") }])}
         <div class="contact-layout">
           <div class="contact-copy">
             <h1>${esc(page.heading)}</h1>
             <p class="lead muted">${esc(page.lead)}</p>
             <aside class="safety-callout">
-              <p class="label">Safety</p>
+              <p class="label">${esc(t("safety"))}</p>
               <p>${esc(page.urgent)}</p>
             </aside>
             <div class="contact-direct">
-              <p class="label">Write or call</p>
+              <p class="label">${esc(t("writeOrCall"))}</p>
               ${contactDirectHtml()}
             </div>
           </div>
-          <form class="form" id="contact-form" novalidate data-mailto="${esc(site.email)}" data-ack="${esc(trust.contact.acknowledgementTime)}">
+          <form class="form" id="contact-form" novalidate data-mailto="${esc(site.email)}" data-ack="${esc(trust.contact.acknowledgementTime)}" data-msg-check="${esc(t("formCheck"))}" data-msg-draft="${esc(t("formDraft"))}" data-msg-subject="${esc(t("formSubject"))}" data-label-name="${esc(t("formName"))}" data-label-email="${esc(t("formEmail"))}" data-label-org="${esc(t("formOrg"))}" data-label-matter="${esc(t("formMatter"))}">
           <p class="form-eta muted">${esc(trust.contact.acknowledgementTime)}</p>
           <div class="field">
-            <label for="full-name">Full name <span class="req">required</span></label>
+            <label for="full-name">${esc(t("fullName"))} <span class="req">${esc(t("required"))}</span></label>
             <input id="full-name" name="name" type="text" autocomplete="name" required>
-            <p class="error" data-error-for="name">Enter your name.</p>
+            <p class="error" data-error-for="name">${esc(t("enterName"))}</p>
           </div>
           <div class="field">
-            <label for="email">Email <span class="req">required</span></label>
+            <label for="email">${esc(t("email"))} <span class="req">${esc(t("required"))}</span></label>
             <input id="email" name="email" type="email" autocomplete="email" required>
-            <p class="error" data-error-for="email">Enter a valid email address.</p>
+            <p class="error" data-error-for="email">${esc(t("enterEmail"))}</p>
           </div>
           <div class="field">
-            <label for="organisation">Organisation (optional)</label>
+            <label for="organisation">${esc(t("organisation"))}</label>
             <input id="organisation" name="organisation" type="text" autocomplete="organization">
           </div>
           <div class="field">
-            <label for="matter">Matter type <span class="req">required</span></label>
+            <label for="matter">${esc(t("matterType"))} <span class="req">${esc(t("required"))}</span></label>
             <select id="matter" name="matter" required>
-              <option value="">Select one</option>
+              <option value="">${esc(t("selectOne"))}</option>
               ${site.practices.map((item) => `<option>${esc(item.title)}</option>`).join("")}
-              <option>Something else</option>
+              <option>${esc(t("somethingElse"))}</option>
             </select>
-            <p class="error" data-error-for="matter">Choose a matter type.</p>
+            <p class="error" data-error-for="matter">${esc(t("chooseMatter"))}</p>
           </div>
           <div class="field">
-            <label for="message">How we can help <span class="req">required</span></label>
+            <label for="message">${esc(t("howWeCanHelp"))} <span class="req">${esc(t("required"))}</span></label>
             <textarea id="message" name="message" required></textarea>
-            <p class="error" data-error-for="message">Describe the situation in a few sentences.</p>
+            <p class="error" data-error-for="message">${esc(t("describeSituation"))}</p>
           </div>
           <div class="field">
             <label class="checkbox" for="privacy">
               <input id="privacy" name="privacy" type="checkbox" required>
-              <span>I understand this message is not a retainer and I have read the <a href="/privacy/">privacy notice</a>.</span>
+              <span>${linkedPhrase(t("privacyConsent"), { privacy: `<a href="/privacy/">${esc(t("privacyNotice"))}</a>` })}</span>
             </label>
-            <p class="error" data-error-for="privacy">Confirm you have read the privacy notice.</p>
+            <p class="error" data-error-for="privacy">${esc(t("confirmPrivacy"))}</p>
           </div>
-          <button class="btn btn-signal form-submit" type="submit">${esc(page.formButton || "Send an initial enquiry")}</button>
+          <button class="btn btn-signal form-submit" type="submit">${esc(page.formButton || t("sendEnquiry"))}</button>
           <p class="form-status" data-form-status></p>
           <p class="small muted">${
             site.email
-              ? `This preview does not send data to a server. It opens a draft to ${esc(site.email)} on this device.`
+              ? t("formPreview", { email: esc(site.email) })
               : esc(trust.contact.acknowledgementTime)
           }</p>
         </form>
@@ -1169,7 +1200,7 @@ function contactPage() {
       </div>
     </main>
   `;
-  return documentPage({ ...page, crumb: "Contact" }, body);
+  return documentPage({ ...page, crumb: t("nav.contact") }, body);
 }
 
 const TRUST_PAGE_HTML = {
@@ -1188,7 +1219,7 @@ function legalPage(key) {
         ${crumbs([{ label: page.heading }])}
         <h1>${esc(page.heading)}</h1>
         ${page.intro && isPublicText(page.intro) ? `<p class="lead muted">${htmlWithSraLinks(page.intro)}</p>` : ""}
-        <p><a class="btn btn-signal" href="${esc(page.movedTo)}">Regulatory information</a></p>
+        <p><a class="btn btn-signal" href="${esc(page.movedTo)}">${esc(t("regulatoryInformation"))}</a></p>
       </div>
     </main>
   `;
@@ -1212,6 +1243,7 @@ function legalPage(key) {
         ${page.intro && isPublicText(page.intro) ? `<p class="lead muted">${htmlWithSraLinks(page.intro)}</p>` : ""}
       </div>
       <div class="wrap legal-doc">
+        ${loc().id !== "en" ? `<p class="legal-note muted">${esc(t("translationNote"))}</p>` : ""}
         ${extra}
       </div>
       ${reviewFoot(page)}
@@ -1223,16 +1255,16 @@ function legalPage(key) {
 function notFoundPage() {
   const page = {
     path: "/404.html",
-    title: "Page not found | Edison Law",
-    description: "The requested page is not on the Edison Law website.",
-    heading: "That page is not here.",
+    title: t("pageNotFound"),
+    description: t("pageNotFoundDesc"),
+    heading: t("pageNotFoundHeading"),
   };
   const body = `
     <main id="content">
       <div class="wrap page-head">
         <h1>${esc(page.heading)}</h1>
-        <p class="lead muted">The address may have changed. Use search or return to the homepage.</p>
-        <a class="btn btn-signal" href="/">Home</a>
+        <p class="lead muted">${esc(t("pageNotFoundLead"))}</p>
+        <a class="btn btn-signal" href="/">${esc(t("home"))}</a>
       </div>
     </main>
   `;

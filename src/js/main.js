@@ -83,6 +83,128 @@ function search() {
   input.addEventListener("input", () => render(input.value));
 }
 
+function languageMenu() {
+  const switches = [...document.querySelectorAll("[data-lang-switch]")];
+
+  const close = (root) => {
+    if (root instanceof HTMLDetailsElement) root.open = false;
+  };
+
+  const closeAll = (except) => {
+    switches.forEach((root) => {
+      if (root !== except) close(root);
+    });
+  };
+
+  switches.forEach((root) => {
+    root.addEventListener("toggle", () => {
+      if (root.open) closeAll(root);
+    });
+
+    const menu = root.querySelector(".lang-menu");
+    menu?.addEventListener("keydown", (event) => {
+      const links = [...root.querySelectorAll(".lang-option")];
+      const index = links.indexOf(document.activeElement);
+      if (index < 0) return;
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        const next =
+          event.key === "ArrowDown"
+            ? links[(index + 1) % links.length]
+            : links[(index - 1 + links.length) % links.length];
+        next?.focus();
+      } else if (event.key === "Home") {
+        event.preventDefault();
+        links[0]?.focus();
+      } else if (event.key === "End") {
+        event.preventDefault();
+        links[links.length - 1]?.focus();
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        close(root);
+        root.querySelector("summary")?.focus();
+      }
+    });
+  });
+
+  document.addEventListener("pointerdown", (event) => {
+    switches.forEach((root) => {
+      if (root.open && !root.contains(event.target)) close(root);
+    });
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    switches.forEach((root) => {
+      if (!root.open) return;
+      close(root);
+      root.querySelector("summary")?.focus();
+    });
+  });
+
+  document.querySelectorAll("[data-lang-link]").forEach((link) => {
+    link.addEventListener("click", () => {
+      try {
+        localStorage.setItem("edison-lang", link.dataset.lang);
+      } catch {
+        /* ignore */
+      }
+    });
+  });
+}
+
+function languageSuggest() {
+  const bar = document.querySelector("[data-lang-suggest]");
+  const raw = document.querySelector("#edison-i18n")?.textContent;
+  if (!bar || !raw) return;
+  let data;
+  try {
+    data = JSON.parse(raw);
+  } catch {
+    return;
+  }
+  let stored = null;
+  try {
+    stored = localStorage.getItem("edison-lang");
+  } catch {
+    stored = null;
+  }
+  if (stored) return;
+  const nav = String(navigator.language || "").toLowerCase();
+  const match = data.locales.find((item) =>
+    (item.match || []).some((code) => nav === code || nav.startsWith(`${code}-`)),
+  );
+  if (!match || match.id === data.locale) return;
+  bar.hidden = false;
+  const text = bar.querySelector("[data-lang-suggest-text]");
+  const go = bar.querySelector("[data-lang-suggest-go]");
+  const dismiss = bar.querySelector("[data-lang-suggest-dismiss]");
+  if (text) text.textContent = match.prompt;
+  if (go) {
+    go.textContent = match.go;
+    go.setAttribute("href", match.href);
+    go.setAttribute("hreflang", match.hreflang);
+    go.addEventListener("click", () => {
+      try {
+        localStorage.setItem("edison-lang", match.id);
+      } catch {
+        /* ignore */
+      }
+    });
+  }
+  if (dismiss) {
+    dismiss.textContent = match.stay;
+    dismiss.addEventListener("click", () => {
+      try {
+        localStorage.setItem("edison-lang", data.locale);
+      } catch {
+        /* ignore */
+      }
+      bar.hidden = true;
+    });
+  }
+}
+
 function contactForm() {
   const form = document.querySelector("#contact-form");
   if (!form) return;
@@ -112,16 +234,16 @@ function contactForm() {
 
     if (!name || !emailOk || !matter || message.length < 12 || !privacy) {
       status.dataset.visible = "true";
-      status.textContent = "Check the highlighted fields and try again.";
+      status.textContent = form.dataset.msgCheck || "Check the highlighted fields and try again.";
       form.querySelector(".is-invalid input, .is-invalid select, .is-invalid textarea, .is-invalid input[type=checkbox]")?.focus();
       return;
     }
 
     const body = [
-      `Name: ${name}`,
-      `Email: ${email}`,
-      organisation ? `Organisation: ${organisation}` : "",
-      `Matter: ${matter}`,
+      `${form.dataset.labelName || "Name"}: ${name}`,
+      `${form.dataset.labelEmail || "Email"}: ${email}`,
+      organisation ? `${form.dataset.labelOrg || "Organisation"}: ${organisation}` : "",
+      `${form.dataset.labelMatter || "Matter"}: ${matter}`,
       "",
       message,
     ]
@@ -135,11 +257,10 @@ function contactForm() {
       return;
     }
 
-    const href = `mailto:${mailto}?subject=${encodeURIComponent(
-      `Edison Law enquiry — ${matter}`,
-    )}&body=${encodeURIComponent(body)}`;
+    const subject = (form.dataset.msgSubject || "Edison Law enquiry — {matter}").replace("{matter}", matter);
+    const href = `mailto:${mailto}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-    status.textContent = `Draft prepared for ${mailto}. If your email app does not open, write to that address directly.`;
+    status.textContent = (form.dataset.msgDraft || `Draft prepared for {email}.`).replace("{email}", mailto);
     window.location.href = href;
   });
 }
@@ -234,6 +355,8 @@ function peopleFilter() {
 currentYear();
 menu();
 search();
+languageMenu();
+languageSuggest();
 contactForm();
 pageJumpSpy();
 insightTools();

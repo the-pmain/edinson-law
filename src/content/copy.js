@@ -950,7 +950,7 @@ export const pages = {
       },
       {
         heading: "Essential storage",
-        text: "The browser may keep ordinary session data required to display pages. We do not use that to profile you.",
+        text: "The browser may keep ordinary session data required to display pages. If you choose another language, that choice is stored locally in this browser so the language switcher can remember it. Neither is used to profile you.",
       },
     ],
   },

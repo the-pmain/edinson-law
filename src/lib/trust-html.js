@@ -7,8 +7,8 @@ import {
   privacyRightsText,
   reviewStatement,
   sraRegisterUrl,
-  trust,
 } from "../config/trust.js";
+import { loc, t, trust } from "../i18n/catalog.js";
 import { esc } from "./html.js";
 
 export function isPublicText(value) {
@@ -16,7 +16,7 @@ export function isPublicText(value) {
 }
 
 export function reviewedNote(topic) {
-  const text = reviewStatement(topic);
+  const text = reviewStatement(topic, loc().dateLocale, trust);
   if (!text) return "";
   return `<p class="mono">${esc(text)}</p>`;
 }
@@ -46,8 +46,10 @@ export function htmlWithSraLinks(text) {
     ? text.split(check).map((part) => esc(part)).join(regulatorCheckHtml())
     : esc(text);
   return html
-    .replaceAll("public SRA organisation record", sraRegisterAnchor("public SRA organisation record"))
-    .replaceAll("public SRA record", sraRegisterAnchor("public SRA record"));
+    .replaceAll(t("publicSraOrganisationRecord"), sraRegisterAnchor(t("publicSraOrganisationRecord")))
+    .replaceAll(t("publicSraRecord"), sraRegisterAnchor(t("publicSraRecord")))
+    .replaceAll("public SRA organisation record", sraRegisterAnchor(t("publicSraOrganisationRecord")))
+    .replaceAll("public SRA record", sraRegisterAnchor(t("publicSraRecord")));
 }
 
 function block(heading, text) {
@@ -69,13 +71,13 @@ export function regulatoryFooterHtml() {
   const ids = [
     `<a href="${esc(sraRegisterUrl())}" target="_blank" rel="noopener noreferrer">SRA ${esc(f.sraNumber)}</a>`,
   ];
-  if (isRecordedId(f.companyNumber)) ids.push(`<span>Company ${esc(f.companyNumber)}</span>`);
-  if (isRecordedId(f.vatNumber)) ids.push(`<span>VAT ${esc(f.vatNumber)}</span>`);
-  if (isRecordedId(f.icoNumber)) ids.push(`<span>ICO ${esc(f.icoNumber)}</span>`);
+  if (isRecordedId(f.companyNumber)) ids.push(`<span>${esc(t("company"))} ${esc(f.companyNumber)}</span>`);
+  if (isRecordedId(f.vatNumber)) ids.push(`<span>${esc(t("vat"))} ${esc(f.vatNumber)}</span>`);
+  if (isRecordedId(f.icoNumber)) ids.push(`<span>${esc(t("ico"))} ${esc(f.icoNumber)}</span>`);
 
   const lines = [`<p class="footer-ids">${ids.join("")}</p>`];
   if (isPublicText(f.registeredOffice)) lines.push(`<p>${esc(f.registeredOffice)}</p>`);
-  lines.push(`<p><a href="/regulatory-information/">Regulatory information</a></p>`);
+  lines.push(`<p><a href="/regulatory-information/">${esc(t("regulatoryInformation"))}</a></p>`);
   return lines.join("");
 }
 
@@ -85,16 +87,16 @@ export function contactDetailsHtml() {
   if (isPublicText(c.officeHours)) parts.push(`<p class="muted">${esc(c.officeHours)}</p>`);
   if (isPublicText(c.phone)) {
     parts.push(
-      `<p class="muted">Telephone: <a href="tel:${esc(c.phone.replace(/\s+/g, ""))}">${esc(c.phone)}</a></p>`,
+      `<p class="muted">${esc(t("telephone"))}: <a href="tel:${esc(c.phone.replace(/\s+/g, ""))}">${esc(c.phone)}</a></p>`,
     );
   }
   if (isPublicText(c.email)) {
     parts.push(`<p class="mono"><a href="mailto:${esc(c.email)}">${esc(c.email)}</a></p>`);
   }
   if (isPublicText(c.address)) parts.push(`<p class="muted">${esc(c.address)}</p>`);
-  const named = firstContactLine();
-  if (named) parts.push(`<p class="muted">First point of contact: ${esc(named)}</p>`);
-  const statement = firstContactStatement();
+  const named = firstContactLine(trust);
+  if (named) parts.push(`<p class="muted">${esc(t("firstContact"))}: ${esc(named)}</p>`);
+  const statement = firstContactStatement(trust);
   if (statement) parts.push(`<p class="muted">${esc(statement)}</p>`);
   if (isPublicText(c.acknowledgementTime)) parts.push(`<p class="muted">${esc(c.acknowledgementTime)}</p>`);
   if (isPublicText(c.substantiveTime)) parts.push(`<p class="muted">${esc(c.substantiveTime)}</p>`);
@@ -122,32 +124,32 @@ export function regulatoryHtml() {
   const money = trust.clientMoney;
   const parts = [
     block(
-      "Regulated name",
-      `${f.tradingName} is authorised and regulated by the Solicitors Regulation Authority. SRA number ${f.sraNumber}.`,
+      t("legal.regulatedName"),
+      t("legal.regulatedNameText", { name: f.tradingName, n: f.sraNumber }),
     ),
   ];
-  if (isPublicText(f.legalName)) parts.push(block("Legal name", f.legalName));
-  if (isPublicText(f.entityType)) parts.push(block("Entity type", f.entityType));
-  if (isPublicText(f.companyNumber)) parts.push(block("Company number", f.companyNumber));
-  if (isPublicText(f.registeredOffice)) parts.push(block("Registered office", f.registeredOffice));
-  if (isPublicText(f.vatNumber)) parts.push(block("VAT number", f.vatNumber));
-  parts.push(blockHtml("How to check us", `<p>${regulatorCheckHtml()}</p>`));
+  if (isPublicText(f.legalName)) parts.push(block(t("legal.legalName"), f.legalName));
+  if (isPublicText(f.entityType)) parts.push(block(t("legal.entityType"), f.entityType));
+  if (isPublicText(f.companyNumber)) parts.push(block(t("legal.companyNumber"), f.companyNumber));
+  if (isPublicText(f.registeredOffice)) parts.push(block(t("legal.registeredOffice"), f.registeredOffice));
+  if (isPublicText(f.vatNumber)) parts.push(block(t("legal.vatNumber"), f.vatNumber));
+  parts.push(blockHtml(t("legal.howToCheck"), `<p>${regulatorCheckHtml()}</p>`));
 
   const insuranceBits = [];
-  if (isPublicText(ins.insurer)) insuranceBits.push(`Insurer: ${ins.insurer}.`);
+  if (isPublicText(ins.insurer)) insuranceBits.push(t("legal.insurer", { n: ins.insurer }));
   if (isPublicText(ins.minimumCover)) {
-    insuranceBits.push(`Minimum cover: ${ins.minimumCover}.`);
+    insuranceBits.push(t("legal.minCover", { n: ins.minimumCover }));
   }
-  if (isPublicText(ins.territory)) insuranceBits.push(`Territory: ${ins.territory}.`);
+  if (isPublicText(ins.territory)) insuranceBits.push(t("legal.territory", { n: ins.territory }));
   if (isPublicText(ins.territoryNote)) insuranceBits.push(ins.territoryNote);
-  if (insuranceBits.length) parts.push(block("Professional indemnity insurance", insuranceBits.join(" ")));
-  if (isPublicText(ins.liabilityCap)) parts.push(block("Limitation of liability", ins.liabilityCap));
+  if (insuranceBits.length) parts.push(block(t("legal.pii"), insuranceBits.join(" ")));
+  if (isPublicText(ins.liabilityCap)) parts.push(block(t("legal.limitation"), ins.liabilityCap));
 
-  if (isPublicText(money.statement)) parts.push(block("Client money", money.statement));
-  if (isPublicText(money.bankNote)) parts.push(block("Client account", money.bankNote));
-  if (isPublicText(f.icoNumber)) parts.push(block("Data protection", `ICO registration: ${f.icoNumber}.`));
+  if (isPublicText(money.statement)) parts.push(block(t("legal.clientMoney"), money.statement));
+  if (isPublicText(money.bankNote)) parts.push(block(t("legal.clientAccount"), money.bankNote));
+  if (isPublicText(f.icoNumber)) parts.push(block(t("legal.dataProtection"), t("legal.icoReg", { n: f.icoNumber })));
   parts.push(
-    `<p class="legal-note">See also the <a href="/privacy/">privacy notice</a>.</p>`,
+    `<p class="legal-note">${t("legal.seePrivacy").replace("{privacy}", `<a href="/privacy/">${esc(t("privacyNotice"))}</a>`)}</p>`,
   );
   return parts.filter(Boolean).join("");
 }
@@ -156,18 +158,18 @@ export function complaintsHtml() {
   const c = trust.complaints;
   const parts = [];
   if (isPublicText(c.handlerName) && isPublicText(c.handlerRole)) {
-    parts.push(block("Who handles complaints", `${c.handlerName}, ${c.handlerRole}.`));
+    parts.push(block(t("legal.whoComplaints"), `${c.handlerName}, ${c.handlerRole}.`));
   }
-  const steps = complaintsProcedure();
+  const steps = complaintsProcedure(trust);
   if (steps.length) {
     parts.push(blockHtml(
-      "How to complain",
+      t("legal.howToComplain"),
       `<ol>${steps.map((step) => `<li>${esc(step)}</li>`).join("")}</ol>`,
     ));
   }
-  if (isPublicText(c.ombudsmanText)) parts.push(block("Legal Ombudsman and the SRA", c.ombudsmanText));
+  if (isPublicText(c.ombudsmanText)) parts.push(block(t("legal.ombudsman"), c.ombudsmanText));
   parts.push(
-    `<p class="legal-note">Legal Ombudsman, PO Box 6167, Slough, SL1 0EH. Telephone 0300 555 0333. Relay UK 18001 0300 555 0333. <a href="https://www.legalombudsman.org.uk/" rel="noopener noreferrer">legalombudsman.org.uk</a></p>`,
+    `<p class="legal-note">${esc(t("legal.ombudsmanAddress"))} <a href="https://www.legalombudsman.org.uk/" rel="noopener noreferrer">legalombudsman.org.uk</a></p>`,
   );
   if (isPublicText(c.noRetaliation)) parts.push(`<p class="legal-note">${esc(c.noRetaliation)}</p>`);
   return parts.filter(Boolean).join("");
@@ -176,49 +178,34 @@ export function complaintsHtml() {
 export function pricingHtml() {
   const f = trust.fees;
   const parts = [
-    block("How we charge", f.model),
-    `<article class="legal-entry"><h2>Hourly rates</h2>${feeBandsHtml()}</article>`,
+    block(t("legal.howWeCharge"), f.model),
+    `<article class="legal-entry"><h2>${esc(t("legal.hourlyRates"))}</h2>${feeBandsHtml()}</article>`,
   ];
-  parts.push(
-    block(
-      "Supervision",
-      "Each charging category is used under the supervision of a named solicitor. The bands describe how time is billed. Confirm who will do the work, and who will supervise it, before the retainer begins.",
-    ),
-  );
-  parts.push(block("VAT", f.vatTreatment));
-  parts.push(block("How time is recorded", f.billingUnit));
-  parts.push(block("Scope and timescales", f.scopeTimescale));
-  parts.push(block("Estimates", f.estimateHonesty));
-  if (isPublicText(f.sraPriceList)) parts.push(block("SRA Transparency Rules", f.sraPriceList));
-  parts.push(block("Insurance and third-party funding", f.thirdPartyFunding));
+  parts.push(block(t("legal.supervision"), t("legal.supervisionText")));
+  parts.push(block(t("legal.vat"), f.vatTreatment));
+  parts.push(block(t("legal.timeRecorded"), f.billingUnit));
+  parts.push(block(t("legal.scopeTimescales"), f.scopeTimescale));
+  parts.push(block(t("legal.estimates"), f.estimateHonesty));
+  if (isPublicText(f.sraPriceList)) parts.push(block(t("legal.sraPrice"), f.sraPriceList));
+  parts.push(block(t("legal.thirdParty"), f.thirdPartyFunding));
   if (isPublicText(f.standardTerms)) {
     parts.push(
-      `<p class="legal-note">Standard terms of business: <a href="${esc(f.standardTerms)}">${esc(f.standardTerms)}</a></p>`,
+      `<p class="legal-note">${esc(t("legal.standardTerms"))} <a href="${esc(f.standardTerms)}">${esc(f.standardTerms)}</a></p>`,
     );
   }
-  parts.push(
-    block(
-      "No guaranteed recoveries",
-      "Fees are for legal work. We will not promise a recovery that the evidence does not support.",
-    ),
-  );
+  parts.push(block(t("legal.noGuarantees"), t("legal.noGuaranteesText")));
   return parts.filter(Boolean).join("");
 }
 
 export function privacyHtml() {
   const p = trust.privacy;
   const parts = [];
-  if (isPublicText(p.controller)) parts.push(block("Controller", p.controller));
-  if (isPublicText(p.icoNumber)) parts.push(block("ICO registration", p.icoNumber));
-  parts.push(
-    block(
-      "What we collect",
-      "If you write to us we receive the name, contact details and matter description you send. We use that information to decide whether we can act and to reply. We do not run advertising analytics on this preview.",
-    ),
-  );
+  if (isPublicText(p.controller)) parts.push(block(t("legal.controller"), p.controller));
+  if (isPublicText(p.icoNumber)) parts.push(block(t("legal.icoRegistration"), p.icoNumber));
+  parts.push(block(t("legal.whatWeCollect"), t("legal.whatWeCollectText")));
   if (p.lawfulBases?.length) {
     parts.push(blockHtml(
-      "Lawful bases",
+      t("legal.lawfulBases"),
       `<ul>${p.lawfulBases
         .filter((item) => isPublicText(item.basis) && isPublicText(item.use))
         .map((item) => `<li><strong>${esc(item.basis)}.</strong> ${esc(item.use)}</li>`)
@@ -227,16 +214,16 @@ export function privacyHtml() {
   }
   if (p.retention?.length) {
     parts.push(blockHtml(
-      "Retention",
+      t("legal.retention"),
       `<ul>${p.retention
         .filter((item) => isPublicText(item.category) && isPublicText(item.period))
         .map((item) => `<li><strong>${esc(item.category)}.</strong> ${esc(item.period)}</li>`)
         .join("")}</ul>`,
     ));
   }
-  const rights = privacyRightsText();
-  if (rights) parts.push(block("Your rights", rights));
-  parts.push(block("International transfers", p.internationalTransfers));
+  const rights = privacyRightsText(trust);
+  if (rights) parts.push(block(t("legal.yourRights"), rights));
+  parts.push(block(t("legal.transfers"), p.internationalTransfers));
   return parts.filter(Boolean).join("");
 }
 

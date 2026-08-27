@@ -8,6 +8,13 @@ html {
   scroll-behavior: smooth;
 }
 
+html:lang(sv),
+html:lang(nb),
+html:lang(da),
+html:lang(de) {
+  hyphens: auto;
+}
+
 html,
 body {
   margin: 0;

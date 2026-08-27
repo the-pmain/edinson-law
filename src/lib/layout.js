@@ -1,11 +1,19 @@
-import { site } from "../../site.config.js";
 import { personEmail } from "../content/people.js";
 import {
   isPending,
   legalServiceName,
   schemaOpeningHours,
-  trust,
 } from "../config/trust.js";
+import {
+  LOCALES,
+  loc,
+  localizePath,
+  prefixHtml,
+  site,
+  t,
+  trust,
+} from "../i18n/catalog.js";
+import { UI } from "../i18n/ui.js";
 import { esc } from "./html.js";
 import { filterPublicFaqs, regulatoryFooterHtml } from "./trust-html.js";
 
@@ -171,9 +179,9 @@ function brand(href = "/") {
 }
 
 export function trustBadges() {
-  return `<div class="trust-badges" role="group" aria-label="Regulation and memberships">
+  return `<div class="trust-badges" role="group" aria-label="${esc(t("regulationMemberships"))}">
     <a class="trust-badge" href="${esc(site.sraUrl)}" target="_blank" rel="noopener noreferrer">
-      <img src="/brand/sra-badge.svg" width="275" height="88" alt="Regulated by Solicitors Regulation Authority">
+      <img src="/brand/sra-badge.svg" width="275" height="88" alt="${esc(t("sraBadgeAlt"))}">
     </a>
     <a class="trust-badge" href="https://www.laworld.com/" target="_blank" rel="noopener noreferrer">
       <img src="/brand/laworld.jpg" width="275" height="178" alt="LAWORLD">
@@ -205,7 +213,7 @@ function isCurrent(item, path) {
 
 function navLinks(items, path, className) {
   const rail = className === "rail-nav";
-  return `<nav class="${className}" aria-label="Primary">
+  return `<nav class="${className}" aria-label="${esc(t("primaryNav"))}">
     ${items
       .map((item) => {
         const current = isCurrent(item, path);
@@ -221,7 +229,7 @@ function navLinks(items, path, className) {
 
 function jsonLd(page) {
   const origin = site.canonicalOrigin.replace(/\/$/, "");
-  const url = `${origin}${page.path}`;
+  const url = `${origin}${localizePath(page.path)}`;
   const org = {
     "@type": ["LegalService", "Organization"],
     "@id": `${origin}/#organisation`,
@@ -249,14 +257,15 @@ function jsonLd(page) {
   if (page.schema === "home") {
     graph.push({
       "@type": "WebSite",
-      url: origin,
+      url: `${origin}${localizePath("/")}`,
       name: site.name,
+      inLanguage: loc().htmlLang,
       publisher: { "@id": `${origin}/#organisation` },
     });
   }
 
   if (page.person) {
-    const personUrl = `${origin}/people/${page.person.slug}/`;
+    const personUrl = `${origin}${localizePath(`/people/${page.person.slug}/`)}`;
     const verifiedSraId = page.person.sraId && !isPending(page.person.sraId);
     const canPublishJobTitle = !/lawyer|solicitor/i.test(page.person.role || "") || verifiedSraId;
     graph.push({
@@ -303,7 +312,7 @@ function jsonLd(page) {
           itemOffered: {
             "@type": "Service",
             name: item.title,
-            url: `${origin}${item.href}`,
+            url: `${origin}${localizePath(item.href)}`,
           },
         })),
       };
@@ -324,10 +333,10 @@ function jsonLd(page) {
   }
 
   if (page.path !== "/") {
-    const crumbs = [{ name: "Home", item: `${origin}/` }];
+    const crumbs = [{ name: t("home"), item: `${origin}${localizePath("/")}` }];
     if (page.breadcrumbs) {
       for (const crumb of page.breadcrumbs) {
-        crumbs.push({ name: crumb.label, item: `${origin}${crumb.href}` });
+        crumbs.push({ name: crumb.label, item: `${origin}${localizePath(crumb.href)}` });
       }
     }
     crumbs.push({ name: page.crumb || page.heading || page.title, item: url });
@@ -347,77 +356,148 @@ function jsonLd(page) {
 
 function searchIndex() {
   const items = [
-    { title: "Home", href: "/", type: "Page", text: site.masterLine },
-    { title: "Expertise", href: "/expertise/", type: "Page", text: "Legal routes for fraud, investigations and recovery." },
+    { title: t("home"), href: "/", type: t("search.page"), text: t("search.homeText") },
+    { title: t("nav.expertise"), href: "/expertise/", type: t("search.page"), text: t("search.expertiseText") },
     ...site.practices.map((item) => ({
       title: item.title,
       href: item.href,
-      type: "Expertise",
+      type: t("search.expertise"),
       text: item.summary,
     })),
     {
-      title: "Investigations",
+      title: t("nav.investigations"),
       href: "/investigations/",
-      type: "Page",
-      text: "Financial crime investigations, internal enquiries, digital tracing and asset location.",
+      type: t("search.page"),
+      text: t("search.investigationsText"),
     },
     ...site.investigations.map((item) => ({
       title: item.title,
       href: item.href,
-      type: "Investigations",
+      type: t("search.investigations"),
       text: item.summary,
     })),
-    { title: "Insights", href: "/insights/", type: "Page", text: "Investigation notes and legal explainers" },
+    { title: t("nav.insights"), href: "/insights/", type: t("search.page"), text: t("search.insightsText") },
     ...site.insights.map((item) => ({
       title: item.title,
       href: `/insights/${item.slug}/`,
       type: item.type,
       text: item.description,
     })),
-    { title: "People", href: "/people/", type: "Page", text: site.people.map((person) => person.name).join(", ") || "People" },
+    { title: t("nav.people"), href: "/people/", type: t("search.page"), text: site.people.map((person) => person.name).join(", ") || t("nav.people") },
     ...site.people.map((person) => ({
       title: person.name,
       href: `/people/${person.slug}/`,
-      type: "People",
+      type: t("search.people"),
       text: `${person.role}. ${person.summary} ${personEmail(person)}`,
     })),
-    { title: "Join us", href: "/join-us/", type: "Page", text: "Careers at Edison Law" },
-    { title: "About", href: "/about/", type: "Page", text: site.shortLine },
+    { title: t("nav.joinUs"), href: "/join-us/", type: t("search.page"), text: t("search.joinUsText") },
+    { title: t("nav.about"), href: "/about/", type: t("search.page"), text: site.shortLine },
     {
       title: site.tools.cobraAi.name,
       href: "/investigations/#cobra-ai",
-      type: "Page",
-      text: `Investigative tool from ${site.tools.cobraAi.vendor}. Used on the file; output is reviewed here.`,
+      type: t("search.page"),
+      text: t("search.cobraText", { vendor: site.tools.cobraAi.vendor }),
     },
-    { title: "Contact", href: "/contact/", type: "Page", text: "Write to the London office" },
+    { title: t("nav.contact"), href: "/contact/", type: t("search.page"), text: t("search.contactText") },
     ...site.footerLinks.map((item) => ({
       title: item.label,
       href: item.href,
-      type: "Legal",
+      type: t("search.legal"),
       text: item.label,
     })),
   ];
   return JSON.stringify(items);
 }
 
+function alternateLinks(pagePath) {
+  const origin = site.canonicalOrigin.replace(/\/$/, "");
+  const links = LOCALES.map((item) => {
+    const href = `${origin}${localizePath(pagePath, item)}`;
+    return `<link rel="alternate" hreflang="${item.hreflang}" href="${href}">`;
+  });
+  links.push(`<link rel="alternate" hreflang="x-default" href="${origin}${localizePath(pagePath, LOCALES[0])}">`);
+  return links.join("\n  ");
+}
+
+function ogLocaleTags() {
+  const current = loc();
+  const tags = [`<meta property="og:locale" content="${current.ogLocale}">`];
+  for (const item of LOCALES) {
+    if (item.id === current.id) continue;
+    tags.push(`<meta property="og:locale:alternate" content="${item.ogLocale}">`);
+  }
+  return tags.join("\n  ");
+}
+
+function languageMenu(pagePath, variant) {
+  const current = loc();
+  const chevron = `<svg class="lang-switch-chevron" viewBox="0 0 12 8" width="10" height="7" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 1.5L6 6l4.5-4.5"/></svg>`;
+  const links = LOCALES.map((item) => {
+    const currentAttr = item.id === current.id ? ' aria-current="true"' : "";
+    return `<a class="lang-option" href="__I18N__${item.id}__" hreflang="${item.hreflang}" lang="${item.htmlLang}" data-lang="${item.id}" data-lang-link${currentAttr}><span class="lang-option-code">${esc(item.code)}</span><span class="lang-option-name">${esc(item.nativeName)}</span><span class="lang-option-mark" aria-hidden="true"></span></a>`;
+  }).join("");
+
+  if (variant === "drawer") {
+    return `<div class="lang-switch lang-switch-drawer">
+      <p class="label" id="lang-drawer-label">${esc(t("language"))}</p>
+      <nav class="lang-menu" aria-labelledby="lang-drawer-label">${links}</nav>
+    </div>`;
+  }
+
+  const id = variant === "rail" ? "lang-menu-rail" : "lang-menu";
+  const extra = variant === "rail" ? " lang-switch-rail" : "";
+  return `<details class="lang-switch${extra}" data-lang-switch name="site-lang">
+    <summary class="lang-switch-btn">
+      <span class="lang-option-code" aria-hidden="true">${esc(current.code)}</span>
+      <span class="visually-hidden">${esc(t("language"))}: ${esc(current.nativeName)}</span>
+      ${chevron}
+    </summary>
+    <div class="lang-menu" id="${id}">
+      <nav aria-label="${esc(t("language"))}">${links}</nav>
+    </div>
+  </details>`;
+}
+
+function i18nPayload(pagePath) {
+  return JSON.stringify({
+    locale: loc().id,
+    path: pagePath,
+    locales: LOCALES.filter((item) => item.id !== "en").map((item) => {
+      const ui = UI[item.id];
+      return {
+        id: item.id,
+        hreflang: item.hreflang,
+        match: item.match,
+        href: localizePath(pagePath, item),
+        prompt: ui["suggest.prompt"].replaceAll("{name}", item.nativeName),
+        go: ui["suggest.go"].replaceAll("{name}", item.nativeName),
+        stay: ui["suggest.stay"],
+      };
+    }),
+  });
+}
+
 export function documentPage(page, body) {
   const origin = site.canonicalOrigin.replace(/\/$/, "");
-  const canonicalPath = page.canonicalPath || page.path;
-  const canonical = `${origin}${canonicalPath}`;
+  const sourcePath = page.canonicalPath || page.path;
+  const localizedPath = localizePath(sourcePath);
+  const canonical = `${origin}${localizedPath}`;
   const title = esc(page.title);
   const description = esc(page.description);
   const ogImage = `${origin}/og-image.png`;
   const robots = page.path === "/404.html" ? "noindex, nofollow" : "index, follow";
+  const current = loc();
+  const redirect = page.redirectTo ? localizePath(page.redirectTo) : "";
 
-  return `<!DOCTYPE html>
-<html lang="${site.lang}">
+  const html = `<!DOCTYPE html>
+<html lang="${esc(current.htmlLang)}" data-locale="${esc(current.id)}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${title}</title>
   <meta name="description" content="${description}">
   <meta name="robots" content="${robots}">
-  ${page.redirectTo ? `<meta http-equiv="refresh" content="0;url=${esc(page.redirectTo)}">` : ""}
+  ${redirect ? `<meta http-equiv="refresh" content="0;url=${esc(redirect)}">` : ""}
   <meta name="author" content="${esc(site.name)}">
   <meta name="theme-color" content="${site.themeColor}">
   <meta name="msapplication-TileColor" content="${site.themeColor}">
@@ -426,8 +506,7 @@ export function documentPage(page, body) {
   <meta name="format-detection" content="telephone=no">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="canonical" href="${canonical}">
-  <link rel="alternate" hreflang="en-GB" href="${canonical}">
-  <link rel="alternate" hreflang="x-default" href="${canonical}">
+  ${alternateLinks(sourcePath)}
 
   <link rel="icon" href="/brand/edison-law-logo.png" type="image/png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -445,7 +524,7 @@ export function documentPage(page, body) {
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="${esc(page.heading || site.name)}">
-  <meta property="og:locale" content="${site.locale}">
+  ${ogLocaleTags()}
   ${page.article ? `<meta property="article:published_time" content="${page.article.date}">` : ""}
 
   <meta name="twitter:card" content="summary_large_image">
@@ -459,7 +538,7 @@ export function documentPage(page, body) {
   <link rel="stylesheet" href="/src/css/main.css">
   <script type="application/ld+json">${jsonLd(page)}</script>
 </head>
-<body data-mode="${esc(site.mode)}" data-path="${esc(page.path)}">
+<body data-mode="${esc(site.mode)}" data-path="${esc(page.path)}" data-locale="${esc(current.id)}">
   <!--
     THESIS: Edison turns fragmented digital and financial facts into a legal position. The site is an evidence desk, not a recovery-service landing or a chambers brochure.
     OWN-WORLD: Midnight and paper fields, Signal reserved for action and nodes, Newsreader display with Manrope interface, IBM Plex Mono only for real metadata, 200px evidence rail from 1680px, hairline rules, node-path graphics.
@@ -468,7 +547,13 @@ export function documentPage(page, body) {
     FORM: Brief-pinned Direction 01 Evidence Signal and the August 2026 brand-book digital system. No concept-seed; the visual world is already approved.
     FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
   -->
-  <a class="skip-link" href="#content">Skip to content</a>
+  <a class="skip-link" href="#content">${esc(t("skip"))}</a>
+
+  <div class="lang-suggest" data-lang-suggest hidden>
+    <p data-lang-suggest-text></p>
+    <a class="btn btn-signal" data-lang-suggest-go></a>
+    <button type="button" class="btn btn-ghost" data-lang-suggest-dismiss></button>
+  </div>
 
   <header class="compact-header">
     ${brand("/")}
@@ -478,36 +563,39 @@ export function documentPage(page, body) {
       "header-nav",
     )}
     <div class="header-tools">
+      ${languageMenu(sourcePath, "header")}
       ${
         site.search.enabled
-          ? `<button class="icon-btn" type="button" data-search-open aria-label="Search the site">${ICONS.search}</button>`
+          ? `<button class="icon-btn" type="button" data-search-open aria-label="${esc(t("searchSite"))}">${ICONS.search}</button>`
           : ""
       }
-      <a class="btn btn-ink" href="/contact/">Contact</a>
-      <button class="icon-btn menu-btn" type="button" data-menu-open aria-expanded="false" aria-controls="site-drawer">${ICONS.menu}<span>Menu</span></button>
+      <a class="btn btn-ink" href="/contact/">${esc(t("contact"))}</a>
+      <button class="icon-btn menu-btn" type="button" data-menu-open aria-expanded="false" aria-controls="site-drawer">${ICONS.menu}<span>${esc(t("menu"))}</span></button>
     </div>
   </header>
 
-  <aside class="rail" aria-label="Evidence rail">
+  <aside class="rail" aria-label="${esc(t("evidenceRail"))}">
     ${brand("/")}
     ${navLinks(site.rail, page.path, "rail-nav")}
     <div class="rail-badges">
       ${trustBadges()}
     </div>
     <div class="rail-utility">
-      ${site.search.enabled ? `<button type="button" data-search-open>Search</button>` : ""}
-      <a href="/accessibility/">Accessibility</a>
-      <a href="/contact/">Contact</a>
+      ${languageMenu(sourcePath, "rail")}
+      ${site.search.enabled ? `<button type="button" data-search-open>${esc(t("search"))}</button>` : ""}
+      <a href="/accessibility/">${esc(t("accessibility"))}</a>
+      <a href="/contact/">${esc(t("contact"))}</a>
     </div>
   </aside>
 
   <div class="drawer" id="site-drawer" data-open="false">
-    <div class="drawer-panel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="drawer-panel" role="dialog" aria-modal="true" aria-label="${esc(t("menuDialog"))}">
       <div class="drawer-top">
         ${brand("/")}
-        <button class="icon-btn" type="button" data-menu-close aria-label="Close menu">${ICONS.close}</button>
+        <button class="icon-btn" type="button" data-menu-close aria-label="${esc(t("closeMenu"))}">${ICONS.close}</button>
       </div>
       ${navLinks([...site.rail, ...site.footerLinks], page.path, "drawer-nav")}
+      ${languageMenu(sourcePath, "drawer")}
     </div>
   </div>
 
@@ -515,8 +603,8 @@ export function documentPage(page, body) {
     site.search.enabled
       ? `<dialog class="search-dialog" data-search>
         <form class="search-panel" method="dialog">
-          <label class="label" for="site-search">Search</label>
-          <input id="site-search" type="search" name="q" placeholder="Expertise, notes, people" autocomplete="off">
+          <label class="label" for="site-search">${esc(t("search"))}</label>
+          <input id="site-search" type="search" name="q" placeholder="${esc(t("searchPlaceholder"))}" autocomplete="off">
           <div class="search-results" data-search-results></div>
         </form>
       </dialog>`
@@ -533,7 +621,7 @@ export function documentPage(page, body) {
             <p>London</p>
             ${site.email ? `<p><a href="mailto:${esc(site.email)}">${esc(site.email)}</a></p>` : ""}
           </div>
-          <nav class="footer-links" aria-label="Legal">
+          <nav class="footer-links" aria-label="${esc(t("legalNav"))}">
             ${site.footerLinks
               .map((item) => `<a href="${item.href}">${esc(item.label)}</a>`)
               .join("")}
@@ -549,15 +637,21 @@ export function documentPage(page, body) {
   </div>
 
   <script type="application/json" id="edison-search-data">${searchIndex()}</script>
+  <script type="application/json" id="edison-i18n">${i18nPayload(sourcePath)}</script>
   <script type="module" src="/src/js/main.js"></script>
 </body>
 </html>
 `;
+  let output = prefixHtml(html);
+  for (const item of LOCALES) {
+    output = output.replaceAll(`__I18N__${item.id}__`, localizePath(sourcePath, item));
+  }
+  return output;
 }
 
 export function crumbs(items) {
   return `<nav class="crumbs" aria-label="Breadcrumb">
-    <a href="/">Home</a>
+    <a href="/">${esc(t("home"))}</a>
     ${items
       .map((item, i) => {
         const last = i === items.length - 1;

@@ -4,7 +4,7 @@ import { join, relative, resolve } from "node:path";
 
 function htmlInputs(dir, acc = {}, root = dir) {
   for (const name of readdirSync(dir)) {
-    if (["node_modules", "dist", "src", "scripts", "public", ".git"].includes(name)) {
+    if (["node_modules", "dist", "src", "scripts", "public", ".git", "tmp-shots"].includes(name)) {
       continue;
     }
     const full = join(dir, name);
