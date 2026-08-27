@@ -17,6 +17,7 @@
     "check:trust": "node scripts/render.mjs"
   },
   "dependencies": {
+    "pdf-lib": "^1.17.1",
     "vite": "^8.2.2"
   }
 }

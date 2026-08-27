@@ -200,6 +200,15 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/"/>
   </url>
   <url>
+    <loc>https://edisonlaw.co.uk/people/agreement/</loc>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="nb-NO" href="https://edisonlaw.co.uk/nb/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/agreement/"/>
+  </url>
+  <url>
     <loc>https://edisonlaw.co.uk/people/richard-edison/</loc>
     <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/richard-edison/"/>
     <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/richard-edison/"/>
@@ -711,6 +720,15 @@
     <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/"/>
     <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/"/>
+  </url>
+  <url>
+    <loc>https://edisonlaw.co.uk/sv/people/agreement/</loc>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="nb-NO" href="https://edisonlaw.co.uk/nb/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/agreement/"/>
   </url>
   <url>
     <loc>https://edisonlaw.co.uk/sv/people/richard-edison/</loc>
@@ -1226,6 +1244,15 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/"/>
   </url>
   <url>
+    <loc>https://edisonlaw.co.uk/nb/people/agreement/</loc>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="nb-NO" href="https://edisonlaw.co.uk/nb/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/agreement/"/>
+  </url>
+  <url>
     <loc>https://edisonlaw.co.uk/nb/people/richard-edison/</loc>
     <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/richard-edison/"/>
     <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/richard-edison/"/>
@@ -1739,6 +1766,15 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/"/>
   </url>
   <url>
+    <loc>https://edisonlaw.co.uk/da/people/agreement/</loc>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="nb-NO" href="https://edisonlaw.co.uk/nb/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/agreement/"/>
+  </url>
+  <url>
     <loc>https://edisonlaw.co.uk/da/people/richard-edison/</loc>
     <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/richard-edison/"/>
     <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/richard-edison/"/>
@@ -2250,6 +2286,15 @@
     <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/"/>
     <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/"/>
+  </url>
+  <url>
+    <loc>https://edisonlaw.co.uk/de/people/agreement/</loc>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="nb-NO" href="https://edisonlaw.co.uk/nb/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/agreement/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/agreement/"/>
   </url>
   <url>
     <loc>https://edisonlaw.co.uk/de/people/richard-edison/</loc>

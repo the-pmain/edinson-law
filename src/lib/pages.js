@@ -120,6 +120,111 @@ function principalPerson() {
   return site.people.find((person) => person.principal) || site.people[0];
 }
 
+function jsonScript(id, value) {
+  return `<script type="application/json" id="${id}">${JSON.stringify(value).replaceAll("<", "\\u003c")}</script>`;
+}
+
+function agreementField({ id, label, type = "text", autocomplete = "", error = "", max = "" }) {
+  const req = ` <span class="req">${esc(t("required"))}</span>`;
+  const auto = autocomplete ? ` autocomplete="${esc(autocomplete)}"` : "";
+  const maxAttr = max ? ` max="${esc(max)}"` : "";
+  const control =
+    type === "textarea"
+      ? `<textarea id="${id}" name="${id}" rows="4" required${auto}></textarea>`
+      : `<input id="${id}" name="${id}" type="${esc(type)}" required${auto}${maxAttr}>`;
+  return `<div class="field">
+    <label for="${id}">${esc(label)}${req}</label>
+    ${control}
+    ${error ? `<p class="error">${esc(error)}</p>` : ""}
+  </div>`;
+}
+
+function agreementPayload() {
+  const lead = principalPerson();
+  return {
+    firm: {
+      address: trust.firm.registeredOffice,
+      email: site.email || trust.contact.email,
+      phone: site.phone || trust.contact.phone,
+      sraNumber: site.sraNumber,
+      supervisorName: lead.name,
+      supervisorTitle: lead.roleEn || lead.role,
+      supervisorRole: "director",
+      updateFrequency: "monthly",
+      vatTreatment: "plus",
+      firstReportWindow: "8-12",
+      recoveryTailMonths: "12",
+      interestRate: "4",
+      singleDisbursementLimit: "500",
+      aggregateDisbursementLimit: "2500",
+      billingFrequency: "monthly",
+      liabilityLimit: "3000000",
+      individualRole: "director",
+      complaintsPartner: trust.complaints.handlerName,
+      complaintsEmail: trust.complaints.email,
+      complaintAckDays: String(trust.complaints.acknowledgementDays),
+      complaintResponseWeeks: String(trust.complaints.finalResponseWeeks),
+      fileRetentionYears: "7",
+      valuationBody: "Royal Institution of Chartered Surveyors (RICS)",
+    },
+    people: site.people.map((person) => ({
+      slug: person.slug,
+      name: person.name,
+      role: person.role,
+      email: personEmail(person),
+      principal: Boolean(person.principal),
+    })),
+  };
+}
+
+function agreementFormHtml() {
+  return `
+    <div class="wrap">
+      ${jsonScript("edison-agreement-defaults", agreementPayload())}
+      <form class="form" id="agreement-form" data-agreement-form novalidate data-msg-check="${esc(t("formCheck"))}" data-msg-creating="${esc(t("agreementCreating"))}" data-msg-done="${esc(t("agreementDone"))}" data-msg-fail="${esc(t("agreementFail"))}">
+        ${agreementField({ id: "clientName", label: t("agreementClientName"), autocomplete: "name", error: t("enterName") })}
+        ${agreementField({ id: "clientEmail", label: t("email"), type: "email", autocomplete: "email", error: t("enterEmail") })}
+        ${agreementField({ id: "clientAddress", label: t("agreementAddress"), type: "textarea", autocomplete: "street-address", error: t("enterAddress") })}
+        ${agreementField({ id: "clientDob", label: t("agreementDob"), type: "date", autocomplete: "bday", error: t("enterDob"), max: new Date().toISOString().slice(0, 10) })}
+        <div class="field">
+          <label class="checkbox" for="agreementPrivacy">
+            <input id="agreementPrivacy" name="agreementPrivacy" type="checkbox" required>
+            <span>${linkedPhrase(t("agreementPrivacy"), { privacy: `<a href="/privacy/">${esc(t("privacyNotice"))}</a>` })}</span>
+          </label>
+          <p class="error">${esc(t("confirmPrivacy"))}</p>
+        </div>
+        <button class="btn btn-signal form-submit" type="submit" data-agreement-submit>${esc(t("agreementDownload"))}</button>
+        <p class="form-status" data-form-status></p>
+      </form>
+    </div>
+  `;
+}
+
+function agreementPage() {
+  const page = {
+    path: "/people/agreement/",
+    title: `${t("agreementHeading").replace(/\.$/, "")} | Edison Law`,
+    description: t("agreementLead"),
+    heading: t("agreementHeading"),
+    crumb: t("agreementLabel"),
+    breadcrumbs: [{ label: t("nav.people"), href: "/people/" }],
+  };
+  const body = `
+    <main id="content" class="agreement-page">
+      <div class="wrap page-head page-head-tight">
+        ${crumbs([
+          { label: t("nav.people"), href: "/people/" },
+          { label: t("agreementLabel") },
+        ])}
+        <h1>${esc(t("agreementHeading"))}</h1>
+        <p class="lead muted">${esc(t("agreementLead"))}</p>
+      </div>
+      ${agreementFormHtml()}
+    </main>
+  `;
+  return documentPage(page, body);
+}
+
 function collectiveShot() {
   const profile = home.sections.profile;
   const lead = principalPerson();
@@ -1039,7 +1144,9 @@ function personPage(person) {
             <ul>${person.experience.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`
               : ""
           }
-          <p><a class="btn btn-signal" href="/contact/">${esc(t("sendEnquiry"))}</a></p>
+          <p class="profile-actions">
+            <a class="btn btn-signal" href="/people/agreement/?instruct=${esc(person.slug)}">${esc(t("agreementProfileCta"))}</a>
+          </p>
         </div>
       </div>
     </main>
@@ -1307,6 +1414,7 @@ export function allPages() {
       html: insightPage(item),
     })),
     { file: "people/index.html", html: peoplePage() },
+    { file: "people/agreement/index.html", html: agreementPage() },
     ...site.people.map((person) => ({
       file: `people/${person.slug}/index.html`,
       html: personPage(person),

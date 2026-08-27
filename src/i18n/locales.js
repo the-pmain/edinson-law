@@ -93,7 +93,7 @@ export function localizePath(path, locale) {
   return `${loc.prefix}${raw}`;
 }
 
-const ASSET = /^\/(src|brand|fonts|images|favicon|apple-touch|android-chrome|og-image|site\.webmanifest|browserconfig|robots\.txt|sitemap)/;
+const ASSET = /^\/(src|brand|fonts|images|documents|favicon|apple-touch|android-chrome|og-image|site\.webmanifest|browserconfig|robots\.txt|sitemap)/;
 
 export function isAssetPath(path) {
   return ASSET.test(path);

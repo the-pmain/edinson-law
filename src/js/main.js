@@ -1,4 +1,5 @@
 import { config } from "../../config.js";
+import { peopleDocumentForm } from "./people-document.js";
 
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -361,6 +362,7 @@ contactForm();
 pageJumpSpy();
 insightTools();
 peopleFilter();
+peopleDocumentForm();
 
 if (!reduced) {
   document.documentElement.style.scrollBehavior = "smooth";

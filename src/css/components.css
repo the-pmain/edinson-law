@@ -908,6 +908,10 @@
   margin-top: var(--space-4);
 }
 
+.person-page .prose .profile-actions {
+  margin-top: var(--space-4);
+}
+
 .person-page blockquote {
   margin: 0;
   padding-left: var(--space-4);

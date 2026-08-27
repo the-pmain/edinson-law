@@ -384,6 +384,7 @@ function searchIndex() {
       text: item.description,
     })),
     { title: t("nav.people"), href: "/people/", type: t("search.page"), text: site.people.map((person) => person.name).join(", ") || t("nav.people") },
+    { title: t("agreementHeading"), href: "/people/agreement/", type: t("search.page"), text: t("agreementLead") },
     ...site.people.map((person) => ({
       title: person.name,
       href: `/people/${person.slug}/`,
