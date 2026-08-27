@@ -132,9 +132,9 @@ export const home = {
         },
         {
           src: "/images/awards/the-lawyer-awards.png",
-          alt: "The Lawyer Awards 2014 Winner, Boutique Firm of the Year City",
-          width: 177,
-          height: 250,
+          alt: "The Lawyer Awards 2015 Winner, Boutique Firm of the Year City",
+          width: 723,
+          height: 1024,
         },
       ],
     },
