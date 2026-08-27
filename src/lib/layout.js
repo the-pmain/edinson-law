@@ -1,4 +1,5 @@
 import { site } from "../../site.config.js";
+import { personEmail } from "../content/people.js";
 import {
   isPending,
   legalServiceName,
@@ -264,6 +265,7 @@ function jsonLd(page) {
       ...(canPublishJobTitle ? { jobTitle: page.person.role } : {}),
       url: personUrl,
       worksFor: { "@id": `${origin}/#organisation` },
+      ...(personEmail(page.person) ? { email: personEmail(page.person) } : {}),
       ...(page.person.photo ? { image: `${origin}${page.person.photo}` } : {}),
       ...(verifiedSraId ? { identifier: page.person.sraId } : {}),
     });
@@ -377,7 +379,7 @@ function searchIndex() {
       title: person.name,
       href: `/people/${person.slug}/`,
       type: "People",
-      text: `${person.role}. ${person.summary}`,
+      text: `${person.role}. ${person.summary} ${personEmail(person)}`,
     })),
     { title: "Join us", href: "/join-us/", type: "Page", text: "Careers at Edison Law" },
     { title: "About", href: "/about/", type: "Page", text: site.shortLine },

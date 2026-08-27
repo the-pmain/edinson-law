@@ -1,3 +1,9 @@
+export function personEmail(person) {
+  if (person?.email) return person.email;
+  const local = String(person?.slug || "").replaceAll("-", ".");
+  return local ? `${local}@edisonlawlegal.com` : "";
+}
+
 export const people = [
   {
     slug: "richard-edison",

@@ -1,4 +1,5 @@
 import { site } from "../../site.config.js";
+import { personEmail } from "../content/people.js";
 import { home, pages, insightBodies } from "../content/copy.js";
 import { serviceMatter } from "../content/service-matter.js";
 import { crumbs, documentPage, fieldMark, insightIcon, practiceIcon, whyIcon } from "./layout.js";
@@ -86,20 +87,29 @@ function personChips(person) {
   </span>`;
 }
 
+function personMailto(person) {
+  const email = personEmail(person);
+  if (!email) return "";
+  return `<a class="mono person-email" href="mailto:${esc(email)}" title="${esc(email)}">${esc(email)}</a>`;
+}
+
 function peopleCards(list = site.people, variant = "") {
   if (!list.length) return "";
   const compact = variant === "compact";
   return `<div class="people-grid${compact ? " people-grid-collective" : ""}">
     ${list
       .map(
-        (person) => `<a class="person-card${compact ? " person-card-compact" : ""}" href="${personHref(person)}" data-expertise="${esc(personExpertise(person).join("|"))}">
-          ${personPortrait(person)}
-          <span class="person-card-copy">
-            <h2>${esc(person.name)}</h2>
-            ${personChips(person)}
-            <p class="muted">${esc(person.summary || person.role)}</p>
-          </span>
-        </a>`,
+        (person) => `<article class="person-card${compact ? " person-card-compact" : ""}" data-expertise="${esc(personExpertise(person).join("|"))}">
+          <a class="person-card-link" href="${personHref(person)}">
+            ${personPortrait(person)}
+            <span class="person-card-copy">
+              <h2>${esc(person.name)}</h2>
+              ${personChips(person)}
+              <p class="muted">${esc(person.summary || person.role)}</p>
+            </span>
+          </a>
+          ${personMailto(person)}
+        </article>`,
       )
       .join("")}
   </div>`;
@@ -145,10 +155,13 @@ function peopleCollective(options = {}) {
       ? `<div class="people-home-head">${copy}</div>`
       : ""
     : options.all
-      ? `<a class="owner-row owner-row-link" href="${personHref(lead)}" data-expertise="${esc(personExpertise(lead).join("|"))}">
-      ${shot}
-      <div class="owner-row-copy">${copy}</div>
-    </a>`
+      ? `<div class="owner-row" data-expertise="${esc(personExpertise(lead).join("|"))}">
+      <a class="owner-row-photo" href="${personHref(lead)}">${personPortrait(lead, "person-photo")}</a>
+      <div class="owner-row-copy">
+        <a class="owner-row-link" href="${personHref(lead)}">${copy}</a>
+        ${personMailto(lead)}
+      </div>
+    </div>`
       : `<div class="owner-row">
       ${shot}
       <div class="owner-row-copy">${copy}</div>
@@ -967,6 +980,7 @@ function personPage(person) {
         <div class="prose">
           <h1>${esc(person.name)}</h1>
           <p class="mono">${esc(person.role)}</p>
+          ${personMailto(person)}
           <p class="profile-status">
             <span>${esc(personStatus(person))}</span>
             <span>London</span>

@@ -442,14 +442,50 @@
 
 .person-card {
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr auto;
   align-content: start;
   align-items: start;
   gap: var(--space-3);
   width: 100%;
   min-width: 0;
+  color: inherit;
+}
+
+.person-card-link {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: inherit;
+  min-width: 0;
   text-decoration: none;
   color: inherit;
+}
+
+.person-email {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.person-card .person-email {
+  font-size: 0.6875rem;
+  line-height: 1.35;
+}
+
+.person-email:hover,
+.person-email:focus-visible {
+  color: var(--edison-signal-deep);
+  text-decoration: underline;
+}
+
+.person-page .person-email {
+  display: inline-block;
+  margin: var(--space-2) 0 0;
+  color: var(--edison-ink);
 }
 
 .person-card h2 {
@@ -511,23 +547,23 @@
   width: 100%;
 }
 
-.person-card:hover h2,
-.person-card:focus-visible h2 {
+.person-card-link:hover h2,
+.person-card-link:focus-visible h2 {
   color: var(--edison-signal-deep);
 }
 
-.person-card:hover .person-photo,
-.person-card:focus-visible .person-photo,
-.person-card:hover .profile-initials,
-.person-card:focus-visible .profile-initials,
-.person-card:hover .portrait-slot,
-.person-card:focus-visible .portrait-slot {
+.person-card-link:hover .person-photo,
+.person-card-link:focus-visible .person-photo,
+.person-card-link:hover .profile-initials,
+.person-card-link:focus-visible .profile-initials,
+.person-card-link:hover .portrait-slot,
+.person-card-link:focus-visible .portrait-slot {
   outline: 3px solid var(--edison-signal);
   outline-offset: 4px;
 }
 
-.person-card:not(.person-card-compact):hover .person-card-copy::after,
-.person-card:not(.person-card-compact):focus-visible .person-card-copy::after {
+.person-card:not(.person-card-compact) .person-card-link:hover .person-card-copy::after,
+.person-card:not(.person-card-compact) .person-card-link:focus-visible .person-card-copy::after {
   color: var(--edison-ink);
 }
 
@@ -535,20 +571,20 @@
   color: var(--edison-signal-bright);
 }
 
-.band-ink .person-card:hover h2,
-.band-ink .person-card:focus-visible h2 {
+.band-ink .person-card-link:hover h2,
+.band-ink .person-card-link:focus-visible h2 {
   color: var(--edison-signal-bright);
 }
 
-.band-ink .person-card:hover .person-photo,
-.band-ink .person-card:focus-visible .person-photo,
-.band-ink .person-card:hover .portrait-slot,
-.band-ink .person-card:focus-visible .portrait-slot {
+.band-ink .person-card-link:hover .person-photo,
+.band-ink .person-card-link:focus-visible .person-photo,
+.band-ink .person-card-link:hover .portrait-slot,
+.band-ink .person-card-link:focus-visible .portrait-slot {
   outline-color: var(--edison-signal-bright);
 }
 
-.band-ink .person-card:not(.person-card-compact):hover .person-card-copy::after,
-.band-ink .person-card:not(.person-card-compact):focus-visible .person-card-copy::after {
+.band-ink .person-card:not(.person-card-compact) .person-card-link:hover .person-card-copy::after,
+.band-ink .person-card:not(.person-card-compact) .person-card-link:focus-visible .person-card-copy::after {
   color: var(--edison-paper);
 }
 
@@ -682,6 +718,9 @@
 }
 
 .owner-row-link {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
   text-decoration: none;
   color: inherit;
 }
@@ -710,6 +749,10 @@
 
 .owner-row-copy .profile-lead {
   margin: 0;
+}
+
+.owner-row-copy .person-email {
+  font-size: var(--text-small);
 }
 
 .owner-row-photo {
