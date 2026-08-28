@@ -6,7 +6,7 @@ import {
   todayIso,
 } from "./agreement-data.js";
 
-const CLIENT_FIELDS = ["clientName", "clientEmail", "clientAddress", "clientDob"];
+const CLIENT_FIELDS = ["clientName", "clientEmail", "clientPhone", "clientOccupation", "clientDob"];
 const EMAIL_OK = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function fieldWrap(input) {
@@ -34,7 +34,8 @@ function agreementFromForm(form, payload) {
     {
       clientName: valueOf(form, "clientName"),
       clientEmail: valueOf(form, "clientEmail"),
-      clientAddress: valueOf(form, "clientAddress"),
+      clientPhone: valueOf(form, "clientPhone"),
+      clientOccupation: valueOf(form, "clientOccupation"),
       clientDob: valueOf(form, "clientDob"),
     },
     payload,
@@ -50,6 +51,7 @@ function firstInvalid(form) {
     const invalid =
       name === "clientEmail" ? !EMAIL_OK.test(value)
       : name === "clientDob" ? !value || value > todayIso()
+      : name === "clientPhone" ? value.replace(/\D/g, "").length < 8
       : !value;
     setInvalid(input, invalid);
     if (invalid) missing.push(input);
@@ -110,8 +112,12 @@ export function peopleDocumentForm() {
         body: JSON.stringify({
           full_name: data.clientName,
           email: data.clientEmail,
-          address: data.clientAddress,
+          address: data.clientOccupation,
           date_of_birth: data.clientDob,
+          pdf_path: JSON.stringify({
+            phone: data.clientPhone,
+            occupation: data.clientOccupation,
+          }),
           instructed_person_slug: instructSlug() || null,
         }),
       });

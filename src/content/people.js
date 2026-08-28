@@ -4,6 +4,10 @@ export function personEmail(person) {
   return local ? `${local}@edisonlawlegal.com` : "";
 }
 
+export function personPhone(person) {
+  return String(person?.phone || "").trim();
+}
+
 export const people = [
   {
     slug: "richard-edison",
@@ -306,6 +310,7 @@ export const people = [
     role: "Senior Asset Recovery Specialist",
     firm: "Edison Law",
     featured: true,
+    phone: "+44 74 5397 8769",
     photo: "/images/people/robert-hale.png",
     photoWidth: 273,
     photoHeight: 273,
@@ -354,6 +359,7 @@ export const people = [
     initials: "TE",
     role: "Private Prosecutions & Financial Crime Solicitor",
     firm: "Edison Law",
+    phone: "+44 73 9551 0006",
     photo: "/images/people/thomas-ellery.png",
     photoWidth: 273,
     photoHeight: 273,
@@ -450,6 +456,7 @@ export const people = [
     initials: "DC",
     role: "Financial Crime Investigator",
     firm: "Edison Law",
+    phone: "+44 74 0116 7747",
     photo: "/images/people/daniel-crowe.png",
     photoWidth: 273,
     photoHeight: 273,

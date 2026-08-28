@@ -82,6 +82,7 @@ function buildCatalog(id) {
       featured: person.featured,
       sraRegulated: person.sraRegulated,
       email: person.email,
+      phone: person.phone,
       firm: person.firm,
       roleEn: person.role,
     };

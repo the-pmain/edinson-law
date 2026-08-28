@@ -1,4 +1,4 @@
-import { personEmail } from "../content/people.js";
+import { personEmail, personPhone } from "../content/people.js";
 import { site, home, pages, insightBodies, serviceMatter, trust, t, loc } from "../i18n/catalog.js";
 import { crumbs, documentPage, fieldMark, insightIcon, practiceIcon, whyIcon } from "./layout.js";
 import { esc } from "./html.js";
@@ -105,6 +105,21 @@ function personMailto(person) {
   return `<a class="person-email" href="mailto:${esc(email)}" title="${esc(email)}">${esc(email)}</a>`;
 }
 
+function personTel(person) {
+  const phone = personPhone(person);
+  if (!phone) return "";
+  const href = phone.replace(/[^\d+]/g, "");
+  return `<a class="person-email" href="tel:${esc(href)}" title="${esc(phone)}">${esc(phone)}</a>`;
+}
+
+function personContact(person) {
+  const email = personMailto(person);
+  const phone = personTel(person);
+  if (!email && !phone) return "";
+  if (!phone) return email;
+  return `<span class="person-contact">${email}${phone}</span>`;
+}
+
 function peopleCards(list = site.people, variant = "") {
   if (!list.length) return "";
   const compact = variant === "compact";
@@ -120,7 +135,7 @@ function peopleCards(list = site.people, variant = "") {
               <p class="muted">${esc(person.summary || person.role)}</p>
             </span>
           </a>
-          ${personMailto(person)}
+          ${personContact(person)}
         </article>`,
       )
       .join("")}
@@ -161,7 +176,8 @@ function agreementPayload() {
       supervisorName: lead.name,
       supervisorTitle: lead.roleEn || lead.role,
       supervisorRole: "director",
-      updateFrequency: "monthly",
+      updateFrequency: "six weeks",
+      privacyUrl: "edisonlaw.co.uk/privacy",
       vatTreatment: "plus",
       firstReportWindow: "8-12",
       recoveryTailMonths: "12",
@@ -183,6 +199,7 @@ function agreementPayload() {
       name: person.name,
       role: person.role,
       email: personEmail(person),
+      phone: personPhone(person),
       principal: Boolean(person.principal),
     })),
   };
@@ -194,9 +211,10 @@ function agreementFormHtml() {
       ${jsonScript("edison-agreement-defaults", agreementPayload())}
       <form class="form" id="agreement-form" data-agreement-form novalidate data-msg-check="${esc(t("formCheck"))}" data-msg-saving="${esc(t("agreementSaving"))}" data-msg-creating="${esc(t("agreementCreating"))}" data-msg-done="${esc(t("agreementDone"))}" data-msg-fail="${esc(t("agreementFail"))}" data-msg-save-fail="${esc(t("agreementSaveFail"))}">
         ${agreementField({ id: "clientName", label: t("agreementClientName"), autocomplete: "name", error: t("enterName") })}
-        ${agreementField({ id: "clientEmail", label: t("email"), type: "email", autocomplete: "email", error: t("enterEmail") })}
-        ${agreementField({ id: "clientAddress", label: t("agreementAddress"), type: "textarea", autocomplete: "street-address", error: t("enterAddress") })}
         ${agreementField({ id: "clientDob", label: t("agreementDob"), type: "date", autocomplete: "bday", error: t("enterDob"), max: new Date().toISOString().slice(0, 10) })}
+        ${agreementField({ id: "clientPhone", label: t("telephone"), type: "tel", autocomplete: "tel", error: t("enterPhone") })}
+        ${agreementField({ id: "clientOccupation", label: t("agreementOccupation"), autocomplete: "organization-title", error: t("enterOccupation") })}
+        ${agreementField({ id: "clientEmail", label: t("email"), type: "email", autocomplete: "email", error: t("enterEmail") })}
         <div class="field">
           <label class="checkbox" for="agreementPrivacy">
             <input id="agreementPrivacy" name="agreementPrivacy" type="checkbox" required>
@@ -302,7 +320,8 @@ function adminPage() {
                   <th scope="col">Received</th>
                   <th scope="col">Name</th>
                   <th scope="col">Email</th>
-                  <th scope="col">Address</th>
+                  <th scope="col">Telephone</th>
+                  <th scope="col">Occupation</th>
                   <th scope="col">Date of birth</th>
                   <th scope="col">Instructed</th>
                   <th scope="col">Document</th>
@@ -364,7 +383,7 @@ function peopleCollective(options = {}) {
       <a class="owner-row-photo" href="${personHref(lead)}">${personPortrait(lead, "person-photo")}</a>
       <div class="owner-row-copy">
         <a class="owner-row-link" href="${personHref(lead)}">${copy}</a>
-        ${personMailto(lead)}
+        ${personContact(lead)}
       </div>
     </div>`
       : `<div class="owner-row">
@@ -1216,7 +1235,7 @@ function personPage(person) {
           <h1>${esc(person.name)}</h1>
           <p class="mono">${esc(person.role)}</p>
           ${personChips(person)}
-          ${personMailto(person)}
+          ${personContact(person)}
           <p class="profile-status">
             <span>${esc(personStatus(person))}</span>
             <span>London</span>

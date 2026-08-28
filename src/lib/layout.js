@@ -1,4 +1,4 @@
-import { personEmail } from "../content/people.js";
+import { personEmail, personPhone } from "../content/people.js";
 import {
   isPending,
   legalServiceName,
@@ -279,6 +279,7 @@ function jsonLd(page) {
       url: personUrl,
       worksFor: { "@id": `${origin}/#organisation` },
       ...(personEmail(page.person) ? { email: personEmail(page.person) } : {}),
+      ...(personPhone(page.person) ? { telephone: personPhone(page.person) } : {}),
       ...(page.person.photo ? { image: `${origin}${page.person.photo}` } : {}),
       ...(verifiedSraId ? { identifier: page.person.sraId } : {}),
       ...(page.person.sraRegulated && site.sraUrl ? { sameAs: [site.sraUrl] } : {}),

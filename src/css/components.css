@@ -486,6 +486,29 @@
   text-decoration: underline;
 }
 
+.person-contact {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.person-card .person-contact {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.person-card .person-contact .person-email {
+  font-size: inherit;
+}
+
+.person-page .person-contact {
+  margin: var(--space-2) 0 0;
+}
+
+.person-page .person-contact .person-email {
+  margin: 0;
+}
+
 .person-page .person-email {
   display: inline-block;
   margin: var(--space-2) 0 0;
