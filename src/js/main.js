@@ -1,5 +1,6 @@
 import { config } from "../../config.js";
 import { adminPrepareClients } from "./admin-prepare-clients.js";
+import { matterForms } from "./matter-forms.js";
 import { peopleDocumentForm } from "./people-document.js";
 
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -364,6 +365,7 @@ pageJumpSpy();
 insightTools();
 peopleFilter();
 peopleDocumentForm();
+matterForms();
 adminPrepareClients();
 
 if (!reduced) {

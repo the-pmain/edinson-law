@@ -391,6 +391,8 @@ function searchIndex() {
     })),
     { title: t("nav.people"), href: "/people/", type: t("search.page"), text: site.people.map((person) => person.name).join(", ") || t("nav.people") },
     { title: t("agreementHeading"), href: "/people/agreement/", type: t("search.page"), text: t("agreementLead") },
+    { title: t("claimHeading"), href: "/people/victim-claim/", type: t("search.page"), text: t("claimLead") },
+    { title: t("releaseHeading"), href: "/people/release-order/", type: t("search.page"), text: t("releaseLead") },
     ...site.people.map((person) => ({
       title: person.name,
       href: `/people/${person.slug}/`,

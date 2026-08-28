@@ -1723,6 +1723,237 @@ body[data-path="/about/"] .footer {
   margin-top: 0;
 }
 
+.matter-page {
+  padding-bottom: calc(var(--section-y) + 3.5rem);
+}
+
+.matter-page .form {
+  max-width: 46rem;
+  gap: var(--space-6);
+  padding-bottom: var(--space-8);
+}
+
+.matter-page .field[hidden] {
+  display: none !important;
+}
+
+.matter-page .hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-small);
+  line-height: 1.45;
+  font-weight: 400;
+}
+
+.matter-kicker {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-small);
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.matter-kicker b {
+  color: var(--edison-signal-deep);
+  font-weight: 600;
+}
+
+.matter-grp {
+  display: grid;
+  gap: var(--space-4);
+  padding-top: var(--space-2);
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+.matter-grp h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--edison-slate);
+}
+
+.matter-n {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0;
+  color: var(--edison-signal-deep);
+  background: var(--edison-signal-soft);
+  border-radius: 3px;
+  padding: 0.15rem 0.45rem;
+}
+
+.matter-body,
+.matter-two {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .matter-two {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.matter-note,
+.matter-flag {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.matter-note h2,
+.matter-note h3,
+.matter-note h4,
+.matter-flag h3 {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.matter-note h2 {
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  font-family: var(--font-display);
+  color: var(--edison-ink);
+}
+
+.matter-note h3,
+.matter-flag h3 {
+  color: var(--edison-signal-deep);
+}
+
+.matter-note h4 {
+  color: var(--edison-ink);
+  letter-spacing: 0.06em;
+}
+
+.matter-note p,
+.matter-flag p,
+.matter-note li {
+  margin: 0;
+  color: var(--color-text);
+}
+
+.matter-note ol {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.matter-flag {
+  padding: var(--space-4);
+  background: #fdf3e0;
+  border: 1px solid #e8c88a;
+}
+
+.matter-flag h3 {
+  color: #b06e00;
+}
+
+.matter-limbs ol {
+  list-style-type: lower-alpha;
+}
+
+.release-band {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: center;
+  background: #7a1616;
+  color: #fff;
+  padding: 0.65rem 0.8rem;
+}
+
+.release-court-label {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--edison-slate);
+}
+
+.matter-foot {
+  margin: 0;
+  font-size: var(--text-small);
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+
+.matter-form .form-submit {
+  margin-top: 1.35rem;
+}
+
+.claim-page .page-head {
+  border-bottom: 0;
+}
+
+.claim-page .matter-kicker {
+  background: var(--edison-ink);
+  color: #eaf3f1;
+  padding: 0.85rem 1rem;
+}
+
+.claim-page .matter-kicker b {
+  color: var(--edison-signal-bright);
+}
+
+.release-page .matter-note h2 {
+  font-family: var(--font-display);
+}
+
+.matter-dock {
+  position: fixed;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  z-index: 40;
+  display: flex;
+  gap: 0.45rem;
+}
+
+.matter-mock {
+  margin: 0;
+  padding: 0.55rem 0.9rem;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(10, 32, 40, 0.22);
+  cursor: pointer;
+  color: var(--edison-white);
+  background: var(--edison-ink);
+}
+
+.matter-mock:hover,
+.matter-mock:focus-visible {
+  background: var(--edison-ink-raised);
+}
+
+@media (max-width: 639px) {
+  .matter-dock {
+    right: 0.85rem;
+    bottom: 0.85rem;
+  }
+}
+
 .admin-page {
   padding-bottom: var(--section-y);
 }

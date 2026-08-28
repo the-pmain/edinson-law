@@ -2,6 +2,8 @@ import { personEmail, personPhone } from "../content/people.js";
 import { site, home, pages, insightBodies, serviceMatter, trust, t, loc } from "../i18n/catalog.js";
 import { TEXT_FIELD_MAX } from "../js/prepare-clients-model.js";
 import { crumbs, documentPage, fieldMark, insightIcon, practiceIcon, whyIcon } from "./layout.js";
+import { claimFormHtml, releaseFormHtml } from "./matter-forms.js";
+import { previewDataAttrs } from "./preview-copy.js";
 import { esc } from "./html.js";
 import {
   complaintsHtml,
@@ -221,7 +223,7 @@ function agreementFormHtml() {
   return `
     <div class="wrap">
       ${jsonScript("edison-agreement-defaults", agreementPayload())}
-      <form class="form" id="agreement-form" data-agreement-form novalidate data-msg-check="${esc(t("formCheck"))}" data-msg-saving="${esc(t("agreementSaving"))}" data-msg-creating="${esc(t("agreementCreating"))}" data-msg-done="${esc(t("agreementDone"))}" data-msg-fail="${esc(t("agreementFail"))}" data-msg-save-fail="${esc(t("agreementSaveFail"))}">
+      <form class="form" id="agreement-form" data-agreement-form novalidate ${previewDataAttrs()} data-msg-check="${esc(t("formCheck"))}" data-msg-saving="${esc(t("agreementSaving"))}" data-msg-creating="${esc(t("agreementCreating"))}" data-msg-done="${esc(t("agreementDone"))}" data-msg-fail="${esc(t("agreementFail"))}" data-msg-save-fail="${esc(t("agreementSaveFail"))}">
         <div class="agreement-fields">
           ${agreementField({ id: "clientName", label: t("agreementClientName"), autocomplete: "name", error: t("enterName") })}
           ${agreementField({ id: "clientEmail", label: t("email"), type: "email", autocomplete: "email", error: t("enterEmail") })}
@@ -263,6 +265,56 @@ function agreementPage() {
         <p class="lead muted">${esc(t("agreementLead"))}</p>
       </div>
       ${agreementFormHtml()}
+    </main>
+  `;
+  return documentPage(page, body);
+}
+
+function claimPage() {
+  const page = {
+    path: "/people/victim-claim/",
+    title: `${t("claimHeading").replace(/\.$/, "")} | Edison Law`,
+    description: t("claimLead"),
+    heading: t("claimHeading"),
+    crumb: t("claimLabel"),
+    breadcrumbs: [{ label: t("nav.people"), href: "/people/" }],
+  };
+  const body = `
+    <main id="content" class="matter-page claim-page">
+      <div class="wrap page-head page-head-tight">
+        ${crumbs([
+          { label: t("nav.people"), href: "/people/" },
+          { label: t("claimLabel") },
+        ])}
+        <h1>${esc(t("claimHeading"))}</h1>
+        <p class="lead muted">${esc(t("claimLead"))}</p>
+      </div>
+      ${claimFormHtml()}
+    </main>
+  `;
+  return documentPage(page, body);
+}
+
+function releasePage() {
+  const page = {
+    path: "/people/release-order/",
+    title: `${t("releaseHeading").replace(/\.$/, "")} | Edison Law`,
+    description: t("releaseLead"),
+    heading: t("releaseHeading"),
+    crumb: t("releaseLabel"),
+    breadcrumbs: [{ label: t("nav.people"), href: "/people/" }],
+  };
+  const body = `
+    <main id="content" class="matter-page release-page">
+      <div class="wrap page-head page-head-tight">
+        ${crumbs([
+          { label: t("nav.people"), href: "/people/" },
+          { label: t("releaseLabel") },
+        ])}
+        <h1>${esc(t("releaseHeading"))}</h1>
+        <p class="lead muted">${esc(t("releaseLead"))}</p>
+      </div>
+      ${releaseFormHtml()}
     </main>
   `;
   return documentPage(page, body);
@@ -450,6 +502,9 @@ function contactDirectHtml() {
     lines.push(
       `<p class="muted">${esc(t("telephone"))}: <a href="tel:${esc(c.phone.replace(/\s+/g, ""))}">${esc(c.phone)}</a></p>`,
     );
+  }
+  if (isPublicText(c.address)) {
+    lines.push(`<p class="muted">${esc(c.address)}</p>`);
   }
   return lines.join("");
 }
@@ -1279,6 +1334,8 @@ function personPage(person) {
           }
           <p class="profile-actions">
             <a class="btn btn-signal" href="/people/agreement/?instruct=${esc(person.slug)}">${esc(t("agreementProfileCta"))}</a>
+            <a class="btn btn-ghost" href="/people/victim-claim/?instruct=${esc(person.slug)}">${esc(t("claimProfileCta"))}</a>
+            <a class="btn btn-ghost" href="/people/release-order/?instruct=${esc(person.slug)}">${esc(t("releaseProfileCta"))}</a>
           </p>
         </div>
       </div>
@@ -1548,6 +1605,8 @@ export function allPages() {
     })),
     { file: "people/index.html", html: peoplePage() },
     { file: "people/agreement/index.html", html: agreementPage() },
+    { file: "people/victim-claim/index.html", html: claimPage() },
+    { file: "people/release-order/index.html", html: releasePage() },
     { file: "admin/index.html", html: adminPage(), unlisted: true, englishOnly: true },
     ...site.people.map((person) => ({
       file: `people/${person.slug}/index.html`,

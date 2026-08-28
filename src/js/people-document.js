@@ -1,10 +1,10 @@
 import {
   agreementFilename,
   buildAgreement,
-  downloadBytes,
   readJson,
   todayIso,
 } from "./agreement-data.js";
+import { copyFromForm, openDocumentPreview } from "./document-preview.js";
 import { normalizeOccupation } from "./prepare-clients-model.js";
 
 const CLIENT_FIELDS = ["clientName", "clientEmail", "clientPhone", "clientDob"];
@@ -99,40 +99,48 @@ export function peopleDocumentForm() {
     }
 
     if (submit) submit.disabled = true;
-    if (status) {
-      status.dataset.visible = "true";
-      status.textContent = form.dataset.msgSaving || "Saving...";
-    }
+    if (status) status.dataset.visible = "";
 
+    const data = agreementFromForm(form, payload);
     try {
-      const data = agreementFromForm(form, payload);
-      const saved = await fetch("/api/prepare-clients", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          full_name: data.clientName,
-          email: data.clientEmail,
-          phone: data.clientPhone,
-          occupation: normalizeOccupation(data.clientOccupation),
-          date_of_birth: data.clientDob,
-          instructed_person_slug: instructSlug() || null,
-        }),
+      await openDocumentPreview({
+        copy: copyFromForm(form),
+        prepare: async () => {
+          const { generateAgreementPdf } = await import("./agreement-pdf.js");
+          return {
+            bytes: await generateAgreementPdf(data),
+            filename: agreementFilename(data.matterReference),
+          };
+        },
+        onSign: async () => {
+          const saved = await fetch("/api/prepare-clients", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              full_name: data.clientName,
+              email: data.clientEmail,
+              phone: data.clientPhone,
+              occupation: normalizeOccupation(data.clientOccupation),
+              date_of_birth: data.clientDob,
+              instructed_person_slug: instructSlug() || null,
+            }),
+          });
+          const body = await saved.json().catch(() => ({}));
+          if (!saved.ok) {
+            throw new Error(
+              body.error || body.message || form.dataset.msgSaveFail || "The details could not be saved.",
+            );
+          }
+          form.reset();
+          if (status) {
+            status.dataset.visible = "true";
+            status.textContent = form.dataset.msgDone || "Agreement downloaded.";
+          }
+        },
       });
-      const body = await saved.json().catch(() => ({}));
-      if (!saved.ok) {
-        throw new Error(
-          body.error || body.message || form.dataset.msgSaveFail || "The details could not be saved.",
-        );
-      }
-
-      if (status) status.textContent = form.dataset.msgCreating || "Creating the PDF...";
-      const { generateAgreementPdf } = await import("./agreement-pdf.js");
-      const bytes = await generateAgreementPdf(data);
-      downloadBytes(bytes, agreementFilename(data.matterReference));
-      form.reset();
-      if (status) status.textContent = form.dataset.msgDone || "Agreement downloaded.";
     } catch (error) {
       if (status) {
+        status.dataset.visible = "true";
         status.textContent = error instanceof Error && error.message
           ? error.message
           : (form.dataset.msgFail || "The PDF could not be created.");

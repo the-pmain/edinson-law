@@ -209,6 +209,24 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/agreement/"/>
   </url>
   <url>
+    <loc>https://edisonlaw.co.uk/people/victim-claim/</loc>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="nb-NO" href="https://edisonlaw.co.uk/nb/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/victim-claim/"/>
+  </url>
+  <url>
+    <loc>https://edisonlaw.co.uk/people/release-order/</loc>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="nb-NO" href="https://edisonlaw.co.uk/nb/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/release-order/"/>
+  </url>
+  <url>
     <loc>https://edisonlaw.co.uk/people/richard-edison/</loc>
     <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/richard-edison/"/>
     <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/richard-edison/"/>
@@ -729,6 +747,24 @@
     <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/agreement/"/>
     <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/agreement/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/agreement/"/>
+  </url>
+  <url>
+    <loc>https://edisonlaw.co.uk/sv/people/victim-claim/</loc>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="nb-NO" href="https://edisonlaw.co.uk/nb/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/victim-claim/"/>
+  </url>
+  <url>
+    <loc>https://edisonlaw.co.uk/sv/people/release-order/</loc>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="nb-NO" href="https://edisonlaw.co.uk/nb/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/release-order/"/>
   </url>
   <url>
     <loc>https://edisonlaw.co.uk/sv/people/richard-edison/</loc>
@@ -1253,6 +1289,24 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/agreement/"/>
   </url>
   <url>
+    <loc>https://edisonlaw.co.uk/nb/people/victim-claim/</loc>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="nb-NO" href="https://edisonlaw.co.uk/nb/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/victim-claim/"/>
+  </url>
+  <url>
+    <loc>https://edisonlaw.co.uk/nb/people/release-order/</loc>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="nb-NO" href="https://edisonlaw.co.uk/nb/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/release-order/"/>
+  </url>
+  <url>
     <loc>https://edisonlaw.co.uk/nb/people/richard-edison/</loc>
     <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/richard-edison/"/>
     <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/richard-edison/"/>
@@ -1775,6 +1829,24 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/agreement/"/>
   </url>
   <url>
+    <loc>https://edisonlaw.co.uk/da/people/victim-claim/</loc>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="nb-NO" href="https://edisonlaw.co.uk/nb/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/victim-claim/"/>
+  </url>
+  <url>
+    <loc>https://edisonlaw.co.uk/da/people/release-order/</loc>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="nb-NO" href="https://edisonlaw.co.uk/nb/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/release-order/"/>
+  </url>
+  <url>
     <loc>https://edisonlaw.co.uk/da/people/richard-edison/</loc>
     <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/richard-edison/"/>
     <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/richard-edison/"/>
@@ -2295,6 +2367,24 @@
     <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/agreement/"/>
     <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/agreement/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/agreement/"/>
+  </url>
+  <url>
+    <loc>https://edisonlaw.co.uk/de/people/victim-claim/</loc>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="nb-NO" href="https://edisonlaw.co.uk/nb/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/victim-claim/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/victim-claim/"/>
+  </url>
+  <url>
+    <loc>https://edisonlaw.co.uk/de/people/release-order/</loc>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://edisonlaw.co.uk/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="sv-SE" href="https://edisonlaw.co.uk/sv/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="nb-NO" href="https://edisonlaw.co.uk/nb/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="da-DK" href="https://edisonlaw.co.uk/da/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://edisonlaw.co.uk/de/people/release-order/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://edisonlaw.co.uk/people/release-order/"/>
   </url>
   <url>
     <loc>https://edisonlaw.co.uk/de/people/richard-edison/</loc>
