@@ -9,7 +9,6 @@ const ink = rgb(10 / 255, 32 / 255, 40 / 255);
 const slate = rgb(83 / 255, 103 / 255, 109 / 255);
 const signal = rgb(0, 111 / 255, 99 / 255);
 const line = rgb(203 / 255, 218 / 255, 214 / 255);
-const paper = rgb(241 / 255, 246 / 255, 244 / 255);
 const white = rgb(1, 1, 1);
 const mint = rgb(204 / 255, 234 / 255, 226 / 255);
 
@@ -222,22 +221,6 @@ export async function generateAgreementPdf(data) {
       `We acknowledge within ${safeText(data.complaintAckDays) || "5"} working days and give a substantive response within ${safeText(data.complaintResponseWeeks) || "8"} weeks. ` +
       `A copy of the complaints procedure is on edisonlawlegal.com/complaints.`,
   );
-
-  y -= 10;
-  page.drawRectangle({
-    x: MARGIN,
-    y: y - 38,
-    width: CONTENT_W,
-    height: 48,
-    color: paper,
-  });
-  y -= 14;
-  const note =
-    "This is a prepared draft from the details entered on the website. It does not create a solicitor-client relationship. Edison Law must still accept instructions in writing. The full terms of business apply once the matter is accepted.";
-  wrapText(regular, note, 8, CONTENT_W - 16).forEach((item) => {
-    page.drawText(item, { x: MARGIN + 8, y, size: 8, font: regular, color: ink });
-    y -= 11;
-  });
 
   const col = (CONTENT_W - 16) / 2;
   const left = MARGIN;

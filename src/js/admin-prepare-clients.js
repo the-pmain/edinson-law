@@ -1,3 +1,10 @@
+import {
+  agreementFilename,
+  agreementFromRecord,
+  downloadBytes,
+  readJson,
+} from "./agreement-data.js";
+
 const ADMIN_PIN = "1100";
 const SESSION_KEY = "edison-admin-ok";
 const PER_PAGE = 20;
@@ -90,7 +97,10 @@ export function adminPrepareClients() {
   const listStatus = root.querySelector("[data-admin-list-status]");
   const signOut = root.querySelector("[data-admin-sign-out]");
   const retry = root.querySelector("[data-admin-retry]");
+  const actionStatus = root.querySelector("[data-admin-action-status]");
   const dots = [...(root.querySelectorAll("[data-admin-pin-dots] span") || [])];
+  const payload = readJson("edison-agreement-defaults");
+  const records = new Map();
 
   let pin = "";
   let locked = false;
@@ -142,13 +152,32 @@ export function adminPrepareClients() {
     setHidden(empty, true);
     setHidden(errorBox, true);
     setHidden(pager, true);
+    if (actionStatus) actionStatus.textContent = "";
     if (rows) rows.replaceChildren();
+  };
+
+  const recordKey = (item, index) => String(item.id ?? `${item.created_at || ""}-${item.email || ""}-${index}`);
+
+  const actionCell = (item, key) => {
+    const td = document.createElement("td");
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "icon-btn admin-download";
+    button.dataset.adminDownload = key;
+    button.title = "Download agreement";
+    button.setAttribute("aria-label", `Download agreement for ${item.full_name || "client"}`);
+    button.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12"/><path d="M7 11l5 5 5-5"/><path d="M5 19h14"/></svg>`;
+    td.append(button);
+    return td;
   };
 
   const renderRows = (items) => {
     if (!rows) return;
+    records.clear();
     rows.replaceChildren();
-    for (const item of items) {
+    items.forEach((item, index) => {
+      const key = recordKey(item, index);
+      records.set(key, item);
       const tr = document.createElement("tr");
       tr.append(
         cell(formatDateTime(item.created_at)),
@@ -157,8 +186,30 @@ export function adminPrepareClients() {
         cell(item.address),
         cell(formatDate(item.date_of_birth)),
         cell(item.instructed_person_slug),
+        actionCell(item, key),
       );
       rows.append(tr);
+    });
+  };
+
+  const downloadRecord = async (item, button) => {
+    if (!payload?.firm || !Array.isArray(payload.people)) {
+      if (actionStatus) actionStatus.textContent = "Agreement defaults are missing.";
+      return;
+    }
+    button.disabled = true;
+    button.setAttribute("aria-busy", "true");
+    if (actionStatus) actionStatus.textContent = "";
+    try {
+      const data = agreementFromRecord(item, payload);
+      const { generateAgreementPdf } = await import("./agreement-pdf.js");
+      const bytes = await generateAgreementPdf(data);
+      downloadBytes(bytes, agreementFilename(data.matterReference));
+    } catch {
+      if (actionStatus) actionStatus.textContent = "The PDF could not be created.";
+    } finally {
+      button.disabled = false;
+      button.removeAttribute("aria-busy");
     }
   };
 
@@ -295,12 +346,25 @@ export function adminPrepareClients() {
   signOut?.addEventListener("click", () => {
     request += 1;
     setSession(false);
+    records.clear();
     if (rows) rows.replaceChildren();
+    if (actionStatus) actionStatus.textContent = "";
     showGate();
   });
 
   retry?.addEventListener("click", () => {
     load();
+  });
+
+  table?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-admin-download]");
+    if (!button || !table.contains(button) || button.disabled) return;
+    const item = records.get(button.dataset.adminDownload);
+    if (!item) {
+      if (actionStatus) actionStatus.textContent = "That record could not be found.";
+      return;
+    }
+    downloadRecord(item, button);
   });
 
   pager?.addEventListener("click", (event) => {

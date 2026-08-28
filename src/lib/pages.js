@@ -275,8 +275,10 @@ function adminPage() {
           <p class="lead muted">Records submitted through the client agreement form.</p>
         </div>
         <div class="wrap">
+          ${jsonScript("edison-agreement-defaults", agreementPayload())}
           <div class="admin-toolbar">
             <p class="muted" data-admin-summary>Loading records</p>
+            <p class="admin-action-status" data-admin-action-status aria-live="polite"></p>
             <button class="btn btn-ghost" type="button" data-admin-sign-out>Sign out</button>
           </div>
           <div class="admin-loading" data-admin-loading role="status" aria-label="Loading records">
@@ -292,6 +294,7 @@ function adminPage() {
                   <th scope="col">Address</th>
                   <th scope="col">Date of birth</th>
                   <th scope="col">Instructed</th>
+                  <th scope="col">Document</th>
                 </tr>
               </thead>
               <tbody data-admin-rows></tbody>

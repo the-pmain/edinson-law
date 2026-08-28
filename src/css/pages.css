@@ -1920,6 +1920,14 @@ html[data-admin-session="1"] .admin-open[hidden] {
   margin: 0;
 }
 
+.admin-action-status {
+  flex: 1 1 12rem;
+  margin: 0;
+  min-height: 1.2rem;
+  color: var(--edison-copper);
+  font-size: var(--text-small);
+}
+
 .admin-loading {
   display: flex;
   align-items: center;
@@ -1983,6 +1991,35 @@ html[data-admin-session="1"] .admin-open[hidden] {
 
 .admin-table td:nth-child(4) {
   min-width: 12rem;
+}
+
+.admin-table th:last-child,
+.admin-table td:last-child {
+  width: 100%;
+  text-align: right;
+  padding-right: 0;
+  padding-left: 1.5rem;
+  white-space: nowrap;
+}
+
+.admin-table td:last-child {
+  vertical-align: middle;
+}
+
+.admin-table .admin-download {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-left: auto;
+  color: var(--edison-ink);
+}
+
+.admin-table .admin-download:hover {
+  background: var(--edison-paper);
+}
+
+.admin-table .admin-download[aria-busy="true"] {
+  opacity: 0.45;
+  pointer-events: none;
 }
 
 .admin-empty {

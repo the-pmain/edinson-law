@@ -1,29 +1,13 @@
+import {
+  agreementFilename,
+  buildAgreement,
+  downloadBytes,
+  readJson,
+  todayIso,
+} from "./agreement-data.js";
+
 const CLIENT_FIELDS = ["clientName", "clientEmail", "clientAddress", "clientDob"];
 const EMAIL_OK = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function readJson(id) {
-  const node = document.getElementById(id);
-  if (!node) return null;
-  try {
-    return JSON.parse(node.textContent || "null");
-  } catch {
-    return null;
-  }
-}
-
-function todayIso() {
-  const now = new Date();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${now.getFullYear()}-${month}-${day}`;
-}
-
-function draftReference() {
-  const now = new Date();
-  const start = Date.UTC(now.getFullYear(), 0, 0);
-  const day = Math.floor((now.getTime() - start) / 86400000);
-  return `EL-${now.getFullYear()}-${String(day).padStart(4, "0")}`;
-}
 
 function fieldWrap(input) {
   return input?.closest(".field") || input;
@@ -45,52 +29,17 @@ function instructSlug() {
   return new URLSearchParams(window.location.search).get("instruct") || "";
 }
 
-function resolvePerson(people) {
-  const slug = instructSlug();
-  return people.find((person) => person.slug === slug)
-    || people.find((person) => person.principal)
-    || people[0]
-    || null;
-}
-
-function buildAgreement(form, payload) {
-  const firm = payload.firm;
-  const person = resolvePerson(payload.people);
-  return {
-    clientName: valueOf(form, "clientName"),
-    clientEmail: valueOf(form, "clientEmail"),
-    clientAddress: valueOf(form, "clientAddress"),
-    clientDob: valueOf(form, "clientDob"),
-    matterReference: draftReference(),
-    agreementDate: todayIso(),
-    feeEarnerName: person?.name || "",
-    feeEarnerTitle: person?.role || "",
-    feeEarnerEmail: person?.email || "",
-    feeEarnerPhone: firm.phone,
-    supervisorName: firm.supervisorName,
-    supervisorTitle: firm.supervisorTitle,
-    supervisorRole: firm.supervisorRole || "director",
-    updateFrequency: firm.updateFrequency || "monthly",
-    firmAddress: firm.address,
-    cancellationEmail: firm.email,
-    sraNumber: firm.sraNumber,
-    vatTreatment: firm.vatTreatment || "plus",
-    firstReportWindow: firm.firstReportWindow,
-    recoveryTailMonths: firm.recoveryTailMonths,
-    interestRate: firm.interestRate,
-    singleDisbursementLimit: firm.singleDisbursementLimit,
-    aggregateDisbursementLimit: firm.aggregateDisbursementLimit,
-    billingFrequency: firm.billingFrequency || "monthly",
-    liabilityLimit: firm.liabilityLimit,
-    individualRole: firm.individualRole || "director",
-    initialComplaintContact: person?.name || firm.supervisorName,
-    complaintsPartner: firm.complaintsPartner,
-    complaintsEmail: firm.complaintsEmail,
-    complaintAckDays: firm.complaintAckDays,
-    complaintResponseWeeks: firm.complaintResponseWeeks,
-    fileRetentionYears: firm.fileRetentionYears,
-    valuationBody: firm.valuationBody,
-  };
+function agreementFromForm(form, payload) {
+  return buildAgreement(
+    {
+      clientName: valueOf(form, "clientName"),
+      clientEmail: valueOf(form, "clientEmail"),
+      clientAddress: valueOf(form, "clientAddress"),
+      clientDob: valueOf(form, "clientDob"),
+    },
+    payload,
+    { instructSlug: instructSlug() },
+  );
 }
 
 function firstInvalid(form) {
@@ -109,18 +58,6 @@ function firstInvalid(form) {
   setInvalid(privacy, !privacy?.checked);
   if (!privacy?.checked) missing.push(privacy);
   return missing.find(Boolean) || null;
-}
-
-function downloadBytes(bytes, filename) {
-  const buffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
-  const url = URL.createObjectURL(new Blob([buffer], { type: "application/pdf" }));
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 export function peopleDocumentForm() {
@@ -166,7 +103,7 @@ export function peopleDocumentForm() {
     }
 
     try {
-      const data = buildAgreement(form, payload);
+      const data = agreementFromForm(form, payload);
       const saved = await fetch("/api/prepare-clients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -185,8 +122,7 @@ export function peopleDocumentForm() {
       if (status) status.textContent = form.dataset.msgCreating || "Creating the PDF...";
       const { generateAgreementPdf } = await import("./agreement-pdf.js");
       const bytes = await generateAgreementPdf(data);
-      const safeReference = data.matterReference.replace(/[^a-z0-9-_]+/gi, "-").replace(/^-|-$/g, "");
-      downloadBytes(bytes, `Edison-Law-Client-Agreement-${safeReference || "completed"}.pdf`);
+      downloadBytes(bytes, agreementFilename(data.matterReference));
       if (status) status.textContent = form.dataset.msgDone || "Agreement downloaded.";
     } catch (error) {
       if (status) {
