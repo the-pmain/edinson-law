@@ -22,6 +22,20 @@ body {
   overflow-x: clip;
 }
 
+html[data-page-lock],
+html[data-page-lock] body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+html[data-page-lock] body {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding-right: var(--page-lock-gap, 0px);
+}
+
 body {
   min-height: 100vh;
   min-height: 100dvh;

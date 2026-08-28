@@ -84,16 +84,25 @@ function ensureDialog() {
   });
   dialog.addEventListener("close", () => {
     generation += 1;
-    preview?.clear();
+    try {
+      preview?.clear();
+    } catch {
+      /* Preview teardown must not block opening the next document. */
+    }
     agree.checked = false;
     agree.disabled = false;
     sign.dataset.ready = "";
     sign.disabled = true;
     sign.onclick = null;
     closeBtn.disabled = false;
+    dialog.dataset.confirm = "true";
+    dialog.querySelector(".checkbox")?.removeAttribute("hidden");
   });
   agree.addEventListener("change", () => {
-    sign.disabled = !agree.checked || sign.dataset.ready !== "true" || closeBtn.disabled;
+    const needsConfirm = dialog.dataset.confirm !== "false";
+    sign.disabled = (needsConfirm && !agree.checked)
+      || sign.dataset.ready !== "true"
+      || closeBtn.disabled;
   });
 }
 
@@ -105,26 +114,34 @@ function applyCopy(copy) {
   pages.setAttribute("aria-label", copy.title);
 }
 
-export function openDocumentPreview({ copy = DEFAULTS, prepare, onSign }) {
+export function openDocumentPreview({ copy = DEFAULTS, prepare, onSign, confirm = true }) {
   ensureDialog();
   const labels = { ...DEFAULTS, ...copy };
   const id = ++generation;
   let packed = null;
+  const checkWrap = dialog.querySelector(".checkbox");
 
   applyCopy(labels);
+  dialog.dataset.confirm = confirm ? "true" : "false";
+  if (checkWrap) checkWrap.hidden = !confirm;
   agree.checked = false;
   agree.disabled = true;
   sign.dataset.ready = "";
   sign.disabled = true;
   sign.onclick = null;
   closeBtn.disabled = false;
-  preview?.clear();
+  try {
+    preview?.clear();
+  } catch {
+    /* Ignore a stale renderer so a new preview can still open. */
+  }
   setStatus(labels.loading, "loading");
   if (!dialog.open) dialog.showModal();
   title.focus();
 
   const runSign = async () => {
-    if (!packed || !agree.checked) return;
+    if (!packed) return;
+    if (confirm && !agree.checked) return;
     const signLabel = sign.textContent;
     closeBtn.disabled = true;
     agree.disabled = true;
@@ -141,8 +158,8 @@ export function openDocumentPreview({ copy = DEFAULTS, prepare, onSign }) {
         "ready",
       );
       closeBtn.disabled = false;
-      agree.disabled = false;
-      sign.disabled = !agree.checked;
+      agree.disabled = !confirm;
+      sign.disabled = confirm ? !agree.checked : false;
     }
   };
   sign.onclick = runSign;
@@ -163,8 +180,8 @@ export function openDocumentPreview({ copy = DEFAULTS, prepare, onSign }) {
         if (id !== generation) return;
         setStatus("", "ready");
         sign.dataset.ready = "true";
-        agree.disabled = false;
-        sign.disabled = !agree.checked;
+        agree.disabled = !confirm;
+        sign.disabled = confirm ? !agree.checked : false;
       })
       .catch((error) => {
         if (id !== generation) return;

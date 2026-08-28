@@ -1334,8 +1334,6 @@ function personPage(person) {
           }
           <p class="profile-actions">
             <a class="btn btn-signal" href="/people/agreement/?instruct=${esc(person.slug)}">${esc(t("agreementProfileCta"))}</a>
-            <a class="btn btn-ghost" href="/people/victim-claim/?instruct=${esc(person.slug)}">${esc(t("claimProfileCta"))}</a>
-            <a class="btn btn-ghost" href="/people/release-order/?instruct=${esc(person.slug)}">${esc(t("releaseProfileCta"))}</a>
           </p>
         </div>
       </div>

@@ -203,15 +203,16 @@
         <p class="release-band">Draft order lodged by the applicant — not a sealed order of the court</p>
         <p class="release-court-label">Precedent · Draft release order</p>
 
-        <section class="matter-grp">
+        
+    <section class="matter-grp">
     <h2><span class="matter-n">1</span> The court and the parties</h2>
     <div class="matter-body">
-          <div class="field">
+      <div class="field">
     <label for="court">Court</label>
     <input id="court" name="court" type="text" value="City of London Magistrates' Court">
     
   </div>
-          <div class="matter-two"><div class="field">
+      <div class="matter-two"><div class="field">
     <label for="caseRef">Case reference</label>
     <input id="caseRef" name="caseRef" type="text" placeholder="to be allocated">
     
@@ -220,7 +221,7 @@
     <input id="before" name="before" type="text" placeholder="District Judge ____ / the bench">
     
   </div></div>
-          <div class="matter-two"><div class="field">
+      <div class="matter-two"><div class="field">
     <label for="orderDated">Dated</label>
     <input id="orderDated" name="orderDated" type="date">
     
@@ -229,28 +230,27 @@
     <input id="freezeDate" name="freezeDate" type="date">
     
   </div></div>
-          <div class="field">
+      <div class="field">
     <label for="applicant">Applicant</label>
     <input id="applicant" name="applicant" type="text" autocomplete="name" placeholder="full legal name">
     
   </div>
-          <div class="field">
+      <div class="field">
     <label for="respondent">Respondent</label>
     <input id="respondent" name="respondent" type="text" placeholder="Chief Constable of ___ / National Crime Agency / HMRC">
     
   </div>
-        </div>
+    </div>
   </section>
-
-        <section class="matter-grp">
+    <section class="matter-grp">
     <h2><span class="matter-n">2</span> The application before the court</h2>
     <div class="matter-body">
-          <div class="field">
+      <div class="field">
     <label for="applicationDate">Upon the application of the Applicant dated</label>
     <input id="applicationDate" name="applicationDate" type="date">
     
   </div>
-          <div class="matter-two"><div class="field">
+      <div class="matter-two"><div class="field">
     <label for="wsName">Witness statement of</label>
     <input id="wsName" name="wsName" type="text" placeholder="name">
     
@@ -259,7 +259,7 @@
     <input id="wsDate" name="wsDate" type="date">
     
   </div></div>
-          <div class="matter-two"><div class="field">
+      <div class="matter-two"><div class="field">
     <label for="provider">Tracing report of</label>
     <input id="provider" name="provider" type="text" placeholder="Elliptic">
     
@@ -268,89 +268,86 @@
     <input id="reportDate" name="reportDate" type="date">
     
   </div></div>
-          <div class="field">
+      <div class="field">
     <label for="hearing">And upon hearing</label>
     <select id="hearing" name="hearing"><option value="" selected>Select</option><option value="the solicitor for the Applicant and the representative of the Respondent">the solicitor for the Applicant and the representative of the Respondent</option><option value="the Respondent neither supporting nor opposing the application">the Respondent neither supporting nor opposing the application</option></select>
     
   </div>
-        </div>
+    </div>
   </section>
-
-        <section class="matter-note matter-limbs">
-          <h3>And the court being satisfied that</h3>
-          <ol type="a">
-            <li>the Applicant was deprived of the cryptoassets to which the application relates, or of property which they represent, by unlawful conduct;</li>
-            <li>the cryptoassets of which the Applicant was deprived were not recoverable property immediately before the Applicant was deprived of them; and</li>
-            <li>those cryptoassets belong to the Applicant.</li>
-          </ol>
-          <p>And the court being further satisfied that no proceedings for forfeiture under section 303Z41 of that Act are ongoing in respect of the cryptoassets to be released.</p>
-        </section>
-
-        <section class="matter-grp">
+    <section class="matter-note matter-limbs">
+      <h3>And the court being satisfied that</h3>
+      <ol type="a">
+        <li>the Applicant was deprived of the cryptoassets to which the application relates, or of property which they represent, by unlawful conduct;</li>
+        <li>the cryptoassets of which the Applicant was deprived were not recoverable property immediately before the Applicant was deprived of them; and</li>
+        <li>those cryptoassets belong to the Applicant.</li>
+      </ol>
+      <p>And the court being further satisfied that no proceedings for forfeiture under section 303Z41 of that Act are ongoing in respect of the cryptoassets to be released.</p>
+    </section>
+    <section class="matter-grp">
     <h2><span class="matter-n">3</span> It is ordered that</h2>
     <div class="matter-body">
-          <div class="field">
+      <div class="field">
     <label for="releasedAssets">Quantity and asset to be released (the Released Assets)</label>
     <input id="releasedAssets" name="releasedAssets" type="text" placeholder="184,500 USDT">
     
   </div>
-          <div class="field">
+      <div class="field">
     <label for="wallet">Crypto wallet address</label>
     <input id="wallet" name="wallet" type="text" placeholder="0x…">
     
   </div>
-          <div class="field">
+      <div class="field">
     <label for="exchange">Administered by</label>
     <input id="exchange" name="exchange" type="text" placeholder="Bitfinex">
     
   </div>
-          <div class="field">
+      <div class="field">
     <label for="destination">The Released Assets shall be transferred to</label>
     <select id="destination" name="destination"><option value="" selected>Select</option><option value="the wallet address nominated by the Applicant">the wallet address nominated by the Applicant</option><option value="the client account of the Applicant's solicitors">the client account of the Applicant's solicitors</option></select>
     
   </div>
-          <div class="field" data-show-when="destination=the wallet address nominated by the Applicant" hidden>
+      <div class="field" data-show-when="destination=the wallet address nominated by the Applicant" hidden>
     <label for="destinationWallet">Wallet address nominated by the Applicant</label>
     <input id="destinationWallet" name="destinationWallet" type="text" placeholder="0x…">
     
   </div>
-          <div class="field">
+      <div class="field">
     <label for="agreeWith">Unless a longer period is agreed between the Applicant and</label>
     <select id="agreeWith" name="agreeWith"><option value="" selected>Select</option><option value="the Respondent">the Respondent</option><option value="the administrator of the wallet">the administrator of the wallet</option></select>
     
   </div>
-          <p class="hint">The Released Assets shall be transferred within seven days of the date of this order, unless a longer period is agreed.</p>
-          <p class="hint">The crypto wallet freezing order shall continue in respect of the balance of the cryptoassets held in the wallet.</p>
-        </div>
+      <p class="hint">The Released Assets shall be transferred within seven days of the date of this order, unless a longer period is agreed.</p>
+      <p class="hint">The crypto wallet freezing order shall continue in respect of the balance of the cryptoassets held in the wallet.</p>
+    </div>
   </section>
-
-        <section class="matter-grp">
+    <section class="matter-grp">
     <h2><span class="matter-n">4</span> Costs</h2>
     <div class="matter-body">
-          <div class="field">
+      <div class="field">
     <label for="costs">Costs</label>
     <select id="costs" name="costs"><option value="" selected>Select</option><option value="pay">The Respondent shall pay the Applicant's costs of this application, summarily assessed, within 14 days.</option><option value="none">There be no order as to costs.</option></select>
     
   </div>
-          <div class="field" data-show-when="costs=pay" hidden>
+      <div class="field" data-show-when="costs=pay" hidden>
     <label for="costsSum">Summarily assessed in the sum of</label>
     <input id="costsSum" name="costsSum" type="text" placeholder="£">
     
   </div>
-          <p class="hint">Liberty to apply in respect of the implementation of paragraph 2.</p>
-        </div>
+      <p class="hint">Liberty to apply in respect of the implementation of paragraph 2.</p>
+    </div>
   </section>
-
-        <section class="matter-grp">
+    <section class="matter-grp">
     <h2><span class="matter-n">5</span> Fee earner</h2>
     <div class="matter-body">
-          <div class="field">
+      <div class="field">
     <label for="feeEarner">Fee earner and contact</label>
     <input id="feeEarner" name="feeEarner" type="text" placeholder="Name · telephone · email">
     
   </div>
-        </div>
+    </div>
   </section>
+  
 
         <section class="matter-note">
           <h3>Points on the draft</h3>

@@ -466,6 +466,7 @@ html:not([lang^="en"]) .header-nav a {
   background: var(--edison-paper);
   padding: var(--space-5) var(--page-pad) var(--space-10);
   overflow: auto;
+  overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
@@ -509,6 +510,8 @@ html:not([lang^="en"]) .header-nav a {
   padding: 0;
   width: min(40rem, calc(100vw - 2rem));
   background: transparent;
+  overflow: hidden;
+  overscroll-behavior: contain;
 }
 
 .search-dialog::backdrop {
@@ -537,6 +540,7 @@ html:not([lang^="en"]) .header-nav a {
   margin-top: var(--space-4);
   max-height: 20rem;
   overflow: auto;
+  overscroll-behavior: contain;
 }
 
 .search-results a {

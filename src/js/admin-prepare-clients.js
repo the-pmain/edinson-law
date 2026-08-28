@@ -1,9 +1,5 @@
-import {
-  agreementFilename,
-  agreementFromRecord,
-  downloadBytes,
-  readJson,
-} from "./agreement-data.js";
+import { readJson } from "./agreement-data.js";
+import { bindAdminDocuments } from "./admin-documents.js";
 
 const ADMIN_PIN = "1100";
 const SESSION_KEY = "edison-admin-ok";
@@ -100,6 +96,7 @@ export function adminPrepareClients() {
   const actionStatus = root.querySelector("[data-admin-action-status]");
   const dots = [...(root.querySelectorAll("[data-admin-pin-dots] span") || [])];
   const payload = readJson("edison-agreement-defaults");
+  const docs = bindAdminDocuments({ payload, statusNode: actionStatus });
   const records = new Map();
 
   let pin = "";
@@ -160,20 +157,37 @@ export function adminPrepareClients() {
 
   const actionCell = (item, key) => {
     const td = document.createElement("td");
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "icon-btn admin-download";
-    button.dataset.adminDownload = key;
-    button.title = "Download agreement";
-    button.setAttribute("aria-label", `Download agreement for ${item.full_name || "client"}`);
-    button.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12"/><path d="M7 11l5 5 5-5"/><path d="M5 19h14"/></svg>`;
-    td.append(button);
+    const wrap = document.createElement("div");
+    wrap.className = "admin-actions";
+
+    const preview = document.createElement("button");
+    preview.type = "button";
+    preview.className = "icon-btn admin-preview";
+    preview.dataset.adminPreview = key;
+    preview.title = "Preview document";
+    preview.setAttribute("aria-label", `Preview document for ${item.full_name || "client"}`);
+    preview.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12s3.6-7 9.5-7 9.5 7 9.5 7-3.6 7-9.5 7-9.5-7-9.5-7z"/><circle cx="12" cy="12" r="3"/></svg>`;
+
+    const menu = document.createElement("button");
+    menu.type = "button";
+    menu.className = "icon-btn admin-doc-menu-btn";
+    menu.dataset.adminMenu = key;
+    menu.title = "Create a document";
+    menu.setAttribute("aria-label", `Create a document for ${item.full_name || "client"}`);
+    menu.setAttribute("aria-haspopup", "menu");
+    menu.setAttribute("aria-expanded", "false");
+    menu.setAttribute("aria-controls", "admin-doc-menu");
+    menu.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="6" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="18" r="1.7"/></svg>`;
+
+    wrap.append(preview, menu);
+    td.append(wrap);
     return td;
   };
 
   const renderRows = (items) => {
     if (!rows) return;
     records.clear();
+    docs.closeMenu();
     rows.replaceChildren();
     items.forEach((item, index) => {
       const key = recordKey(item, index);
@@ -191,27 +205,6 @@ export function adminPrepareClients() {
       );
       rows.append(tr);
     });
-  };
-
-  const downloadRecord = async (item, button) => {
-    if (!payload?.firm || !Array.isArray(payload.people)) {
-      if (actionStatus) actionStatus.textContent = "Agreement defaults are missing.";
-      return;
-    }
-    button.disabled = true;
-    button.setAttribute("aria-busy", "true");
-    if (actionStatus) actionStatus.textContent = "";
-    try {
-      const data = agreementFromRecord(item, payload);
-      const { generateAgreementPdf } = await import("./agreement-pdf.js");
-      const bytes = await generateAgreementPdf(data);
-      downloadBytes(bytes, agreementFilename(data.matterReference));
-    } catch {
-      if (actionStatus) actionStatus.textContent = "The PDF could not be created.";
-    } finally {
-      button.disabled = false;
-      button.removeAttribute("aria-busy");
-    }
   };
 
   const renderPager = (meta) => {
@@ -348,6 +341,7 @@ export function adminPrepareClients() {
     request += 1;
     setSession(false);
     records.clear();
+    docs.reset();
     if (rows) rows.replaceChildren();
     if (actionStatus) actionStatus.textContent = "";
     showGate();
@@ -358,14 +352,17 @@ export function adminPrepareClients() {
   });
 
   table?.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-admin-download]");
+    const preview = event.target.closest("[data-admin-preview]");
+    const menu = event.target.closest("[data-admin-menu]");
+    const button = preview || menu;
     if (!button || !table.contains(button) || button.disabled) return;
-    const item = records.get(button.dataset.adminDownload);
+    const item = records.get(button.dataset.adminPreview || button.dataset.adminMenu);
     if (!item) {
       if (actionStatus) actionStatus.textContent = "That record could not be found.";
       return;
     }
-    downloadRecord(item, button);
+    if (preview) docs.previewRecord(item);
+    else docs.toggleMenu(button, item);
   });
 
   pager?.addEventListener("click", (event) => {

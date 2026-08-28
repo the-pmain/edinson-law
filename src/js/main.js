@@ -1,6 +1,7 @@
 import { config } from "../../config.js";
 import { adminPrepareClients } from "./admin-prepare-clients.js";
 import { matterForms } from "./matter-forms.js";
+import { watchPageLock } from "./page-lock.js";
 import { peopleDocumentForm } from "./people-document.js";
 
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -19,11 +20,13 @@ function menu() {
   const openers = document.querySelectorAll("[data-menu-open]");
   const closer = drawer.querySelector("[data-menu-close]");
   const panel = drawer.querySelector(".drawer-panel");
+  panel?.setAttribute("data-page-lock-scroll", "");
   let last = null;
 
   const set = (open) => {
+    const was = drawer.dataset.open === "true";
+    if (open === was) return;
     drawer.dataset.open = open ? "true" : "false";
-    document.body.style.overflow = open ? "hidden" : "";
     openers.forEach((btn) => btn.setAttribute("aria-expanded", open ? "true" : "false"));
     if (open) {
       last = document.activeElement;
@@ -78,7 +81,7 @@ function search() {
 
   document.querySelectorAll("[data-search-open]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      dialog.showModal();
+      if (!dialog.open) dialog.showModal();
       render("");
       input.focus();
     });
@@ -356,6 +359,7 @@ function peopleFilter() {
 }
 
 currentYear();
+watchPageLock();
 menu();
 search();
 languageMenu();

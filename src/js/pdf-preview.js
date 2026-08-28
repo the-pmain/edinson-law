@@ -14,7 +14,6 @@ function pageWidth(container) {
 }
 
 export function createPdfPreview(container) {
-  let pdf = null;
   let source = null;
   let lastWidth = 0;
   let token = 0;
@@ -30,18 +29,13 @@ export function createPdfPreview(container) {
     const id = ++token;
     lastWidth = width;
 
-    if (pdf) {
-      pdf.destroy();
-      pdf = null;
-    }
-
     const loading = getDocument({
       data: copyBytes(source),
       disableAutoFetch: true,
       isEvalSupported: false,
       useSystemFonts: true,
     });
-    pdf = await loading.promise;
+    const pdf = await loading.promise;
     if (id !== token) return;
 
     const fragment = document.createDocumentFragment();
@@ -74,7 +68,7 @@ export function createPdfPreview(container) {
 
       article.append(canvas);
       fragment.append(article);
-      page.cleanup();
+      if (typeof page.cleanup === "function") page.cleanup();
     }
 
     if (id !== token) return;
@@ -101,14 +95,14 @@ export function createPdfPreview(container) {
     clear() {
       token += 1;
       window.clearTimeout(timer);
-      observer.disconnect();
+      try {
+        observer.disconnect();
+      } catch {
+        /* already disconnected */
+      }
       watching = false;
       source = null;
       lastWidth = 0;
-      if (pdf) {
-        pdf.destroy();
-        pdf = null;
-      }
       container.replaceChildren();
     },
   };
