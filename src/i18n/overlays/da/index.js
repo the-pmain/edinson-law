@@ -1979,19 +1979,19 @@ export default {
         "Digitale tidslinjer og bilag",
       ],
     },
-    "caroline-reid": {
-      role: "Solicitor, restraint og frysningskendelser",
-      summary: "Rådgiver om hastende ansøgninger om restraint, frysning og edition.",
+    "abigail-wills": {
+      role: "SRA-reguleret solicitor",
+      summary: "SRA-reguleret solicitor, der er nævnt i det offentlige organisationsregister for Edison Law.",
       bio: [
-        "Caroline er solicitor med speciale i restraint, frysningskendelser og relateret midlertidig retsbeskyttelse. Hun begynder med den gældende retlige test, den tilgængelige evidens og identiteten af hver foreslået respondent eller institution.",
-        "Hun koordinerer sporings-, regnskabs- og vidnemateriale til ansøgninger om frysning, proprieterisk retsbeskyttelse og edition. Hendes rådgivning behandler også de fortsatte forpligtelser knyttet til en kendelse, herunder forkyndelse, undertakings, return dates og mulig variation.",
-        "Caroline giver klar rådgivning om hast, evidensmæssige huller og de praktiske konsekvenser af at søge en kendelse. Midlertidig retsbeskyttelse forbliver skønsmæssig, og sikring af et aktiv garanterer ikke dets endelige tilbageførsel.",
+        "Abigail Charlotte Wills er en SRA-reguleret solicitor. Hun er den solicitor, der er nævnt i det offentlige SRA-organisationsregister for Edison Law, en anerkendt enkeltmandsvirksomhed autoriseret og reguleret under SRA-nummer 510498.",
+        "Forbeholdt juridisk arbejde i praksissen udføres af en solicitor. Bekræft hendes aktuelle praksisstatus i det offentlige SRA-register. Stillingsbetegnelser på dette websted er ikke en erstatning for det register.",
+        "Organisationsregistret opregner i øjeblikket strafferetligt arbejde blandt firmaets fagområder. Instrukser accepteres skriftligt efter konflikttjek.",
       ],
       areas: [
-        "Frysnings- og proprieteriske forbud",
-        "Editionsansøgninger over for banker og tredjeparter",
-        "Evidens til hastende midlertidig retsbeskyttelse",
-        "Undertakings, return dates og variation",
+        "SRA-autoriseret forbeholdt juridisk arbejde",
+        "Anerkendt enkeltmandsvirksomhed",
+        "Strafferetligt arbejde anført i SRA-registret",
+        "Offentligt SRA-organisationsregister",
       ],
     },
     "marcus-quinn": {

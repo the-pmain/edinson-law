@@ -869,6 +869,10 @@
   margin-top: 0;
 }
 
+.person-page .prose .chip-row {
+  margin: var(--space-3) 0;
+}
+
 .profile-status {
   display: flex;
   flex-wrap: wrap;

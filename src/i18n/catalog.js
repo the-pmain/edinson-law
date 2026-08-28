@@ -80,6 +80,7 @@ function buildCatalog(id) {
       practicePhotoHeight: person.practicePhotoHeight,
       principal: person.principal,
       featured: person.featured,
+      sraRegulated: person.sraRegulated,
       email: person.email,
       firm: person.firm,
       roleEn: person.role,

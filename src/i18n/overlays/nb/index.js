@@ -2041,19 +2041,19 @@ export default {
         "Digitale tidslinjer og exhibits",
       ],
     },
-    "caroline-reid": {
-      role: "Solicitor, restraint og freezing orders",
-      summary: "Rådgir om hastende restraint-, freezing- og disclosure-begjæringer.",
+    "abigail-wills": {
+      role: "SRA-regulert solicitor",
+      summary: "SRA-regulert solicitor oppført i det offentlige organisasjonsregisteret for Edison Law.",
       bio: [
-        "Caroline er en solicitor med spesialisering i restraint, freezing orders og relaterte midlertidige rettsmidler. Hun begynner med den gjeldende rettslige testen, evidensen som er tilgjengelig, og identiteten til hver foreslått motpart eller institusjon.",
-        "Hun samordner sporings-, regnskaps- og vitnemateriale for freezing-, proprietary- og disclosure-begjæringer. Rådet hennes tar også for seg de fortløpende pliktene knyttet til en kjennelse, inkludert forkynning, undertakings, return dates og mulig endring.",
-        "Caroline gir klare råd om hast, evidenshull og de praktiske konsekvensene av å søke en kjennelse. Midlertidige rettsmidler forblir skjønnsmessige, og sikring av en eiendel garanterer ikke dens endelige inndrivelse.",
+        "Abigail Charlotte Wills er en SRA-regulert solicitor. Hun er solicitoren som er oppført i det offentlige SRA-organisasjonsregisteret for Edison Law, et anerkjent enkeltpersonsforetak autorisert og regulert under SRA-nummer 510498.",
+        "Forbeholdt juridisk arbeid i praksisen utføres av en solicitor. Bekreft hennes gjeldende praksisstatus i det offentlige SRA-registeret. Stillingstitler på dette nettstedet erstatter ikke det registeret.",
+        "Organisasjonsregisteret lister for tiden strafferettslig arbeid blant firmaets fagområder. Instrukser aksepteres skriftlig etter interessekonfliktsjekk.",
       ],
       areas: [
-        "Freezing- og proprietary injunctions",
-        "Disclosure-begjæringer mot bank og tredjepart",
-        "Evidens for hastende midlertidige rettsmidler",
-        "Undertakings, return dates og endring",
+        "SRA-autorisert forbeholdt juridisk arbeid",
+        "Anerkjent enkeltpersonsforetak",
+        "Strafferettslig arbeid oppført i SRA-registeret",
+        "Offentlig SRA-organisasjonsregister",
       ],
     },
     "marcus-quinn": {

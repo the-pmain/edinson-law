@@ -2004,20 +2004,20 @@ export default {
         "Digitale Zeitlinien und Beweisstücke",
       ],
     },
-    "caroline-reid": {
-      role: "Solicitor für Restraint und Freezing Orders",
+    "abigail-wills": {
+      role: "SRA-regulierter Solicitor",
       summary:
-        "Berät zu eiligen Restraint-, Freeze- und Disclosure-Anträgen.",
+        "SRA-regulierter Solicitor, der im öffentlichen Organisationsregister von Edison Law genannt ist.",
       bio: [
-        "Caroline ist Solicitor mit Schwerpunkt auf Restraint, Freezing Orders und verwandtem einstweiligem Rechtsschutz. Sie beginnt mit der anwendbaren rechtlichen Voraussetzung, dem verfügbaren Beweisstand und der Identität jedes vorgesehenen Antragsgegners oder Instituts.",
-        "Sie stimmt Nachverfolgungs-, Buchhaltungs- und Zeugenmaterial für Freeze-, dingliche und Disclosure-Anträge ab. Ihre Beratung behandelt auch die fortlaufenden Pflichten, die an einer Anordnung hängen, einschließlich Zustellung, Undertakings, Return Dates und möglicher Abänderung.",
-        "Caroline gibt klare Beratung zu Dringlichkeit, beweismäßigen Lücken und den praktischen Folgen der Beantragung einer Anordnung. Einstweiliger Rechtsschutz bleibt ermessensabhängig, und die Sicherung eines Vermögenswerts garantiert nicht seine spätere Rückführung.",
+        "Abigail Charlotte Wills ist eine von der SRA regulierte Solicitor. Sie ist die Solicitor, die im öffentlichen SRA-Organisationsregister für Edison Law genannt ist, einer anerkannten Einzelkanzlei, die unter der SRA-Nummer 510498 zugelassen und beaufsichtigt wird.",
+        "Vorbehaltene Rechtsdienstleistungen der Praxis werden von einer Solicitor ausgeführt. Bestätigen Sie ihren aktuellen Zulassungsstatus im öffentlichen SRA-Register. Berufsbezeichnungen auf dieser Website ersetzen dieses Register nicht.",
+        "Das Organisationsregister führt derzeit strafrechtliche Arbeit unter den Rechtsgebieten der Kanzlei. Mandate werden schriftlich nach Konfliktprüfung angenommen.",
       ],
       areas: [
-        "Freeze- und dingliche Unterlassungsverfügungen",
-        "Disclosure-Anträge gegen Banken und Dritte",
-        "Beweis für eiligen einstweiligen Rechtsschutz",
-        "Undertakings, Return Dates und Abänderung",
+        "Von der SRA zugelassene vorbehaltene Rechtsdienstleistungen",
+        "Anerkannte Einzelkanzlei",
+        "Strafrechtliche Arbeit laut SRA-Register",
+        "Öffentliches SRA-Organisationsregister",
       ],
     },
     "marcus-quinn": {

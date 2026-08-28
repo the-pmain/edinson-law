@@ -119,6 +119,7 @@ export const UI = table([
   ["solePractice", ["Sole practice", "Enskild verksamhet", "Enkeltpersonsforetak", "Enkeltmandsvirksomhed", "Einzelkanzlei"]],
   ["ownerSole", ["Owner · sole practice", "Ägare · enskild verksamhet", "Eier · enkeltpersonsforetak", "Ejer · enkeltmandsvirksomhed", "Inhaber · Einzelkanzlei"]],
   ["solicitor", ["Solicitor", "Solicitor", "Solicitor", "Solicitor", "Solicitor"]],
+  ["sraRegulated", ["SRA-regulated", "SRA-reglerad", "SRA-regulert", "SRA-reguleret", "SRA-reguliert"]],
   ["lawyer", ["Lawyer", "Jurist", "Jurist", "Jurist", "Jurist"]],
   ["investigator", ["Investigator", "Utredare", "Etterforsker", "Efterforsker", "Ermittler"]],
   ["specialist", ["Specialist", "Specialist", "Spesialist", "Specialist", "Spezialist"]],

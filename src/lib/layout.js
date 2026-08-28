@@ -267,16 +267,21 @@ function jsonLd(page) {
   if (page.person) {
     const personUrl = `${origin}${localizePath(`/people/${page.person.slug}/`)}`;
     const verifiedSraId = page.person.sraId && !isPending(page.person.sraId);
-    const canPublishJobTitle = !/lawyer|solicitor/i.test(page.person.role || "") || verifiedSraId;
+    const canPublishJobTitle =
+      Boolean(page.person.sraRegulated)
+      || !/lawyer|solicitor/i.test(page.person.role || "")
+      || verifiedSraId;
     graph.push({
       "@type": "Person",
       name: page.person.name,
       ...(canPublishJobTitle ? { jobTitle: page.person.role } : {}),
+      ...(page.person.summary ? { description: page.person.summary } : {}),
       url: personUrl,
       worksFor: { "@id": `${origin}/#organisation` },
       ...(personEmail(page.person) ? { email: personEmail(page.person) } : {}),
       ...(page.person.photo ? { image: `${origin}${page.person.photo}` } : {}),
       ...(verifiedSraId ? { identifier: page.person.sraId } : {}),
+      ...(page.person.sraRegulated && site.sraUrl ? { sameAs: [site.sraUrl] } : {}),
     });
   }
 

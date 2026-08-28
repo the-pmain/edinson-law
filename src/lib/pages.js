@@ -79,11 +79,22 @@ function personStatus(person) {
 }
 
 function personChips(person) {
+  if (person.principal) {
+    return `<span class="chip-row">
+    <span class="chip">${esc(t("owner"))}</span>
+    <span class="chip chip-status">${esc(t("solePractice"))}</span>
+  </span>`;
+  }
+  if (person.sraRegulated) {
+    return `<span class="chip-row">
+    <span class="chip">${esc(t("sraRegulated"))}</span>
+    <span class="chip chip-status">${esc(t("solicitor"))}</span>
+  </span>`;
+  }
   const status = personStatus(person);
-  const roleChip = person.principal ? t("owner") : status;
-  const second = person.principal ? t("solePractice") : expertiseLabel(personExpertise(person)[0]);
+  const second = expertiseLabel(personExpertise(person)[0]);
   return `<span class="chip-row">
-    <span class="chip">${esc(roleChip)}</span>
+    <span class="chip">${esc(status)}</span>
     ${second ? `<span class="chip chip-status">${esc(second)}</span>` : ""}
   </span>`;
 }
@@ -1204,6 +1215,7 @@ function personPage(person) {
         <div class="prose">
           <h1>${esc(person.name)}</h1>
           <p class="mono">${esc(person.role)}</p>
+          ${personChips(person)}
           ${personMailto(person)}
           <p class="profile-status">
             <span>${esc(personStatus(person))}</span>

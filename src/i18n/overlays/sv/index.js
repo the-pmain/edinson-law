@@ -2045,19 +2045,19 @@ export default {
         "Digitala tidslinjer och bevisuppgifter",
       ],
     },
-    "caroline-reid": {
-      role: "Solicitor, restraint och freezing orders",
-      summary: "Ger råd om brådskande ansökningar om restraint, frysning och disclosure.",
+    "abigail-wills": {
+      role: "SRA-reglerad solicitor",
+      summary: "SRA-reglerad solicitor som anges i det offentliga organisationsregistret för Edison Law.",
       bio: [
-        "Caroline är solicitor med inriktning mot restraint, freezing orders och relaterat interimistiskt skydd. Hon börjar med det tillämpliga rättsliga testet, den tillgängliga bevisningen och identiteten hos varje föreslagen svarande eller institut.",
-        "Hon samordnar spårnings-, redovisnings- och vittnesmaterial för ansökningar om frysning, sakrättsligt skydd och disclosure. Hennes råd tar också upp de fortlöpande skyldigheter som följer med ett beslut, inklusive delgivning, undertakings, return dates och möjlig variation.",
-        "Caroline ger tydliga råd om brådska, evidensluckor och de praktiska följderna av att söka ett beslut. Interimistiskt skydd förblir diskretionärt, och säkring av en tillgång garanterar inte dess slutliga återvinning.",
+        "Abigail Charlotte Wills är en SRA-reglerad solicitor. Hon är den solicitor som anges i det offentliga SRA-organisationsregistret för Edison Law, en erkänd enskild verksamhet som är auktoriserad och reglerad under SRA-nummer 510498.",
+        "Förbehållen juridisk verksamhet i byrån utförs av en solicitor. Bekräfta hennes aktuella behörighet i det offentliga SRA-registret. Yrkestitlar på denna webbplats ersätter inte det registret.",
+        "Organisationsregistret listar för närvarande straffrättsligt arbete bland byråns verksamhetsområden. Instruktioner antas skriftligen efter intressekonfliktskontroll.",
       ],
       areas: [
-        "Frysnings- och sakrättsliga förelägganden",
-        "Ansökningar om bank- och tredjemansdisclosure",
-        "Bevisning för brådskande interimistiskt skydd",
-        "Undertakings, return dates och variation",
+        "SRA-auktoriserad förbehållen juridisk verksamhet",
+        "Erkänd enskild verksamhet",
+        "Straffrättsligt arbete enligt SRA-registret",
+        "Offentligt SRA-organisationsregister",
       ],
     },
     "marcus-quinn": {

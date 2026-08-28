@@ -42,14 +42,20 @@ export function regulatorCheckHtml() {
 export function htmlWithSraLinks(text) {
   if (typeof text !== "string" || !text) return "";
   const check = trust.firm.regulatorCheckText;
-  const html = text.includes(check)
+  let html = text.includes(check)
     ? text.split(check).map((part) => esc(part)).join(regulatorCheckHtml())
     : esc(text);
-  return html
-    .replaceAll(t("publicSraOrganisationRecord"), sraRegisterAnchor(t("publicSraOrganisationRecord")))
-    .replaceAll(t("publicSraRecord"), sraRegisterAnchor(t("publicSraRecord")))
-    .replaceAll("public SRA organisation record", sraRegisterAnchor(t("publicSraOrganisationRecord")))
-    .replaceAll("public SRA record", sraRegisterAnchor(t("publicSraRecord")));
+  const organisation = t("publicSraOrganisationRecord");
+  const record = t("publicSraRecord");
+  const phrases = [organisation, record, "public SRA organisation record", "public SRA record"];
+  const seen = new Set();
+  for (const phrase of phrases) {
+    if (!phrase || seen.has(phrase) || !html.includes(phrase)) continue;
+    seen.add(phrase);
+    const label = phrase === organisation || phrase === "public SRA organisation record" ? organisation : record;
+    html = html.replaceAll(phrase, sraRegisterAnchor(label));
+  }
+  return html;
 }
 
 function block(heading, text) {

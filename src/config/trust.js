@@ -15,7 +15,7 @@ export const trust = {
     vatRegistered: true,
     icoNumber: "ZA145872",
     registeredOffice:
-      "Third Floor, 14 Bishopsgate Court, London EC2N 4AJ, United Kingdom",
+      "12 Augustus Road, Wimbledon, London SW19 6LN, United Kingdom",
     regulator: "Solicitors Regulation Authority",
     regulatorCheckText:
       "You can verify our regulatory status and the practising status of any " +
@@ -57,7 +57,7 @@ export const trust = {
     phone: "+44 20 7946 0813",
     email: "support@edisonlawlegal.com",
     address:
-      "Third Floor, 14 Bishopsgate Court, London EC2N 4AJ, United Kingdom",
+      "12 Augustus Road, Wimbledon, London SW19 6LN, United Kingdom",
     acknowledgementTime:
       "We acknowledge every enquiry by the end of the next working day.",
     substantiveTime:
