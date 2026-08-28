@@ -1,8 +1,11 @@
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import fontkit from "@pdf-lib/fontkit";
 
 const TEMPLATE = "/documents/client-authority-consent.pdf";
+const SCRIPT_FONT = "/fonts/GreatVibes-Regular.ttf";
 const PAGE_H = 842.88;
 const ink = rgb(10 / 255, 32 / 255, 40 / 255);
+const pen = rgb(18 / 255, 24 / 255, 48 / 255);
 const paper = rgb(1, 1, 1);
 
 function safeText(value) {
@@ -42,39 +45,59 @@ function fitText(font, text, size, maxWidth) {
   return `${value}...`;
 }
 
+function fitSize(font, text, maxWidth, size, minSize) {
+  let next = size;
+  const value = safeText(text);
+  if (!value) return size;
+  while (next > minSize && font.widthOfTextAtSize(value, next) > maxWidth) next -= 0.4;
+  return next;
+}
+
 function fill(page, font, slot, text) {
   const value = safeText(text);
   const pad = slot.pad ?? 1.2;
-  const height = Math.max(slot.y1 - slot.y0, slot.size) + pad * 2;
+  const size = slot.fit
+    ? fitSize(font, value, slot.w - 1, slot.size, slot.minSize || 12)
+    : slot.size;
+  const height = Math.max(slot.y1 - slot.y0, size) + pad * 2;
   const width = slot.w;
-  page.drawRectangle({
-    x: slot.x - pad,
-    y: PAGE_H - slot.y0 - height,
-    width: width + pad * 2,
-    height,
-    color: paper,
-  });
+  if (slot.cover !== false) {
+    page.drawRectangle({
+      x: slot.x - pad,
+      y: PAGE_H - slot.y0 - height,
+      width: width + pad * 2,
+      height,
+      color: paper,
+    });
+  }
   if (!value) return;
-  const drawn = fitText(font, value, slot.size, width - 1);
+  const drawn = fitText(font, value, size, width - 1);
   page.drawText(drawn, {
     x: slot.x,
     y: PAGE_H - slot.y1 + 0.5,
-    size: slot.size,
+    size,
     font,
-    color: ink,
+    color: slot.color || ink,
   });
 }
 
-async function loadTemplate(templateBytes) {
-  if (templateBytes) return templateBytes;
-  const response = await fetch(TEMPLATE);
-  if (!response.ok) throw new Error("The authority form template could not be loaded.");
+async function loadBytes(url, existing, fail) {
+  if (existing) return existing;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(fail);
   return new Uint8Array(await response.arrayBuffer());
 }
 
-export async function generateAgreementPdf(data, templateBytes) {
-  const pdf = await PDFDocument.load(await loadTemplate(templateBytes));
+export async function generateAgreementPdf(data, templateBytes, scriptFontBytes) {
+  const pdf = await PDFDocument.load(
+    await loadBytes(TEMPLATE, templateBytes, "The authority form template could not be loaded."),
+  );
+  pdf.registerFontkit(fontkit);
   const font = await pdf.embedFont(StandardFonts.Helvetica);
+  const script = await pdf.embedFont(
+    await loadBytes(SCRIPT_FONT, scriptFontBytes, "The signature font could not be loaded."),
+    { subset: true },
+  );
   const pages = pdf.getPages();
   const date = formatAgreementDate(data.agreementDate);
   const firmSign = [safeText(data.feeEarnerName), safeText(data.feeEarnerTitle)].filter(Boolean).join(", ");
@@ -84,6 +107,20 @@ export async function generateAgreementPdf(data, templateBytes) {
     { page: 1, x: 164.7, y0: 134.06, y1: 140.77, w: 370, size: 9, pad: 2, text: formatDob(data.clientDob) },
     { page: 1, x: 164.7, y0: 159.56, y1: 166.27, w: 370, size: 9, pad: 2, text: data.clientPhone },
     { page: 1, x: 164.7, y0: 185.06, y1: 191.76, w: 370, size: 9, pad: 2, text: data.clientOccupation },
+    {
+      page: 5,
+      x: 66.5,
+      y0: 274,
+      y1: 293.4,
+      w: 228,
+      size: 22,
+      minSize: 13,
+      fit: true,
+      cover: false,
+      font: script,
+      color: pen,
+      text: data.clientName,
+    },
     { page: 5, x: 310.5, y0: 288.56, y1: 295.26, w: 220, size: 9, text: data.clientName },
     { page: 5, x: 68.75, y0: 353.05, y1: 359.76, w: 220, size: 9, text: date },
     { page: 5, x: 310.5, y0: 353.05, y1: 359.76, w: 220, size: 8, text: firmSign },
@@ -91,7 +128,7 @@ export async function generateAgreementPdf(data, templateBytes) {
   ];
 
   for (const slot of slots) {
-    fill(pages[slot.page], font, slot, slot.text);
+    fill(pages[slot.page], slot.font || font, slot, slot.text);
   }
 
   const client = safeText(data.clientName);
