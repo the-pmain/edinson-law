@@ -170,31 +170,33 @@
     <div class="wrap">
       <script type="application/json" id="edison-agreement-defaults">{"firm":{"address":"12 Augustus Road, Wimbledon, London SW19 6LN, United Kingdom","email":"support@edisonlawlegal.com","phone":"+44 20 7946 0813","sraNumber":"510498","supervisorName":"Richard Edison","supervisorTitle":"Owner","supervisorRole":"director","updateFrequency":"six weeks","privacyUrl":"edisonlaw.co.uk/privacy","vatTreatment":"plus","firstReportWindow":"8-12","recoveryTailMonths":"12","interestRate":"4","singleDisbursementLimit":"500","aggregateDisbursementLimit":"2500","billingFrequency":"monthly","liabilityLimit":"3000000","individualRole":"director","complaintsPartner":"Priya Raman","complaintsEmail":"complaints@edisonlaw.co.uk","complaintAckDays":"5","complaintResponseWeeks":"8","fileRetentionYears":"7","valuationBody":"Royal Institution of Chartered Surveyors (RICS)"},"people":[{"slug":"richard-edison","name":"Richard Edison","role":"Ägare","email":"richard.edison@edisonlawlegal.com","phone":"","principal":true},{"slug":"david-kerr","name":"David Kerr","role":"Solicitor, ekonomisk brottslighet och enskilt åtal","email":"david.kerr@edisonlawlegal.com","phone":"","principal":false},{"slug":"amelia-rowe","name":"Amelia Rowe","role":"Solicitor, bedrägeri och utredningar","email":"amelia.rowe@edisonlawlegal.com","phone":"","principal":false},{"slug":"liam-brennan","name":"Liam Brennan","role":"Utredare, ekonomisk brottslighet","email":"liam.brennan@edisonlawlegal.com","phone":"","principal":false},{"slug":"sophie-lang","name":"Sophie Lang","role":"Specialist, betalningar och transaktionsspårning","email":"sophie.lang@edisonlawlegal.com","phone":"","principal":false},{"slug":"oliver-bennett","name":"Oliver Bennett","role":"Solicitor, bedrägeri och återvinning","email":"oliver.bennett@edisonlawlegal.com","phone":"","principal":false},{"slug":"andrew-haddon","name":"Andrew Haddon","role":"Specialist, tillgångsspårning och återvinning","email":"andrew.haddon@edisonlawlegal.com","phone":"","principal":false},{"slug":"rosalind-keane","name":"Rosalind Keane","role":"Specialist, confiscation och brottsvinster","email":"rosalind.keane@edisonlawlegal.com","phone":"","principal":false},{"slug":"julian-vance","name":"Julian Vance","role":"Forensisk revisor","email":"julian.vance@edisonlawlegal.com","phone":"","principal":false},{"slug":"imogen-vale","name":"Imogen Vale","role":"Analytiker, digital forensik och bevisning","email":"imogen.vale@edisonlawlegal.com","phone":"","principal":false},{"slug":"abigail-wills","name":"Abigail Charlotte Wills","role":"SRA-reglerad solicitor","email":"abigail.wills@edisonlawlegal.com","phone":"","principal":false},{"slug":"marcus-quinn","name":"Marcus Quinn","role":"Analytiker, krypto- och digital tillgångsspårning","email":"marcus.quinn@edisonlawlegal.com","phone":"","principal":false},{"slug":"robert-hale","name":"Robert Hale","role":"Senior specialist, återvinning","email":"robert.hale@edisonlawlegal.com","phone":"+44 74 5397 8769","principal":false},{"slug":"clara-whitfield","name":"Clara Whitfield","role":"Solicitor, disclosure och oanvänt material","email":"clara.whitfield@edisonlawlegal.com","phone":"","principal":false},{"slug":"thomas-ellery","name":"Thomas Ellery","role":"Solicitor, enskilt åtal och ekonomisk brottslighet","email":"thomas.ellery@edisonlawlegal.com","phone":"+44 73 9551 0006","principal":false},{"slug":"hannah-croft","name":"Hannah Croft","role":"Specialist, interna utredningar","email":"hannah.croft@edisonlawlegal.com","phone":"","principal":false},{"slug":"hugh-penton","name":"Hugh Penton","role":"Solicitor — tillsynsförsvar och utredningar","email":"hugh.penton@edisonlawlegal.com","phone":"","principal":false},{"slug":"edward-langford","name":"Edward Langford","role":"Solicitor — gränsöverskridande bedrägeri och korruption","email":"edward.langford@edisonlawlegal.com","phone":"","principal":false},{"slug":"daniel-crowe","name":"Daniel Crowe","role":"Utredare, ekonomisk brottslighet","email":"daniel.crowe@edisonlawlegal.com","phone":"+44 74 0116 7747","principal":false},{"slug":"simon-blake","name":"Simon Blake","role":"Solicitor — kryptobedrägeri och digitala tillgångar","email":"simon.blake@edisonlawlegal.com","phone":"","principal":false},{"slug":"helen-ashworth","name":"Helen Ashworth","role":"Solicitor — skatteutredningar och HMRC","email":"helen.ashworth@edisonlawlegal.com","phone":"","principal":false},{"slug":"graham-holt","name":"Graham Holt","role":"Specialist, pre-litigation-underrättelser","email":"graham.holt@edisonlawlegal.com","phone":"","principal":false}]}</script>
       <form class="form" id="agreement-form" data-agreement-form novalidate data-msg-check="Kontrollera de markerade fälten och försök igen." data-msg-saving="Sparar…" data-msg-creating="Skapar PDF…" data-msg-done="Fullmakten har laddats ned. Kontrollera filen innan du skickar eller undertecknar den. Edison Law måste fortfarande anta uppdraget skriftligen." data-msg-fail="PDF:en kunde inte skapas. Kontrollera anslutningen och försök igen." data-msg-save-fail="Uppgifterna kunde inte sparas. Kontrollera anslutningen och försök igen.">
-        <div class="field">
+        <div class="agreement-fields">
+          <div class="field">
     <label for="clientName">Fullständigt juridiskt namn <span class="req">obligatoriskt</span></label>
     <input id="clientName" name="clientName" type="text" required autocomplete="name">
     <p class="error">Ange ditt namn.</p>
   </div>
-        <div class="field">
-    <label for="clientDob">Födelsedatum <span class="req">obligatoriskt</span></label>
-    <input id="clientDob" name="clientDob" type="date" required autocomplete="bday" max="2026-08-28">
-    <p class="error">Ange ditt födelsedatum.</p>
-  </div>
-        <div class="field">
-    <label for="clientPhone">Telefon <span class="req">obligatoriskt</span></label>
-    <input id="clientPhone" name="clientPhone" type="tel" required autocomplete="tel">
-    <p class="error">Ange ditt telefonnummer.</p>
-  </div>
-        <div class="field">
-    <label for="clientOccupation">Sysselsättning <span class="req">obligatoriskt</span></label>
-    <input id="clientOccupation" name="clientOccupation" type="text" required autocomplete="organization-title">
-    <p class="error">Ange din sysselsättning.</p>
-  </div>
-        <div class="field">
+          <div class="field">
     <label for="clientEmail">E-post <span class="req">obligatoriskt</span></label>
     <input id="clientEmail" name="clientEmail" type="email" required autocomplete="email">
     <p class="error">Ange en giltig e-postadress.</p>
   </div>
+          <div class="field">
+    <label for="clientPhone">Telefon <span class="req">obligatoriskt</span></label>
+    <input id="clientPhone" name="clientPhone" type="tel" required autocomplete="tel">
+    <p class="error">Ange ditt telefonnummer.</p>
+  </div>
+          <div class="field">
+    <label for="clientOccupation">Sysselsättning</label>
+    <input id="clientOccupation" name="clientOccupation" type="text" autocomplete="organization-title" maxlength="80">
+    
+  </div>
+          <div class="field">
+    <label for="clientDob">Födelsedatum <span class="req">obligatoriskt</span></label>
+    <input id="clientDob" name="clientDob" type="date" required autocomplete="bday" max="2026-08-28">
+    <p class="error">Ange ditt födelsedatum.</p>
+  </div>
+        </div>
         <div class="field">
           <label class="checkbox" for="agreementPrivacy">
             <input id="agreementPrivacy" name="agreementPrivacy" type="checkbox" required>

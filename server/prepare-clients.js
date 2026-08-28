@@ -1,7 +1,8 @@
 import { readJsonBody, requestPath, sendJson } from "./http.js";
 import { requireSupabase, supabaseHeaders } from "./supabase.js";
+import { normalizeOccupation, TEXT_FIELD_MAX } from "../src/js/prepare-clients-model.js";
 
-const EMAIL_OK = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+const EMAIL_RE = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/i;
 
 function todayIso() {
   const now = new Date();
@@ -16,46 +17,91 @@ export function isPrepareClientsRequest(req) {
   return requestPath(req) === "/api/prepare-clients";
 }
 
-function extrasPath(input, occupation) {
-  const fromJson = (() => {
-    try {
-      const parsed = JSON.parse(String(input.pdf_path || ""));
-      if (parsed && typeof parsed === "object") return parsed;
-    } catch {
-      return null;
-    }
-    return null;
-  })();
-  const phone = String(fromJson?.phone || input.phone || "").trim().slice(0, 80);
-  const job = String(fromJson?.occupation || input.occupation || occupation || "").trim().slice(0, 120);
-  return JSON.stringify({ phone, occupation: job });
-}
-
 export function validatePrepareClient(input = {}) {
   const full_name = String(input.full_name || "").trim();
   const email = String(input.email || "").trim().toLowerCase();
-  const address = String(input.address || input.occupation || "").trim();
   const date_of_birth = String(input.date_of_birth || "").trim();
+  const phone = String(input.phone || "").trim().slice(0, TEXT_FIELD_MAX);
+  const occupation = normalizeOccupation(input.occupation);
   const slug = String(input.instructed_person_slug || "").trim();
-  const pdf_path = extrasPath(input, address);
 
   if (full_name.length < 1) return { error: "Enter your name." };
-  if (!EMAIL_OK.test(email)) return { error: "Enter a valid email address." };
-  if (address.length < 1) return { error: "Enter your occupation." };
+  if (!EMAIL_RE.test(email)) return { error: "Enter a valid email address." };
+  if (phone.replace(/\D/g, "").length < 8) return { error: "Enter your telephone number." };
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date_of_birth)) return { error: "Enter your date of birth." };
   if (date_of_birth > todayIso()) return { error: "Date of birth cannot be in the future." };
-  if (!JSON.parse(pdf_path).phone) return { error: "Enter your telephone number." };
 
   return {
     row: {
       full_name,
       email,
-      address,
       date_of_birth,
-      pdf_path,
+      phone,
+      occupation,
       instructed_person_slug: slug || null,
     },
   };
+}
+
+function parseDetail(detail) {
+  if (!detail) return null;
+  if (typeof detail === "object") return detail;
+  try {
+    return JSON.parse(detail);
+  } catch {
+    const text = String(detail).trim();
+    return text ? { message: text } : null;
+  }
+}
+
+function missingField(message) {
+  const text = String(message || "");
+  return text.match(/field "([^"]+)"/)?.[1]
+    || text.match(/Could not find the '([^']+)' column/)?.[1]
+    || text.match(/column ["']?[\w.]+["']?\.["']?(\w+)/)?.[1]
+    || text.match(/column "([^"]+)"/)?.[1]
+    || "";
+}
+
+export function saveErrorPayload(error) {
+  const parsed = parseDetail(error?.detail);
+  const code = String(parsed?.code || "");
+  const message = String(parsed?.message || error?.message || "").trim();
+  const field = missingField(message);
+
+  if (code === "42703") {
+    return {
+      error: field
+        ? `The database trigger still references ${field}, which is not on prepare_clients.`
+        : "The database trigger references a column that is not on prepare_clients.",
+      code,
+      message,
+      ...(field ? { field } : {}),
+      hint: "Run server/prepare_clients.sql in the Supabase SQL editor so the trigger only trims full_name, email, phone, occupation and instructed_person_slug.",
+    };
+  }
+
+  if (code === "PGRST204") {
+    return {
+      error: message || "The save payload includes a column that is not on prepare_clients.",
+      code,
+      message,
+      ...(field ? { field } : {}),
+    };
+  }
+
+  return {
+    error: message || "Could not save the client record.",
+    ...(code ? { code } : {}),
+    ...(message && message !== error?.message ? { message } : {}),
+  };
+}
+
+function responseStatus(error) {
+  if (error?.status === 500) return 500;
+  const status = Number(error?.status);
+  if (Number.isInteger(status) && status >= 400 && status < 600) return status;
+  return 502;
 }
 
 export async function insertPrepareClient(row, env = process.env) {
@@ -63,17 +109,38 @@ export async function insertPrepareClient(row, env = process.env) {
   const response = await fetch(`${url}/rest/v1/prepare_clients`, {
     method: "POST",
     headers: supabaseHeaders(key, {
+      Accept: "application/json",
       "Content-Type": "application/json",
-      Prefer: "return=minimal",
+      Prefer: "return=representation",
     }),
     body: JSON.stringify(row),
   });
 
+  const detail = await response.text();
   if (!response.ok) {
-    const detail = await response.text();
     const error = new Error("Could not save the client record.");
     error.status = response.status;
     error.detail = detail;
+    throw error;
+  }
+
+  let rows = [];
+  if (detail.trim()) {
+    try {
+      rows = JSON.parse(detail);
+    } catch {
+      const error = new Error("Could not save the client record.");
+      error.status = 502;
+      error.detail = detail;
+      throw error;
+    }
+  }
+  if (!Array.isArray(rows) || rows.length === 0) {
+    const error = new Error("Could not save the client record.");
+    error.status = 502;
+    error.detail = JSON.stringify({
+      message: "Insert returned no row. Row-level security may be blocking writes.",
+    });
     throw error;
   }
 }
@@ -104,8 +171,6 @@ export async function handlePrepareClients(req, res, env = process.env) {
       return;
     }
     console.error(error.detail || error.message || error);
-    sendJson(res, error.status === 500 ? 500 : 502, {
-      error: "Could not save the client record.",
-    });
+    sendJson(res, responseStatus(error), saveErrorPayload(error));
   }
 }

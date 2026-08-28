@@ -1679,6 +1679,17 @@ body[data-path="/about/"] .footer {
   padding-bottom: var(--space-8);
 }
 
+.agreement-page .agreement-fields {
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .agreement-page .agreement-fields {
+    gap: var(--space-6);
+  }
+}
+
 .agreement-page input[type="date"] {
   position: relative;
   cursor: pointer;
@@ -1989,7 +2000,7 @@ html[data-admin-session="1"] .admin-open[hidden] {
   white-space: nowrap;
 }
 
-.admin-table td:nth-child(4) {
+.admin-table td:nth-child(3) {
   min-width: 12rem;
 }
 

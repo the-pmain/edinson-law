@@ -43,16 +43,6 @@ function formatDate(value) {
   return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeZone: "UTC" }).format(date);
 }
 
-function recordExtras(item) {
-  try {
-    const parsed = JSON.parse(item?.pdf_path || "");
-    if (parsed && typeof parsed === "object") return parsed;
-  } catch {
-    return {};
-  }
-  return {};
-}
-
 function cell(text) {
   const td = document.createElement("td");
   td.textContent = text || "—";
@@ -166,7 +156,7 @@ export function adminPrepareClients() {
     if (rows) rows.replaceChildren();
   };
 
-  const recordKey = (item, index) => String(item.id ?? `${item.created_at || ""}-${item.email || ""}-${index}`);
+  const recordKey = (item, index) => String(item.id ?? `${item.created_at || ""}-${item.full_name || ""}-${index}`);
 
   const actionCell = (item, key) => {
     const td = document.createElement("td");
@@ -187,15 +177,14 @@ export function adminPrepareClients() {
     rows.replaceChildren();
     items.forEach((item, index) => {
       const key = recordKey(item, index);
-      const extras = recordExtras(item);
       records.set(key, item);
       const tr = document.createElement("tr");
       tr.append(
         cell(formatDateTime(item.created_at)),
         cell(item.full_name),
         cell(item.email),
-        cell(item.phone || extras.phone),
-        cell(item.occupation || extras.occupation || item.address),
+        cell(item.phone),
+        cell(item.occupation),
         cell(formatDate(item.date_of_birth)),
         cell(item.instructed_person_slug),
         actionCell(item, key),

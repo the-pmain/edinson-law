@@ -1,3 +1,15 @@
+export function clientInitials(name = "") {
+  return String(name || "")
+    .trim()
+    .split(/[\s-]+/)
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join("")
+    .replace(/[^A-Za-z0-9]/g, "")
+    .toUpperCase()
+    .slice(0, 4);
+}
+
 export function todayIso(now = new Date()) {
   const date = now instanceof Date ? now : new Date(now);
   const when = Number.isNaN(date.getTime()) ? new Date() : date;
@@ -30,10 +42,10 @@ export function buildAgreement(client, payload, options = {}) {
   const person = resolvePerson(payload.people, options.instructSlug);
   return {
     clientName: String(client.clientName || "").trim(),
-    clientEmail: String(client.clientEmail || "").trim(),
+    clientEmail: String(client.clientEmail || "").trim().toLowerCase(),
     clientPhone: String(client.clientPhone || "").trim(),
     clientOccupation: String(client.clientOccupation || "").trim(),
-    clientAddress: String(client.clientAddress || client.clientOccupation || "").trim(),
+    clientInitials: clientInitials(client.clientName),
     clientDob: String(client.clientDob || "").slice(0, 10),
     matterReference: draftReference(at),
     agreementDate: todayIso(at),
@@ -68,25 +80,13 @@ export function buildAgreement(client, payload, options = {}) {
   };
 }
 
-function recordExtras(record) {
-  try {
-    const parsed = JSON.parse(record?.pdf_path || "");
-    if (parsed && typeof parsed === "object") return parsed;
-  } catch {
-    /* stored as a path, not extras */
-  }
-  return {};
-}
-
 export function agreementFromRecord(record, payload) {
-  const extras = recordExtras(record);
   return buildAgreement(
     {
       clientName: record.full_name,
-      clientEmail: record.email,
-      clientPhone: record.phone || extras.phone || "",
-      clientOccupation: record.occupation || extras.occupation || record.address || "",
-      clientAddress: record.address,
+      clientEmail: record.email || "",
+      clientPhone: record.phone || "",
+      clientOccupation: record.occupation ?? "",
       clientDob: record.date_of_birth,
     },
     payload,

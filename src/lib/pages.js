@@ -1,5 +1,6 @@
 import { personEmail, personPhone } from "../content/people.js";
 import { site, home, pages, insightBodies, serviceMatter, trust, t, loc } from "../i18n/catalog.js";
+import { TEXT_FIELD_MAX } from "../js/prepare-clients-model.js";
 import { crumbs, documentPage, fieldMark, insightIcon, practiceIcon, whyIcon } from "./layout.js";
 import { esc } from "./html.js";
 import {
@@ -150,14 +151,25 @@ function jsonScript(id, value) {
   return `<script type="application/json" id="${id}">${JSON.stringify(value).replaceAll("<", "\\u003c")}</script>`;
 }
 
-function agreementField({ id, label, type = "text", autocomplete = "", error = "", max = "" }) {
-  const req = ` <span class="req">${esc(t("required"))}</span>`;
+function agreementField({
+  id,
+  label,
+  type = "text",
+  autocomplete = "",
+  error = "",
+  max = "",
+  maxlength = "",
+  required = true,
+}) {
+  const req = required ? ` <span class="req">${esc(t("required"))}</span>` : "";
   const auto = autocomplete ? ` autocomplete="${esc(autocomplete)}"` : "";
   const maxAttr = max ? ` max="${esc(max)}"` : "";
+  const maxLengthAttr = maxlength ? ` maxlength="${esc(String(maxlength))}"` : "";
+  const reqAttr = required ? " required" : "";
   const control =
     type === "textarea"
-      ? `<textarea id="${id}" name="${id}" rows="4" required${auto}></textarea>`
-      : `<input id="${id}" name="${id}" type="${esc(type)}" required${auto}${maxAttr}>`;
+      ? `<textarea id="${id}" name="${id}" rows="4"${reqAttr}${auto}${maxLengthAttr}></textarea>`
+      : `<input id="${id}" name="${id}" type="${esc(type)}"${reqAttr}${auto}${maxAttr}${maxLengthAttr}>`;
   return `<div class="field">
     <label for="${id}">${esc(label)}${req}</label>
     ${control}
@@ -210,11 +222,13 @@ function agreementFormHtml() {
     <div class="wrap">
       ${jsonScript("edison-agreement-defaults", agreementPayload())}
       <form class="form" id="agreement-form" data-agreement-form novalidate data-msg-check="${esc(t("formCheck"))}" data-msg-saving="${esc(t("agreementSaving"))}" data-msg-creating="${esc(t("agreementCreating"))}" data-msg-done="${esc(t("agreementDone"))}" data-msg-fail="${esc(t("agreementFail"))}" data-msg-save-fail="${esc(t("agreementSaveFail"))}">
-        ${agreementField({ id: "clientName", label: t("agreementClientName"), autocomplete: "name", error: t("enterName") })}
-        ${agreementField({ id: "clientDob", label: t("agreementDob"), type: "date", autocomplete: "bday", error: t("enterDob"), max: new Date().toISOString().slice(0, 10) })}
-        ${agreementField({ id: "clientPhone", label: t("telephone"), type: "tel", autocomplete: "tel", error: t("enterPhone") })}
-        ${agreementField({ id: "clientOccupation", label: t("agreementOccupation"), autocomplete: "organization-title", error: t("enterOccupation") })}
-        ${agreementField({ id: "clientEmail", label: t("email"), type: "email", autocomplete: "email", error: t("enterEmail") })}
+        <div class="agreement-fields">
+          ${agreementField({ id: "clientName", label: t("agreementClientName"), autocomplete: "name", error: t("enterName") })}
+          ${agreementField({ id: "clientEmail", label: t("email"), type: "email", autocomplete: "email", error: t("enterEmail") })}
+          ${agreementField({ id: "clientPhone", label: t("telephone"), type: "tel", autocomplete: "tel", error: t("enterPhone") })}
+          ${agreementField({ id: "clientOccupation", label: t("agreementOccupation"), autocomplete: "organization-title", required: false, maxlength: TEXT_FIELD_MAX })}
+          ${agreementField({ id: "clientDob", label: t("agreementDob"), type: "date", autocomplete: "bday", error: t("enterDob"), max: new Date().toISOString().slice(0, 10) })}
+        </div>
         <div class="field">
           <label class="checkbox" for="agreementPrivacy">
             <input id="agreementPrivacy" name="agreementPrivacy" type="checkbox" required>

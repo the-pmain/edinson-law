@@ -5,9 +5,9 @@ import {
   readJson,
   todayIso,
 } from "./agreement-data.js";
+import { normalizeOccupation } from "./prepare-clients-model.js";
 
-const CLIENT_FIELDS = ["clientName", "clientEmail", "clientPhone", "clientOccupation", "clientDob"];
-const EMAIL_OK = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const CLIENT_FIELDS = ["clientName", "clientEmail", "clientPhone", "clientDob"];
 
 function fieldWrap(input) {
   return input?.closest(".field") || input;
@@ -49,9 +49,9 @@ function firstInvalid(form) {
     const input = form.elements.namedItem(name);
     const value = valueOf(form, name);
     const invalid =
-      name === "clientEmail" ? !EMAIL_OK.test(value)
-      : name === "clientDob" ? !value || value > todayIso()
+      name === "clientDob" ? !value || value > todayIso()
       : name === "clientPhone" ? value.replace(/\D/g, "").length < 8
+      : name === "clientEmail" ? !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
       : !value;
     setInvalid(input, invalid);
     if (invalid) missing.push(input);
@@ -112,23 +112,24 @@ export function peopleDocumentForm() {
         body: JSON.stringify({
           full_name: data.clientName,
           email: data.clientEmail,
-          address: data.clientOccupation,
+          phone: data.clientPhone,
+          occupation: normalizeOccupation(data.clientOccupation),
           date_of_birth: data.clientDob,
-          pdf_path: JSON.stringify({
-            phone: data.clientPhone,
-            occupation: data.clientOccupation,
-          }),
           instructed_person_slug: instructSlug() || null,
         }),
       });
+      const body = await saved.json().catch(() => ({}));
       if (!saved.ok) {
-        throw new Error(form.dataset.msgSaveFail || "The details could not be saved.");
+        throw new Error(
+          body.error || body.message || form.dataset.msgSaveFail || "The details could not be saved.",
+        );
       }
 
       if (status) status.textContent = form.dataset.msgCreating || "Creating the PDF...";
       const { generateAgreementPdf } = await import("./agreement-pdf.js");
       const bytes = await generateAgreementPdf(data);
       downloadBytes(bytes, agreementFilename(data.matterReference));
+      form.reset();
       if (status) status.textContent = form.dataset.msgDone || "Agreement downloaded.";
     } catch (error) {
       if (status) {

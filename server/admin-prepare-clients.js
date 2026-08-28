@@ -1,9 +1,9 @@
 import { requestPath, requestUrl, sendJson } from "./http.js";
 import { requireSupabase, supabaseHeaders } from "./supabase.js";
+import { PREPARE_CLIENTS_SELECT } from "../src/js/prepare-clients-model.js";
 
 const DEFAULT_PER_PAGE = 20;
 const MAX_PER_PAGE = 100;
-const SELECT = "id,created_at,full_name,email,address,date_of_birth,pdf_path,instructed_person_slug";
 
 export function isAdminPrepareClientsRequest(req) {
   return requestPath(req) === "/api/admin/prepare-clients";
@@ -40,7 +40,7 @@ export async function listPrepareClients(query, env = process.env) {
   const from = (query.page - 1) * query.per_page;
   const to = from + query.per_page - 1;
   const endpoint = new URL("/rest/v1/prepare_clients", `${url}/`);
-  endpoint.searchParams.set("select", SELECT);
+  endpoint.searchParams.set("select", PREPARE_CLIENTS_SELECT);
   endpoint.searchParams.set("order", "created_at.desc,id.desc");
 
   const response = await fetch(endpoint, {
@@ -64,6 +64,8 @@ export async function listPrepareClients(query, env = process.env) {
       error.hint = usingServiceRole
         ? "Row-level security blocked this read."
         : "Row-level security blocked this read. Add SUPABASE_SERVICE_ROLE_KEY to .env.";
+    } else if (detail.includes("42703") || /column .* does not exist/i.test(detail)) {
+      error.hint = "Run server/prepare_clients.sql in the Supabase SQL editor so prepare_clients includes occupation.";
     }
     throw error;
   }
