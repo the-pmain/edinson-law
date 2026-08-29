@@ -172,6 +172,7 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
   const compose = document.createElement("dialog");
   compose.className = "admin-compose-dialog";
   compose.setAttribute("aria-labelledby", "admin-compose-title");
+  compose.setAttribute("closedby", "none");
   compose.innerHTML = `
     <div class="admin-compose-panel">
       <header class="preview-head">
@@ -537,10 +538,7 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
     if (!saving && !previewing) compose.close();
   });
   compose.addEventListener("cancel", (event) => {
-    if (saving || previewing) event.preventDefault();
-  });
-  compose.addEventListener("click", (event) => {
-    if (event.target === compose && !saving && !previewing) compose.close();
+    event.preventDefault();
   });
   compose.addEventListener("close", () => {
     activeKind = "";

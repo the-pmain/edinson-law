@@ -531,6 +531,18 @@ html:not([lang^="en"]) .header-nav a {
   padding: var(--space-6);
 }
 
+.search-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.search-head .label {
+  margin: 0;
+}
+
 .search-panel input {
   width: 100%;
   min-height: 48px;

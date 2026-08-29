@@ -47,7 +47,10 @@ function ensureDialog() {
   dialog = document.createElement("dialog");
   dialog.className = "preview-dialog";
   dialog.setAttribute("aria-labelledby", "preview-dialog-title");
-  dialog.setAttribute("closedby", "closerequest");
+  dialog.setAttribute("closedby", "none");
+  dialog.addEventListener("cancel", (event) => {
+    event.preventDefault();
+  });
   dialog.innerHTML = `
     <div class="preview-panel">
       <header class="preview-head">

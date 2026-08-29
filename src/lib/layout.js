@@ -618,9 +618,12 @@ export function documentPage(page, body) {
 
   ${
     site.search.enabled
-      ? `<dialog class="search-dialog" data-search>
-        <form class="search-panel" method="dialog">
-          <label class="label" for="site-search">${esc(t("search"))}</label>
+      ? `<dialog class="search-dialog" data-search closedby="none">
+        <form class="search-panel">
+          <div class="search-head">
+            <label class="label" for="site-search">${esc(t("search"))}</label>
+            <button class="btn btn-ghost preview-close" type="button" data-search-close>${esc(t("close"))}</button>
+          </div>
           <input id="site-search" type="search" name="q" placeholder="${esc(t("searchPlaceholder"))}" autocomplete="off">
           <div class="search-results" data-search-results></div>
         </form>

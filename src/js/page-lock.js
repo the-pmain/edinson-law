@@ -76,16 +76,33 @@ export function syncPageLock() {
   else releaseLock();
 }
 
+/** Close only via an explicit Close control — not backdrop click or Escape. */
+export function lockDialogToCloseButton(dialog) {
+  if (!(dialog instanceof HTMLDialogElement)) return;
+  if (dialog.dataset.closeLocked === "1") return;
+  dialog.dataset.closeLocked = "1";
+  dialog.setAttribute("closedby", "none");
+  dialog.addEventListener("cancel", (event) => {
+    event.preventDefault();
+  });
+}
+
+function lockOpenDialogs() {
+  document.querySelectorAll("dialog").forEach(lockDialogToCloseButton);
+}
+
 export function watchPageLock() {
   if (watching) return;
   watching = true;
   nativeShowModal = HTMLDialogElement.prototype.showModal;
   HTMLDialogElement.prototype.showModal = function showModalLocked(...args) {
+    lockDialogToCloseButton(this);
     rememberScroll();
     const result = nativeShowModal.apply(this, args);
     syncPageLock();
     return result;
   };
+  lockOpenDialogs();
   window.addEventListener("scroll", () => {
     if (!active && !document.querySelector("dialog[open]")) y = window.scrollY;
   }, { passive: true });

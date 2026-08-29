@@ -38,11 +38,7 @@ function menu() {
 
   openers.forEach((btn) => btn.addEventListener("click", () => set(true)));
   closer?.addEventListener("click", () => set(false));
-  drawer.addEventListener("click", (event) => {
-    if (event.target === drawer) set(false);
-  });
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && drawer.dataset.open === "true") set(false);
     if (event.key !== "Tab" || drawer.dataset.open !== "true") return;
     const focusable = panel.querySelectorAll("a, button");
     const first = focusable[0];
@@ -60,9 +56,21 @@ function menu() {
 function search() {
   const dialog = document.querySelector("[data-search]");
   if (!dialog) return;
+  const form = dialog.querySelector("form");
   const input = dialog.querySelector("input");
   const results = dialog.querySelector("[data-search-results]");
   const data = JSON.parse(document.querySelector("#edison-search-data")?.textContent || "[]");
+  let closer = dialog.querySelector("[data-search-close]");
+  if (!closer) {
+    closer = document.createElement("button");
+    closer.type = "button";
+    closer.className = "btn btn-ghost preview-close";
+    closer.setAttribute("data-search-close", "");
+    closer.textContent = "Close";
+    form?.prepend(closer);
+  }
+  closer.addEventListener("click", () => dialog.close());
+  form?.addEventListener("submit", (event) => event.preventDefault());
 
   const render = (query) => {
     const q = query.trim().toLowerCase();

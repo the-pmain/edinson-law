@@ -16,6 +16,7 @@ export const UI = table([
   ["searchSite", ["Search the site", "Sök på webbplatsen", "Søk på nettstedet", "Søg på webstedet", "Website durchsuchen"]],
   ["searchPlaceholder", ["Expertise, notes, people", "Verksamhetsområden, anteckningar, medarbetare", "Fagområder, notater, medarbeidere", "Fagområder, noter, medarbejdere", "Rechtsgebiete, Hinweise, Personen"]],
   ["menu", ["Menu", "Meny", "Meny", "Menu", "Menü"]],
+  ["close", ["Close", "Stäng", "Lukk", "Luk", "Schließen"]],
   ["closeMenu", ["Close menu", "Stäng menyn", "Lukk menyen", "Luk menuen", "Menü schließen"]],
   ["contact", ["Contact", "Kontakt", "Kontakt", "Kontakt", "Kontakt"]],
   ["home", ["Home", "Hem", "Hjem", "Hjem", "Startseite"]],
