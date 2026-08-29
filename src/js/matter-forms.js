@@ -1,10 +1,12 @@
-import { feeEarnerLine } from "./agreement-data.js";
 import { copyFromForm, openDocumentPreview } from "./document-preview.js";
+import { FIXED_FEE_EARNER_LINE } from "../lib/matter-fields.js";
+import { isRejectedApplicantName } from "./matter-validate.js";
 
 const CLAIM_MOCK = {
   clientName: "Margaret Hollis",
   clientAddr: "14 Weaver's Row, Leeds LS6 2QT",
   crimeRef: "NFRC260114882",
+  policeUrn: "WY/26/014882",
   ourRef: "EL/2026/0431",
   fraudDates: "11 September and 4 October 2025",
   lossValue: "£184,500",
@@ -25,7 +27,7 @@ const CLAIM_MOCK = {
   court: "City of London Magistrates' Court",
   respondent: "",
   copyTo: "CPS Proceeds of Crime Division",
-  feeEarner: "Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk",
+  feeEarner: FIXED_FEE_EARNER_LINE,
 };
 
 export const MATTER_MOCK = {
@@ -34,11 +36,14 @@ export const MATTER_MOCK = {
   release: {
     court: "City of London Magistrates' Court",
     caseRef: "to be allocated",
-    before: "District Judge Hale",
-    orderDated: "2026-07-14",
+    before: "",
+    orderDated: "",
     freezeDate: "2026-03-03",
     applicant: "Margaret Hollis",
-    respondent: "Chief Constable of West Yorkshire",
+    clientName: "Margaret Hollis",
+    clientAddr: "14 Weaver's Row, Leeds LS6 2QT",
+    crimeRef: "NFRC260114882",
+    respondent: "The Chief Officer of Police for West Yorkshire",
     applicationDate: "2026-06-02",
     wsName: "Margaret Hollis",
     wsDate: "2026-06-02",
@@ -53,7 +58,7 @@ export const MATTER_MOCK = {
     agreeWith: "the administrator of the wallet",
     costs: "none",
     costsSum: "",
-    feeEarner: "Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk",
+    feeEarner: FIXED_FEE_EARNER_LINE,
   },
 };
 
@@ -70,9 +75,10 @@ async function runPreview(form, button) {
   try {
     const kind = form.getAttribute("data-matter-form");
     const { formValues, matterPdf } = await import("./matter-download.js");
+    const people = readMatterPeople();
     await openDocumentPreview({
       copy: copyFromForm(form),
-      prepare: () => matterPdf(kind, formValues(form)),
+      prepare: () => matterPdf(kind, formValues(form), { people }),
     });
   } catch {
     if (button) button.textContent = "Try again";
@@ -137,27 +143,35 @@ export function applyMatterMock(form, kind, { keepFilled = [] } = {}) {
   if (!form || !data) return false;
   const keep = new Set(keepFilled);
   Object.entries(data).forEach(([name, value]) => {
+    if (name === "feeEarner") return;
     const field = form.elements.namedItem(name);
     if (!field) return;
-    if (keep.has(name) && String(field.value || "").trim()) return;
+    const current = String(field.value || "").trim();
+    if (keep.has(name) && current && !isRejectedApplicantName(current)) return;
     field.value = value;
   });
+  lockFeeEarner(form);
   return true;
 }
 
+function lockFeeEarner(form) {
+  const line = FIXED_FEE_EARNER_LINE;
+  form.querySelectorAll('[name="feeEarner"], #feeEarner').forEach((node) => {
+    node.value = line;
+  });
+}
+
 function fillFeeEarner(form) {
-  const input = form.elements.namedItem("feeEarner");
-  if (!input || input.value) return;
-  const slug = new URLSearchParams(window.location.search).get("instruct") || "";
+  lockFeeEarner(form);
+}
+
+function readMatterPeople() {
   const node = document.getElementById("edison-matter-defaults");
-  if (!node) return;
-  let payload = null;
+  if (!node) return [];
   try {
-    payload = JSON.parse(node.textContent || "null");
+    const payload = JSON.parse(node.textContent || "null");
+    return Array.isArray(payload?.people) ? payload.people : [];
   } catch {
-    return;
+    return [];
   }
-  const people = Array.isArray(payload?.people) ? payload.people : [];
-  const line = feeEarnerLine(people, slug);
-  if (line) input.value = line;
 }

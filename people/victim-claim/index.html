@@ -194,6 +194,11 @@
     <input id="ourRef" name="ourRef" type="text" placeholder="EL/2026/0431">
     
   </div></div>
+      <div class="field">
+    <label for="policeUrn">Police crime number (if different)</label>
+    <input id="policeUrn" name="policeUrn" type="text" placeholder="WY/26/014882">
+    
+  </div>
       <div class="matter-two"><div class="field">
     <label for="fraudDates">When it happened</label>
     <input id="fraudDates" name="fraudDates" type="text" placeholder="11 September and 4 October 2025">
@@ -306,9 +311,9 @@
     <p class="hint">Leave blank to use the agency named above.</p>
   </div>
       <div class="field">
-    <label for="feeEarner">Fee earner and contact</label>
-    <input id="feeEarner" name="feeEarner" type="text" placeholder="Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk">
-    
+    <label for="feeEarner">Fee earner and contact <span class="req">required</span></label>
+    <input type="hidden" name="feeEarner" value="Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk"><input id="feeEarner" type="text" value="Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk" disabled aria-required="true">
+    <p class="hint">Fixed to Abigail Charlotte Wills, the SRA-regulated solicitor named on organisation 510498.</p>
   </div>
       <div class="field">
     <label for="copyTo">Copy to</label>

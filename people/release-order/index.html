@@ -218,9 +218,10 @@
     
   </div><div class="field">
     <label for="before">Before</label>
-    <input id="before" name="before" type="text" placeholder="District Judge ____ / the bench">
+    <input id="before" name="before" type="text" placeholder="the District Judge assigned to the application">
     
   </div></div>
+      <p class="hint">Leave the case number and judge blank on a lodging draft. The court office allocates both.</p>
       <div class="matter-two"><div class="field">
     <label for="orderDated">Dated</label>
     <input id="orderDated" name="orderDated" type="date">
@@ -230,15 +231,26 @@
     <input id="freezeDate" name="freezeDate" type="date">
     
   </div></div>
+      <p class="hint">Leave Dated blank. The court inserts that date when it makes the order. The freezing-order date is the date of the existing section 303Z37 order.</p>
       <div class="field">
     <label for="applicant">Applicant</label>
     <input id="applicant" name="applicant" type="text" autocomplete="name" placeholder="full legal name">
     
   </div>
       <div class="field">
-    <label for="respondent">Respondent</label>
-    <input id="respondent" name="respondent" type="text" placeholder="Chief Constable of ___ / National Crime Agency / HMRC">
+    <label for="clientAddr">Applicant's address</label>
+    <input id="clientAddr" name="clientAddr" type="text" autocomplete="street-address" placeholder="14 Weaver's Row, Leeds LS6 2QT">
     
+  </div>
+      <div class="field">
+    <label for="crimeRef">Action Fraud reference</label>
+    <input id="crimeRef" name="crimeRef" type="text" placeholder="NFRC260114882">
+    
+  </div>
+      <div class="field">
+    <label for="respondent">Respondent</label>
+    <input id="respondent" name="respondent" type="text" placeholder="The Chief Officer of Police for West Yorkshire">
+    <p class="hint">Statutory style: the Chief Officer of Police for the force, or the enforcement officer named on the freezing order. Cryptoasset freezing orders are obtained by that officer, not by the court of its own motion.</p>
   </div>
     </div>
   </section>
@@ -268,10 +280,11 @@
     <input id="reportDate" name="reportDate" type="date">
     
   </div></div>
+      <p class="hint">Date as it appears on the exhibit. This tool does not retrieve or verify the report from the provider.</p>
       <div class="field">
     <label for="hearing">And upon hearing</label>
     <select id="hearing" name="hearing"><option value="" selected>Select</option><option value="the solicitor for the Applicant and the representative of the Respondent">the solicitor for the Applicant and the representative of the Respondent</option><option value="the Respondent neither supporting nor opposing the application">the Respondent neither supporting nor opposing the application</option></select>
-    
+    <p class="hint">Intended recital after the hearing. The court amends this when it makes the order.</p>
   </div>
     </div>
   </section>
@@ -294,8 +307,8 @@
   </div>
       <div class="field">
     <label for="wallet">Crypto wallet address</label>
-    <input id="wallet" name="wallet" type="text" placeholder="0x…">
-    
+    <input id="wallet" name="wallet" type="text" maxlength="42" placeholder="0x9f2b41c8e07dd5a3f190bb7c26e4a5109d3f41ce">
+    <p class="hint">Full 0x + 40 hexadecimal characters. Printed on its own line in the draft.</p>
   </div>
       <div class="field">
     <label for="exchange">Administered by</label>
@@ -309,8 +322,8 @@
   </div>
       <div class="field" data-show-when="destination=the wallet address nominated by the Applicant" hidden>
     <label for="destinationWallet">Wallet address nominated by the Applicant</label>
-    <input id="destinationWallet" name="destinationWallet" type="text" placeholder="0x…">
-    
+    <input id="destinationWallet" name="destinationWallet" type="text" maxlength="42" placeholder="0x3ad188b0c41e9f2b07dd5a3f190bb7c26e4a5109">
+    <p class="hint">Full 0x + 40 hexadecimal characters. Do not wrap this inside a sentence.</p>
   </div>
       <div class="field">
     <label for="agreeWith">Unless a longer period is agreed between the Applicant and</label>
@@ -334,16 +347,16 @@
     <input id="costsSum" name="costsSum" type="text" placeholder="£">
     
   </div>
-      <p class="hint">Liberty to apply in respect of the implementation of paragraph 2.</p>
+      <p class="hint">Liberty to apply in respect of the implementation of paragraph [2].</p>
     </div>
   </section>
     <section class="matter-grp">
     <h2><span class="matter-n">5</span> Fee earner</h2>
     <div class="matter-body">
       <div class="field">
-    <label for="feeEarner">Fee earner and contact</label>
-    <input id="feeEarner" name="feeEarner" type="text" placeholder="Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk">
-    
+    <label for="feeEarner">Fee earner and contact <span class="req">required</span></label>
+    <input type="hidden" name="feeEarner" value="Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk"><input id="feeEarner" type="text" value="Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk" disabled aria-required="true">
+    <p class="hint">Fixed to the SRA-regulated solicitor named on the firm register.</p>
   </div>
     </div>
   </section>

@@ -55,6 +55,27 @@ export function feeEarnerLine(people, slug = "") {
   return [person.name, person.phone, person.email].filter(Boolean).join(" · ");
 }
 
+export function siteHost() {
+  try {
+    if (typeof window !== "undefined" && window.location?.host) {
+      return String(window.location.host).replace(/\.+$/, "");
+    }
+  } catch {
+    // Node and other non-browser callers have no window.
+  }
+  return "";
+}
+
+export function privacyNoticeUrl(fallback = "edisonlaw.co.uk/privacy") {
+  const host = siteHost();
+  if (host) return `${host}/privacy`;
+  const given = String(fallback || "")
+    .trim()
+    .replace(/^https?:\/\//i, "")
+    .replace(/\/+$/, "");
+  return given || "edisonlaw.co.uk/privacy";
+}
+
 export function buildAgreement(client, payload, options = {}) {
   const firm = payload.firm;
   const when = options.when ? new Date(options.when) : new Date();
@@ -77,7 +98,7 @@ export function buildAgreement(client, payload, options = {}) {
     supervisorTitle: firm.supervisorTitle,
     supervisorRole: firm.supervisorRole || "director",
     updateFrequency: firm.updateFrequency || "six weeks",
-    privacyUrl: firm.privacyUrl || "edisonlaw.co.uk/privacy",
+    privacyUrl: privacyNoticeUrl(firm.privacyUrl),
     firmAddress: firm.address,
     cancellationEmail: firm.email,
     sraNumber: firm.sraNumber,

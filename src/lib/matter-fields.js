@@ -1,5 +1,8 @@
 import { esc } from "./html.js";
 
+/** Locked fee earner — matches FIRM_SRA_REGISTER.namedSolicitor in matter-validate.js. */
+export const FIXED_FEE_EARNER_LINE = "Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk";
+
 export function field({
   id,
   label,
@@ -12,12 +15,21 @@ export function field({
   options = null,
   showWhen = "",
   placeholder = "",
+  required = false,
+  readonly = false,
+  disabled = false,
+  className = "",
 }) {
   const auto = autocomplete ? ` autocomplete="${esc(autocomplete)}"` : "";
   const maxLengthAttr = maxlength ? ` maxlength="${esc(String(maxlength))}"` : "";
   const val = value ? ` value="${esc(value)}"` : "";
   const ph = placeholder ? ` placeholder="${esc(placeholder)}"` : "";
   const when = showWhen ? ` data-show-when="${esc(showWhen)}" hidden` : "";
+  const reqAttr = required ? " required" : "";
+  const readAttr = readonly ? " readonly" : "";
+  const disAttr = disabled ? " disabled" : "";
+  const cls = className ? ` class="${esc(className)}"` : "";
+  const reqLabel = required ? ` <span class="req">required</span>` : "";
   let control;
   if (options) {
     const opts = options
@@ -28,14 +40,17 @@ export function field({
         return `<option value="${esc(optValue)}"${selected}>${esc(optLabel)}</option>`;
       })
       .join("");
-    control = `<select id="${id}" name="${id}">${opts}</select>`;
+    control = `<select id="${id}" name="${id}"${cls}${reqAttr}${disAttr}>${opts}</select>`;
   } else if (type === "textarea") {
-    control = `<textarea id="${id}" name="${id}" rows="${rows}"${auto}${maxLengthAttr}${ph}>${esc(value)}</textarea>`;
+    control = `<textarea id="${id}" name="${id}" rows="${rows}"${cls}${auto}${maxLengthAttr}${ph}${reqAttr}${readAttr}${disAttr}>${esc(value)}</textarea>`;
+  } else if (disabled) {
+    // Disabled controls are omitted from FormData — keep a hidden twin for submit.
+    control = `<input type="hidden" name="${id}" value="${esc(value)}"><input id="${id}" type="${esc(type)}" value="${esc(value)}" disabled${required ? " aria-required=\"true\"" : ""}${auto}${maxLengthAttr}${ph}${cls}>`;
   } else {
-    control = `<input id="${id}" name="${id}" type="${esc(type)}"${auto}${maxLengthAttr}${val}${ph}>`;
+    control = `<input id="${id}" name="${id}" type="${esc(type)}"${cls}${auto}${maxLengthAttr}${val}${ph}${reqAttr}${readAttr}>`;
   }
   return `<div class="field"${when}>
-    <label for="${id}">${esc(label)}</label>
+    <label for="${id}">${esc(label)}${reqLabel}</label>
     ${control}
     ${hint ? `<p class="hint">${esc(hint)}</p>` : ""}
   </div>`;
@@ -73,9 +88,18 @@ export function claimFieldsHtml() {
       ${field({ id: "clientName", label: "Client's full name", autocomplete: "name", placeholder: "Margaret Hollis" })}
       ${field({ id: "clientAddr", label: "Client's address", autocomplete: "street-address", placeholder: "14 Weaver's Row, Leeds LS6 2QT" })}
       ${pair(
-        field({ id: "crimeRef", label: "Action Fraud reference", placeholder: "NFRC260114882" }),
+        field({
+          id: "crimeRef",
+          label: "Action Fraud reference",
+          placeholder: "NFRC260114882",
+        }),
         field({ id: "ourRef", label: "Our reference", placeholder: "EL/2026/0431" }),
       )}
+      ${field({
+        id: "policeUrn",
+        label: "Police crime number (if different)",
+        placeholder: "WY/26/014882",
+      })}
       ${pair(
         field({ id: "fraudDates", label: "When it happened", placeholder: "11 September and 4 October 2025" }),
         field({ id: "lossValue", label: "Value at the time", placeholder: "£184,500" }),
@@ -157,7 +181,10 @@ export function claimFieldsHtml() {
       ${field({
         id: "feeEarner",
         label: "Fee earner and contact",
-        placeholder: "Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk",
+        value: FIXED_FEE_EARNER_LINE,
+        required: true,
+        disabled: true,
+        hint: "Fixed to Abigail Charlotte Wills, the SRA-regulated solicitor named on organisation 510498.",
       })}
       ${field({ id: "copyTo", label: "Copy to", value: "CPS Proceeds of Crime Division" })}
     `)}
@@ -170,17 +197,31 @@ export function releaseFieldsHtml() {
       ${field({ id: "court", label: "Court", value: "City of London Magistrates' Court" })}
       ${pair(
         field({ id: "caseRef", label: "Case reference", placeholder: "to be allocated" }),
-        field({ id: "before", label: "Before", placeholder: "District Judge ____ / the bench" }),
+        field({ id: "before", label: "Before", placeholder: "the District Judge assigned to the application" }),
       )}
+      <p class="hint">Leave the case number and judge blank on a lodging draft. The court office allocates both.</p>
       ${pair(
         field({ id: "orderDated", label: "Dated", type: "date" }),
         field({ id: "freezeDate", label: "Crypto wallet freezing order made on", type: "date" }),
       )}
+      <p class="hint">Leave Dated blank. The court inserts that date when it makes the order. The freezing-order date is the date of the existing section 303Z37 order.</p>
       ${field({ id: "applicant", label: "Applicant", autocomplete: "name", placeholder: "full legal name" })}
+      ${field({
+        id: "clientAddr",
+        label: "Applicant's address",
+        autocomplete: "street-address",
+        placeholder: "14 Weaver's Row, Leeds LS6 2QT",
+      })}
+      ${field({
+        id: "crimeRef",
+        label: "Action Fraud reference",
+        placeholder: "NFRC260114882",
+      })}
       ${field({
         id: "respondent",
         label: "Respondent",
-        placeholder: "Chief Constable of ___ / National Crime Agency / HMRC",
+        placeholder: "The Chief Officer of Police for West Yorkshire",
+        hint: "Statutory style: the Chief Officer of Police for the force, or the enforcement officer named on the freezing order. Cryptoasset freezing orders are obtained by that officer, not by the court of its own motion.",
       })}
     `)}
     ${group(2, "The application before the court", `
@@ -193,9 +234,11 @@ export function releaseFieldsHtml() {
         field({ id: "provider", label: "Tracing report of", placeholder: "Elliptic" }),
         field({ id: "reportDate", label: "Tracing report dated", type: "date" }),
       )}
+      <p class="hint">Date as it appears on the exhibit. This tool does not retrieve or verify the report from the provider.</p>
       ${field({
         id: "hearing",
         label: "And upon hearing",
+        hint: "Intended recital after the hearing. The court amends this when it makes the order.",
         options: [
           { value: "", label: "Select" },
           {
@@ -224,7 +267,13 @@ export function releaseFieldsHtml() {
         label: "Quantity and asset to be released (the Released Assets)",
         placeholder: "184,500 USDT",
       })}
-      ${field({ id: "wallet", label: "Crypto wallet address", placeholder: "0x…" })}
+      ${field({
+        id: "wallet",
+        label: "Crypto wallet address",
+        placeholder: "0x9f2b41c8e07dd5a3f190bb7c26e4a5109d3f41ce",
+        maxlength: 42,
+        hint: "Full 0x + 40 hexadecimal characters. Printed on its own line in the draft.",
+      })}
       ${field({ id: "exchange", label: "Administered by", placeholder: "Bitfinex" })}
       ${field({
         id: "destination",
@@ -244,7 +293,9 @@ export function releaseFieldsHtml() {
       ${field({
         id: "destinationWallet",
         label: "Wallet address nominated by the Applicant",
-        placeholder: "0x…",
+        placeholder: "0x3ad188b0c41e9f2b07dd5a3f190bb7c26e4a5109",
+        maxlength: 42,
+        hint: "Full 0x + 40 hexadecimal characters. Do not wrap this inside a sentence.",
         showWhen: "destination=the wallet address nominated by the Applicant",
       })}
       ${field({
@@ -278,13 +329,16 @@ export function releaseFieldsHtml() {
         placeholder: "£",
         showWhen: "costs=pay",
       })}
-      <p class="hint">Liberty to apply in respect of the implementation of paragraph 2.</p>
+      <p class="hint">Liberty to apply in respect of the implementation of paragraph [2].</p>
     `)}
     ${group(5, "Fee earner", `
       ${field({
         id: "feeEarner",
         label: "Fee earner and contact",
-        placeholder: "Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk",
+        value: FIXED_FEE_EARNER_LINE,
+        required: true,
+        disabled: true,
+        hint: "Fixed to the SRA-regulated solicitor named on the firm register.",
       })}
     `)}
   `;

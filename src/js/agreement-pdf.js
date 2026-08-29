@@ -1,12 +1,15 @@
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
+import { privacyNoticeUrl } from "./agreement-data.js";
 
 const TEMPLATE = "/documents/client-authority-consent.pdf";
 const SCRIPT_FONT = "/fonts/GreatVibes-Regular.ttf";
 const PAGE_H = 842.88;
 const ink = rgb(10 / 255, 32 / 255, 40 / 255);
+const bodyInk = rgb(20 / 255, 37 / 255, 43 / 255);
 const pen = rgb(18 / 255, 24 / 255, 48 / 255);
 const paper = rgb(1, 1, 1);
+const PRIVACY_LINE = { page: 3, x: 51, y0: 467.32, y1: 478.39, w: 493.47, size: 10, leading: 15 };
 
 function safeText(value) {
   return String(value || "")
@@ -53,6 +56,52 @@ function fitSize(font, text, maxWidth, size, minSize) {
   return next;
 }
 
+function wrapLines(font, text, size, maxWidth) {
+  const words = safeText(text).split(" ").filter(Boolean);
+  const lines = [];
+  let line = "";
+  for (const word of words) {
+    const next = line ? `${line} ${word}` : word;
+    if (font.widthOfTextAtSize(next, size) <= maxWidth) line = next;
+    else {
+      if (line) lines.push(line);
+      line = word;
+    }
+  }
+  if (line) lines.push(line);
+  return lines.length ? lines : [""];
+}
+
+function fillPrivacyUrl(page, font, url) {
+  const text = `legitimate interest in investigating and recovering assets. Our privacy notice is at ${safeText(url)}.`;
+  let size = PRIVACY_LINE.size;
+  let lines = wrapLines(font, text, size, PRIVACY_LINE.w);
+  while (lines.length > 2 && size > 8) {
+    size -= 0.3;
+    lines = wrapLines(font, text, size, PRIVACY_LINE.w);
+  }
+  if (lines.length > 2) {
+    lines = [lines[0], fitText(font, lines.slice(1).join(" "), size, PRIVACY_LINE.w)];
+  }
+  const coverH = PRIVACY_LINE.leading * lines.length + 2;
+  page.drawRectangle({
+    x: PRIVACY_LINE.x - 1.2,
+    y: PAGE_H - PRIVACY_LINE.y0 - coverH,
+    width: PRIVACY_LINE.w + 3,
+    height: coverH,
+    color: paper,
+  });
+  lines.forEach((line, index) => {
+    page.drawText(line, {
+      x: PRIVACY_LINE.x,
+      y: PAGE_H - (PRIVACY_LINE.y1 + index * PRIVACY_LINE.leading) + 0.5,
+      size,
+      font,
+      color: bodyInk,
+    });
+  });
+}
+
 function fill(page, font, slot, text) {
   const value = safeText(text);
   const pad = slot.pad ?? 1.2;
@@ -94,6 +143,7 @@ export async function generateAgreementPdf(data, templateBytes, scriptFontBytes)
   );
   pdf.registerFontkit(fontkit);
   const font = await pdf.embedFont(StandardFonts.Helvetica);
+  const times = await pdf.embedFont(StandardFonts.TimesRoman);
   const script = await pdf.embedFont(
     await loadBytes(SCRIPT_FONT, scriptFontBytes, "The signature font could not be loaded."),
     { subset: true },
@@ -130,6 +180,7 @@ export async function generateAgreementPdf(data, templateBytes, scriptFontBytes)
   for (const slot of slots) {
     fill(pages[slot.page], slot.font || font, slot, slot.text);
   }
+  fillPrivacyUrl(pages[PRIVACY_LINE.page], times, privacyNoticeUrl(data.privacyUrl));
 
   const client = safeText(data.clientName);
   const reference = safeText(data.matterReference);

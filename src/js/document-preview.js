@@ -47,6 +47,7 @@ function ensureDialog() {
   dialog = document.createElement("dialog");
   dialog.className = "preview-dialog";
   dialog.setAttribute("aria-labelledby", "preview-dialog-title");
+  dialog.setAttribute("closedby", "closerequest");
   dialog.innerHTML = `
     <div class="preview-panel">
       <header class="preview-head">
@@ -78,9 +79,6 @@ function ensureDialog() {
 
   closeBtn.addEventListener("click", () => {
     if (!closeBtn.disabled) dialog.close();
-  });
-  dialog.addEventListener("click", (event) => {
-    if (event.target === dialog && !closeBtn.disabled) dialog.close();
   });
   dialog.addEventListener("close", () => {
     generation += 1;

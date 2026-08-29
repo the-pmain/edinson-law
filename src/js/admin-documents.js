@@ -2,7 +2,6 @@ import {
   agreementFilename,
   agreementFromRecord,
   buildAgreement,
-  feeEarnerLine,
   todayIso,
 } from "./agreement-data.js";
 import {
@@ -15,6 +14,7 @@ import { openDocumentPreview } from "./document-preview.js";
 import {
   agreementFieldsHtml,
   claimFieldsHtml,
+  FIXED_FEE_EARNER_LINE,
   releaseFieldsHtml,
 } from "../lib/matter-fields.js";
 import { applyMatterMock, MATTER_MOCK } from "./matter-forms.js";
@@ -55,7 +55,7 @@ function syncShowWhen(form) {
 
 function prefill(kind, item, payload) {
   const name = item.full_name || "";
-  const feeEarner = feeEarnerLine(payload?.people, item.instructed_person_slug);
+  const feeEarner = FIXED_FEE_EARNER_LINE;
   if (kind === "agreement") {
     return {
       clientName: name,
@@ -80,6 +80,12 @@ function prefill(kind, item, payload) {
     court: "City of London Magistrates' Court",
     feeEarner,
   };
+}
+
+function lockFeeEarner(form) {
+  form.querySelectorAll('[name="feeEarner"], #feeEarner').forEach((node) => {
+    node.value = FIXED_FEE_EARNER_LINE;
+  });
 }
 
 function fieldsHtml(kind) {
@@ -362,7 +368,7 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
     }
     const { formValues, matterPdf } = await import("./matter-download.js");
     const kind = activeKind;
-    await previewPacked(() => matterPdf(kind, formValues(form)), kind);
+    await previewPacked(() => matterPdf(kind, formValues(form), { people: payload.people }), kind);
   };
 
   const openCompose = (kind, item) => {
@@ -396,7 +402,9 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
       ...prefill(kind, item, payload),
       ...(kind === "matter" && !saved ? fieldsForKind(item.documents, "claim") : {}),
       ...fieldsForKind(item.documents, kind),
+      feeEarner: FIXED_FEE_EARNER_LINE,
     });
+    lockFeeEarner(form);
     const dob = form.elements.namedItem("clientDob");
     if (dob) dob.max = todayIso();
     syncShowWhen(form);
@@ -435,7 +443,7 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
     const fields = savedFields(item, kind);
     return previewPacked(async () => {
       const { matterPdf } = await import("./matter-download.js");
-      return matterPdf(kind, fields);
+      return matterPdf(kind, fields, { people: payload.people });
     }, kind);
   };
 
@@ -455,13 +463,25 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
     showComposeStatus("");
     setBarBusy(true, { save: updating ? "Updating…" : "Saving…" });
     try {
+      const rawFields = formFields(form);
+      rawFields.feeEarner = FIXED_FEE_EARNER_LINE;
+      lockFeeEarner(form);
+      const { validateMatterFields } = await import("./matter-validate.js");
+      const validation = validateMatterFields(rawFields, { people: payload.people });
+      if (!validation.ok) {
+        const top = validation.critical.slice(0, 2).map((item) => item.message).join(" ");
+        showComposeStatus(top || "Fix the highlighted document issues before saving.");
+        setBarBusy(false);
+        saving = false;
+        return;
+      }
       const response = await fetch("/api/admin/clients-documents", {
         method: "PUT",
         headers: { Accept: "application/json", "Content-Type": "application/json" },
         body: JSON.stringify({
           prepare_client_id: activeItem.id,
           kind: activeKind,
-          fields: formFields(form),
+          fields: rawFields,
         }),
       });
       const body = await response.json().catch(() => ({}));
@@ -492,6 +512,7 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
     if (!applyMatterMock(form, activeKind, {
       keepFilled: ["clientName", "applicant", "wsName"],
     })) return;
+    lockFeeEarner(form);
     syncShowWhen(form);
   });
   previewBtn.addEventListener("click", async () => {
