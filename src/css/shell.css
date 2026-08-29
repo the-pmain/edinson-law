@@ -15,8 +15,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
-  padding: 0.5rem var(--page-pad);
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
   border-bottom: var(--border-width) solid var(--color-border);
   background: var(--edison-white);
   position: sticky;
@@ -40,15 +40,16 @@
 
 .compact-header .brand,
 .drawer .brand {
-  flex: none;
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 .compact-header .brand-lockup,
 .drawer .brand-lockup {
   filter: brightness(0);
   width: auto;
-  height: 2.75rem;
-  max-width: min(11rem, 46vw);
+  height: 2.25rem;
+  max-width: min(8.75rem, 38vw);
 }
 
 .header-nav {
@@ -82,7 +83,7 @@ html:not([lang^="en"]) .header-nav a {
 .header-tools {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0;
   flex: none;
 }
 
@@ -306,21 +307,26 @@ html:not([lang^="en"]) .header-nav a {
   border-radius: var(--radius-sm);
 }
 
-.icon-btn svg {
-  width: 20px;
-  height: 20px;
+.icon-btn:disabled,
+.icon-btn[aria-busy="true"] {
+  opacity: 0.45;
+  cursor: wait;
 }
 
 .menu-btn {
   display: inline-flex;
-  width: auto;
+  width: 44px;
   gap: 0.4rem;
-  padding: 0 0.65rem;
+  padding: 0;
   font-family: var(--font-ui);
   font-size: var(--text-label);
   font-weight: 600;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
+}
+
+.menu-btn span {
+  display: none;
 }
 
 .rail {
@@ -356,7 +362,7 @@ html:not([lang^="en"]) .header-nav a {
   gap: var(--space-4);
   color: #a9bfba;
   font-size: 1rem;
-  min-width: 12rem;
+  min-width: 0;
 }
 
 .footer-brand a {
@@ -394,8 +400,8 @@ html:not([lang^="en"]) .header-nav a {
 
 .footer-links {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.65rem 1.5rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.55rem;
   align-content: start;
 }
 
@@ -557,15 +563,45 @@ html:not([lang^="en"]) .header-nav a {
   color: var(--edison-signal-deep);
 }
 
+@media (min-width: 480px) {
+  .footer-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem 1.5rem;
+  }
+
+  .footer-brand {
+    min-width: 12rem;
+  }
+}
+
 @media (min-width: 768px) {
   .compact-header {
     gap: var(--space-6);
     padding: 0.75rem var(--page-pad);
   }
 
-  .compact-header .brand-lockup {
+  .compact-header .brand,
+  .drawer .brand {
+    flex: none;
+  }
+
+  .compact-header .brand-lockup,
+  .drawer .brand-lockup {
     height: 3.25rem;
     max-width: min(13rem, 40vw);
+  }
+
+  .header-tools {
+    gap: 0.25rem;
+  }
+
+  .menu-btn {
+    width: auto;
+    padding: 0 0.65rem;
+  }
+
+  .menu-btn span {
+    display: inline;
   }
 
   .footer {

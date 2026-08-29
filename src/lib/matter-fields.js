@@ -157,7 +157,7 @@ export function claimFieldsHtml() {
       ${field({
         id: "feeEarner",
         label: "Fee earner and contact",
-        placeholder: "Name · telephone · email",
+        placeholder: "Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk",
       })}
       ${field({ id: "copyTo", label: "Copy to", value: "CPS Proceeds of Crime Division" })}
     `)}
@@ -284,7 +284,7 @@ export function releaseFieldsHtml() {
       ${field({
         id: "feeEarner",
         label: "Fee earner and contact",
-        placeholder: "Name · telephone · email",
+        placeholder: "Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk",
       })}
     `)}
   `;

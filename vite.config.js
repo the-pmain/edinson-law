@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from "vite";
 import { readdirSync, statSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
+import { handleAdminClientsDocuments, isAdminClientsDocumentsRequest } from "./server/clients-documents.js";
 import { handleAdminPrepareClients, isAdminPrepareClientsRequest } from "./server/admin-prepare-clients.js";
 import { handlePrepareClients, isPrepareClientsRequest } from "./server/prepare-clients.js";
 
@@ -29,6 +30,7 @@ export default defineConfig(({ mode }) => {
       port: 5173,
       host: true,
       open: true,
+      hmr: false,
     },
     plugins: [
       {
@@ -48,6 +50,10 @@ export default defineConfig(({ mode }) => {
             }
             if (isAdminPrepareClientsRequest(req)) {
               handleAdminPrepareClients(req, res, env).catch(next);
+              return;
+            }
+            if (isAdminClientsDocumentsRequest(req)) {
+              handleAdminClientsDocuments(req, res, env).catch(next);
               return;
             }
             if (!isPrepareClientsRequest(req)) {

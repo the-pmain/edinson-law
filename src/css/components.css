@@ -59,6 +59,17 @@
   color: var(--edison-ink);
 }
 
+.btn-muted {
+  background: var(--edison-slate);
+  color: var(--edison-white);
+}
+
+.btn-muted:hover,
+.btn-muted:focus-visible {
+  background: var(--edison-ink-raised);
+  color: var(--edison-white);
+}
+
 .crumbs {
   display: flex;
   flex-wrap: wrap;
@@ -216,6 +227,9 @@
 .field input:not([type="checkbox"]),
 .field select,
 .field textarea {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   min-height: 48px;
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-sm);
@@ -250,7 +264,9 @@
 
 .form-submit {
   width: 100%;
+  max-width: 100%;
   min-height: 3.25rem;
+  white-space: normal;
 }
 
 .field.is-invalid .error {
@@ -286,6 +302,10 @@
 .btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+.btn:disabled[aria-busy="true"] {
+  cursor: wait;
 }
 
 .checkbox span {
@@ -1305,8 +1325,33 @@
   display: none;
 }
 
+.admin-doc-menu button.is-saved {
+  font-weight: 600;
+}
+
+.admin-compose-note {
+  margin: 0;
+}
+
+.admin-compose-status.is-ok {
+  color: var(--edison-signal-deep);
+}
+
 .admin-compose-dialog .preview-bar {
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.admin-compose-dialog .preview-bar [data-compose-mock] {
+  width: auto;
+  min-width: 0;
+  margin-inline-end: auto;
+}
+
+.admin-compose-dialog .preview-bar [data-compose-mock][hidden] {
+  display: none;
 }
 
 .admin-compose-dialog .preview-bar .btn {
@@ -1314,13 +1359,13 @@
 }
 
 @media (min-width: 720px) {
-  .admin-compose-dialog .preview-bar {
-    justify-items: end;
-  }
-
   .admin-compose-dialog .preview-bar .btn {
     width: auto;
-    min-width: 14rem;
+    min-width: 10.5rem;
+  }
+
+  .admin-compose-dialog .preview-bar [data-compose-mock] {
+    min-width: 0;
   }
 }
 

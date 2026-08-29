@@ -679,13 +679,14 @@
 
 .contact-page {
   display: grid;
-  gap: var(--space-6);
-  padding: var(--space-6) 0 var(--section-y);
+  gap: var(--space-5);
+  padding: var(--space-5) 0 var(--section-y);
+  width: min(var(--content-max), calc(100% - 3rem));
 }
 
 .contact-layout {
   display: grid;
-  gap: var(--cluster-gap);
+  gap: var(--space-8);
   align-items: start;
   min-width: 0;
 }
@@ -705,23 +706,34 @@
 
 .contact-copy h1 {
   margin: 0;
-  max-width: min(16ch, 100%);
+  max-width: 100%;
+  font-size: 1.5rem;
+  line-height: 1.18;
 }
 
 .contact-copy .lead {
   max-width: min(36rem, 100%);
+  font-size: 1rem;
 }
 
 .contact-layout .form {
   width: 100%;
   max-width: none;
+  min-width: 0;
   margin: 0;
+}
+
+.contact-layout .form-submit {
+  white-space: normal;
+  height: auto;
+  padding-block: 0.85rem;
+  line-height: 1.25;
 }
 
 .safety-callout {
   display: grid;
   gap: var(--space-2);
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-4);
   border: var(--border-width) solid var(--edison-copper);
   background: var(--edison-copper-soft);
 }
@@ -737,6 +749,11 @@
 .contact-direct {
   display: grid;
   gap: var(--space-2);
+}
+
+.contact-direct p,
+.contact-direct a {
+  overflow-wrap: anywhere;
 }
 
 .contact-direct a {
@@ -1384,6 +1401,26 @@ body[data-path="/about/"] .footer {
     gap: var(--space-6);
   }
 
+  .contact-copy h1 {
+    max-width: min(16ch, 100%);
+    font-size: var(--text-h1);
+    line-height: var(--leading-heading);
+  }
+
+  .contact-copy .lead {
+    font-size: var(--text-lead);
+  }
+
+  .contact-page {
+    gap: var(--space-6);
+    padding: var(--space-6) 0 var(--section-y);
+    width: min(var(--content-max), calc(100% - (var(--page-pad) * 2)));
+  }
+
+  .safety-callout {
+    padding: var(--space-4) var(--space-5);
+  }
+
   .cta-band,
   .london-copy,
   .cta-visual .cta-band {
@@ -1560,7 +1597,23 @@ body[data-path="/about/"] .footer {
 
   .contact-layout {
     grid-template-columns: minmax(16rem, 0.9fr) minmax(20rem, 1.1fr);
+    grid-template-areas:
+      "intro form"
+      "aside form";
     column-gap: var(--space-12);
+    row-gap: var(--space-8);
+  }
+
+  .contact-intro {
+    grid-area: intro;
+  }
+
+  .contact-aside {
+    grid-area: aside;
+  }
+
+  .contact-layout .form {
+    grid-area: form;
   }
 
   .about-open {
@@ -2174,18 +2227,19 @@ html[data-admin-session="1"] .admin-open[hidden] {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 10rem;
+  min-height: min(40rem, calc(100dvh - 14rem));
   padding: var(--space-8) 0;
   border-top: var(--border-width) solid var(--color-border);
 }
 
 .admin-spinner {
-  width: 1.5rem;
-  height: 1.5rem;
-  border: var(--border-width) solid var(--edison-line);
+  box-sizing: border-box;
+  width: 4rem;
+  height: 4rem;
+  border: 0.3rem solid color-mix(in srgb, var(--edison-signal-deep) 18%, var(--edison-line));
   border-top-color: var(--edison-signal-deep);
   border-radius: 50%;
-  animation: admin-spin 0.7s linear infinite;
+  animation: admin-spin 0.75s linear infinite;
 }
 
 @keyframes admin-spin {
@@ -2246,6 +2300,7 @@ html[data-admin-session="1"] .admin-open[hidden] {
 
 .admin-table td:last-child {
   vertical-align: middle;
+  white-space: normal;
 }
 
 .admin-table .admin-actions {
@@ -2253,10 +2308,12 @@ html[data-admin-session="1"] .admin-open[hidden] {
   align-items: center;
   justify-content: flex-end;
   gap: 0.1rem;
+  flex-wrap: wrap;
 }
 
 .admin-table .admin-preview,
-.admin-table .admin-doc-menu-btn {
+.admin-table .admin-doc-menu-btn,
+.admin-table .admin-doc-list-btn {
   width: 44px;
   height: 44px;
   color: var(--edison-ink);
@@ -2264,8 +2321,14 @@ html[data-admin-session="1"] .admin-open[hidden] {
 
 .admin-table .admin-preview:hover,
 .admin-table .admin-doc-menu-btn:hover,
-.admin-table .admin-doc-menu-btn[aria-expanded="true"] {
+.admin-table .admin-doc-menu-btn[aria-expanded="true"],
+.admin-table .admin-doc-list-btn:hover,
+.admin-table .admin-doc-list-btn[aria-expanded="true"] {
   background: var(--edison-paper);
+}
+
+.admin-table .admin-doc-list-btn:not(:disabled) {
+  color: var(--edison-signal-bright);
 }
 
 .admin-empty {

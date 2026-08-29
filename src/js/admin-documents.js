@@ -2,15 +2,22 @@ import {
   agreementFilename,
   agreementFromRecord,
   buildAgreement,
-  resolvePerson,
+  feeEarnerLine,
   todayIso,
 } from "./agreement-data.js";
+import {
+  COMPOSE_KINDS,
+  DOCUMENT_LABELS,
+  fieldsForKind,
+  kindSaved,
+} from "./clients-documents-model.js";
 import { openDocumentPreview } from "./document-preview.js";
 import {
   agreementFieldsHtml,
   claimFieldsHtml,
   releaseFieldsHtml,
 } from "../lib/matter-fields.js";
+import { applyMatterMock, MATTER_MOCK } from "./matter-forms.js";
 
 const ADMIN_COPY = {
   title: "Preview",
@@ -21,24 +28,6 @@ const ADMIN_COPY = {
   fail: "The document could not be prepared. Close this window and try again.",
   signing: "Downloading…",
 };
-
-const MENU_ITEMS = [
-  { kind: "agreement", label: "Client authority form" },
-  { kind: "claim", label: "Victim claim" },
-  { kind: "release", label: "Draft release order" },
-];
-
-const TITLES = {
-  agreement: "Client authority form",
-  claim: "Victim claim",
-  release: "Draft release order",
-};
-
-function feeEarnerLine(people, slug) {
-  const person = resolvePerson(people, slug);
-  if (!person) return "";
-  return [person.name, person.phone, person.email].filter(Boolean).join(" · ");
-}
 
 function setStatus(node, text) {
   if (node) node.textContent = text || "";
@@ -76,7 +65,7 @@ function prefill(kind, item, payload) {
       clientDob: String(item.date_of_birth || "").slice(0, 10),
     };
   }
-  if (kind === "claim") {
+  if (kind === "claim" || kind === "matter") {
     return {
       clientName: name,
       court: "City of London Magistrates' Court",
@@ -117,25 +106,62 @@ function firstAgreementInvalid(form) {
   return null;
 }
 
-async function previewPacked(prepare) {
-  await openDocumentPreview({
-    copy: ADMIN_COPY,
+function formFields(form) {
+  const values = {};
+  new FormData(form).forEach((value, name) => {
+    values[name] = String(value || "").trim();
+  });
+  return values;
+}
+
+function previewPacked(prepare, kind) {
+  return openDocumentPreview({
+    copy: {
+      ...ADMIN_COPY,
+      title: DOCUMENT_LABELS[kind] || "Document",
+    },
     confirm: false,
     prepare,
+    wait: "ready",
   });
 }
 
-export function bindAdminDocuments({ payload, statusNode }) {
+function markBusy(button, on, busyText) {
+  if (!button) return;
+  if (on) {
+    if (button.dataset.idle == null) button.dataset.idle = button.textContent;
+    button.disabled = true;
+    button.setAttribute("aria-busy", "true");
+    if (busyText) button.textContent = busyText;
+    return;
+  }
+  button.disabled = false;
+  button.removeAttribute("aria-busy");
+  if (button.dataset.idle != null) {
+    button.textContent = button.dataset.idle;
+    delete button.dataset.idle;
+  }
+}
+
+export function bindAdminDocuments({ payload, statusNode, onSaved }) {
   const menu = document.createElement("div");
   menu.className = "admin-doc-menu";
   menu.id = "admin-doc-menu";
   menu.setAttribute("role", "menu");
-  menu.setAttribute("aria-label", "Create a document");
+  menu.setAttribute("aria-label", "Add or edit a document");
   menu.hidden = true;
-  menu.innerHTML = MENU_ITEMS.map(
-    (item) => `<button type="button" role="menuitem" data-admin-create="${item.kind}">${item.label}</button>`,
+  menu.innerHTML = COMPOSE_KINDS.map(
+    (kind) => `<button type="button" role="menuitem" data-admin-create="${kind}">${DOCUMENT_LABELS[kind]}</button>`,
   ).join("");
   document.body.append(menu);
+
+  const savedMenu = document.createElement("div");
+  savedMenu.className = "admin-doc-menu";
+  savedMenu.id = "admin-doc-saved-menu";
+  savedMenu.setAttribute("role", "menu");
+  savedMenu.setAttribute("aria-label", "Saved documents");
+  savedMenu.hidden = true;
+  document.body.append(savedMenu);
 
   const compose = document.createElement("dialog");
   compose.className = "admin-compose-dialog";
@@ -148,12 +174,15 @@ export function bindAdminDocuments({ payload, statusNode }) {
       </header>
       <div class="admin-compose-body">
         <form class="form matter-form admin-compose-form" id="admin-compose-form" novalidate>
+          <p class="admin-compose-note muted" data-compose-saved hidden>This document is already on file. Saving will replace it.</p>
           <p class="admin-compose-status" data-compose-status hidden></p>
           <div class="admin-compose-fields"></div>
         </form>
       </div>
       <div class="preview-bar">
-        <button class="btn btn-signal" type="submit" form="admin-compose-form">Preview document</button>
+        <button class="btn btn-muted" type="button" data-compose-mock hidden>Insert mock</button>
+        <button class="btn btn-ghost" type="button" data-compose-preview>Preview</button>
+        <button class="btn btn-signal" type="submit" form="admin-compose-form" data-compose-save>Save</button>
       </div>
     </div>
   `;
@@ -163,32 +192,74 @@ export function bindAdminDocuments({ payload, statusNode }) {
   const form = compose.querySelector("#admin-compose-form");
   const fields = compose.querySelector(".admin-compose-fields");
   const composeStatus = compose.querySelector("[data-compose-status]");
+  const savedNote = compose.querySelector("[data-compose-saved]");
+  const saveBtn = compose.querySelector("[data-compose-save]");
+  const previewBtn = compose.querySelector("[data-compose-preview]");
+  const mockBtn = compose.querySelector("[data-compose-mock]");
   const closeBtn = compose.querySelector(".preview-close");
 
   let menuButton = null;
+  let savedMenuButton = null;
   let activeItem = null;
   let activeKind = "";
+  let saving = false;
+  let previewing = false;
 
   const closeMenu = () => {
     menu.hidden = true;
+    savedMenu.hidden = true;
+    savedMenu.replaceChildren();
     if (menuButton) {
       menuButton.setAttribute("aria-expanded", "false");
       menuButton = null;
     }
+    if (savedMenuButton) {
+      savedMenuButton.setAttribute("aria-expanded", "false");
+      savedMenuButton = null;
+    }
   };
 
-  const placeMenu = (button) => {
+  const showComposeStatus = (text, ok = false) => {
+    composeStatus.hidden = !text;
+    composeStatus.textContent = text || "";
+    composeStatus.classList.toggle("is-ok", Boolean(ok && text));
+  };
+
+  const paintMenu = (item) => {
+    menu.querySelectorAll("[data-admin-create]").forEach((button) => {
+      const kind = button.getAttribute("data-admin-create");
+      const saved = kindSaved(item?.documents, kind);
+      const label = DOCUMENT_LABELS[kind];
+      button.textContent = saved ? `${label} · Saved` : `Add ${label.toLowerCase()}`;
+      button.classList.toggle("is-saved", saved);
+    });
+  };
+
+  const paintSavedMenu = (item) => {
+    const kinds = COMPOSE_KINDS.filter((kind) => kindSaved(item?.documents, kind));
+    savedMenu.replaceChildren();
+    kinds.forEach((kind) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.setAttribute("role", "menuitem");
+      button.dataset.adminPreviewKind = kind;
+      button.textContent = DOCUMENT_LABELS[kind];
+      savedMenu.append(button);
+    });
+  };
+
+  const placeAt = (node, button) => {
     const rect = button.getBoundingClientRect();
-    menu.hidden = false;
-    const height = menu.offsetHeight;
-    const width = menu.offsetWidth;
+    node.hidden = false;
+    const height = node.offsetHeight;
+    const width = node.offsetWidth;
     const below = window.innerHeight - rect.bottom;
     const top = below < height + 8 && rect.top > height + 8
       ? rect.top - height - 6
       : rect.bottom + 6;
     const left = Math.min(rect.right - width, window.innerWidth - width - 8);
-    menu.style.top = `${Math.max(8, top)}px`;
-    menu.style.left = `${Math.max(8, left)}px`;
+    node.style.top = `${Math.max(8, top)}px`;
+    node.style.left = `${Math.max(8, left)}px`;
   };
 
   const toggleMenu = (button, item) => {
@@ -200,7 +271,26 @@ export function bindAdminDocuments({ payload, statusNode }) {
     activeItem = item;
     menuButton = button;
     button.setAttribute("aria-expanded", "true");
-    placeMenu(button);
+    paintMenu(item);
+    placeAt(menu, button);
+  };
+
+  const toggleSavedMenu = (button, item) => {
+    if (button.disabled) return;
+    if (savedMenuButton === button && !savedMenu.hidden) {
+      closeMenu();
+      return;
+    }
+    closeMenu();
+    activeItem = item;
+    savedMenuButton = button;
+    button.setAttribute("aria-expanded", "true");
+    paintSavedMenu(item);
+    if (!savedMenu.childElementCount) {
+      closeMenu();
+      return;
+    }
+    placeAt(savedMenu, button);
   };
 
   const previewAgreement = (item) => {
@@ -209,27 +299,44 @@ export function bindAdminDocuments({ payload, statusNode }) {
       return;
     }
     setStatus(statusNode, "");
+    const saved = fieldsForKind(item.documents, "agreement");
     return previewPacked(async () => {
-      const data = agreementFromRecord(item, payload);
+      const data = Object.keys(saved).length
+        ? buildAgreement(
+          {
+            clientName: saved.clientName,
+            clientEmail: saved.clientEmail,
+            clientPhone: saved.clientPhone,
+            clientOccupation: saved.clientOccupation,
+            clientDob: saved.clientDob,
+          },
+          payload,
+          {
+            instructSlug: item?.instructed_person_slug || "",
+            when: item?.created_at,
+          },
+        )
+        : agreementFromRecord(item, payload);
       const { generateAgreementPdf } = await import("./agreement-pdf.js");
       return {
         bytes: await generateAgreementPdf(data),
         filename: agreementFilename(data.matterReference),
       };
-    });
+    }, "agreement");
   };
 
   const previewFromForm = async () => {
     if (activeKind === "agreement") {
       const invalid = firstAgreementInvalid(form);
       if (invalid) {
-        composeStatus.hidden = false;
-        composeStatus.textContent = "Check the highlighted fields and try again.";
+        showComposeStatus("Check the highlighted fields and try again.");
         invalid.focus?.();
         return;
       }
-      composeStatus.hidden = true;
-      const values = Object.fromEntries(new FormData(form).entries());
+    }
+    showComposeStatus("");
+    if (activeKind === "agreement") {
+      const values = formFields(form);
       await previewPacked(async () => {
         const data = buildAgreement(
           {
@@ -250,13 +357,12 @@ export function bindAdminDocuments({ payload, statusNode }) {
           bytes: await generateAgreementPdf(data),
           filename: agreementFilename(data.matterReference),
         };
-      });
+      }, "agreement");
       return;
     }
-
     const { formValues, matterPdf } = await import("./matter-download.js");
     const kind = activeKind;
-    await previewPacked(() => matterPdf(kind, formValues(form)));
+    await previewPacked(() => matterPdf(kind, formValues(form)), kind);
   };
 
   const openCompose = (kind, item) => {
@@ -265,14 +371,32 @@ export function bindAdminDocuments({ payload, statusNode }) {
       setStatus(statusNode, "Agreement defaults are missing.");
       return;
     }
+    if (!item?.id) {
+      setStatus(statusNode, "That record could not be found.");
+      return;
+    }
+    if (!COMPOSE_KINDS.includes(kind)) {
+      setStatus(statusNode, "That document is previewed from the client record.");
+      return;
+    }
     activeItem = item;
     activeKind = kind;
-    title.textContent = TITLES[kind] || "New document";
+    const saved = kindSaved(item.documents, kind);
+    title.textContent = DOCUMENT_LABELS[kind] || "Document";
+    savedNote.hidden = !saved;
+    saveBtn.textContent = saved ? "Update" : "Save";
+    delete saveBtn.dataset.idle;
+    delete previewBtn.dataset.idle;
+    previewBtn.textContent = "Preview";
+    mockBtn.hidden = !MATTER_MOCK[kind];
     fields.innerHTML = fieldsHtml(kind);
     form.reset();
-    composeStatus.hidden = true;
-    composeStatus.textContent = "";
-    fillForm(form, prefill(kind, item, payload));
+    showComposeStatus("");
+    fillForm(form, {
+      ...prefill(kind, item, payload),
+      ...(kind === "matter" && !saved ? fieldsForKind(item.documents, "claim") : {}),
+      ...fieldsForKind(item.documents, kind),
+    });
     const dob = form.elements.namedItem("clientDob");
     if (dob) dob.max = todayIso();
     syncShowWhen(form);
@@ -280,26 +404,128 @@ export function bindAdminDocuments({ payload, statusNode }) {
     title.focus();
   };
 
+  const setBarBusy = (on, { save, preview } = {}) => {
+    markBusy(saveBtn, on, save);
+    markBusy(previewBtn, on, preview);
+    mockBtn.disabled = on;
+    closeBtn.disabled = on;
+  };
+
+  const savedFields = (item, kind) => ({
+    ...prefill(kind, item, payload),
+    ...fieldsForKind(item.documents, kind),
+  });
+
+  const previewKind = (item, kind) => {
+    closeMenu();
+    if (!payload?.firm || !Array.isArray(payload.people)) {
+      setStatus(statusNode, "Agreement defaults are missing.");
+      return Promise.reject(new Error("Agreement defaults are missing."));
+    }
+    if (!item?.id) {
+      setStatus(statusNode, "That record could not be found.");
+      return Promise.reject(new Error("That record could not be found."));
+    }
+    if (kind === "agreement") return previewAgreement(item);
+    if (!COMPOSE_KINDS.includes(kind) || !kindSaved(item.documents, kind)) {
+      setStatus(statusNode, "That document is not on file.");
+      return Promise.reject(new Error("That document is not on file."));
+    }
+    setStatus(statusNode, "");
+    const fields = savedFields(item, kind);
+    return previewPacked(async () => {
+      const { matterPdf } = await import("./matter-download.js");
+      return matterPdf(kind, fields);
+    }, kind);
+  };
+
+  const saveDocument = async () => {
+    if (!activeItem?.id || !activeKind) return;
+    if (!COMPOSE_KINDS.includes(activeKind)) return;
+    if (activeKind === "agreement") {
+      const invalid = firstAgreementInvalid(form);
+      if (invalid) {
+        showComposeStatus("Check the highlighted fields and try again.");
+        invalid.focus?.();
+        return;
+      }
+    }
+    const updating = kindSaved(activeItem.documents, activeKind);
+    saving = true;
+    showComposeStatus("");
+    setBarBusy(true, { save: updating ? "Updating…" : "Saving…" });
+    try {
+      const response = await fetch("/api/admin/clients-documents", {
+        method: "PUT",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prepare_client_id: activeItem.id,
+          kind: activeKind,
+          fields: formFields(form),
+        }),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const extra = body.hint ? ` ${body.hint}` : "";
+        throw new Error(`${body.error || "Could not save the document."}${extra}`);
+      }
+      activeItem.document_id = body.id;
+      activeItem.documents = body.documents;
+      onSaved?.(activeItem, activeKind);
+      compose.close();
+    } catch (error) {
+      showComposeStatus(error instanceof Error && error.message
+        ? error.message
+        : "Could not save the document.");
+      setBarBusy(false);
+      saving = false;
+    }
+  };
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (saving || previewing) return;
+    await saveDocument();
+  });
+  mockBtn.addEventListener("click", () => {
+    if (saving || previewing) return;
+    if (!applyMatterMock(form, activeKind, {
+      keepFilled: ["clientName", "applicant", "wsName"],
+    })) return;
+    syncShowWhen(form);
+  });
+  previewBtn.addEventListener("click", async () => {
+    if (saving || previewing) return;
+    previewing = true;
+    setBarBusy(true, { preview: "Preparing…" });
     try {
       await previewFromForm();
     } catch (error) {
-      composeStatus.hidden = false;
-      composeStatus.textContent = error instanceof Error && error.message
+      showComposeStatus(error instanceof Error && error.message
         ? error.message
-        : "The document could not be prepared.";
+        : "The document could not be prepared.");
+    } finally {
+      previewing = false;
+      if (compose.open && !saving) setBarBusy(false);
     }
   });
   form.addEventListener("change", () => syncShowWhen(form));
   form.addEventListener("input", () => syncShowWhen(form));
 
-  closeBtn.addEventListener("click", () => compose.close());
+  closeBtn.addEventListener("click", () => {
+    if (!saving && !previewing) compose.close();
+  });
+  compose.addEventListener("cancel", (event) => {
+    if (saving || previewing) event.preventDefault();
+  });
   compose.addEventListener("click", (event) => {
-    if (event.target === compose) compose.close();
+    if (event.target === compose && !saving && !previewing) compose.close();
   });
   compose.addEventListener("close", () => {
     activeKind = "";
+    saving = false;
+    previewing = false;
+    setBarBusy(false);
     fields.replaceChildren();
   });
 
@@ -309,13 +535,42 @@ export function bindAdminDocuments({ payload, statusNode }) {
     openCompose(button.getAttribute("data-admin-create"), activeItem);
   });
 
+  savedMenu.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-admin-preview-kind]");
+    if (!button || !activeItem) return;
+    const kind = button.getAttribute("data-admin-preview-kind");
+    const item = activeItem;
+    const trigger = savedMenuButton;
+    closeMenu();
+    if (trigger) {
+      trigger.disabled = true;
+      trigger.setAttribute("aria-busy", "true");
+    }
+    Promise.resolve(previewKind(item, kind))
+      .catch((error) => {
+        setStatus(
+          statusNode,
+          error instanceof Error && error.message
+            ? error.message
+            : "The document could not be prepared.",
+        );
+      })
+      .finally(() => {
+        if (!trigger) return;
+        trigger.disabled = false;
+        trigger.removeAttribute("aria-busy");
+      });
+  });
+
   document.addEventListener("click", (event) => {
-    if (menu.hidden) return;
-    if (menu.contains(event.target) || menuButton?.contains(event.target)) return;
+    if (menu.hidden && savedMenu.hidden) return;
+    const t = event.target;
+    if (menu.contains(t) || savedMenu.contains(t)) return;
+    if (menuButton?.contains(t) || savedMenuButton?.contains(t)) return;
     closeMenu();
   });
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !menu.hidden) closeMenu();
+    if (event.key === "Escape" && (!menu.hidden || !savedMenu.hidden)) closeMenu();
   });
   window.addEventListener("resize", closeMenu);
   window.addEventListener("scroll", closeMenu, true);
@@ -325,7 +580,14 @@ export function bindAdminDocuments({ payload, statusNode }) {
       closeMenu();
       return previewAgreement(item);
     },
+    previewKind(item, kind) {
+      return previewKind(item, kind);
+    },
+    openKind(item, kind) {
+      openCompose(kind, item);
+    },
     toggleMenu,
+    toggleSavedMenu,
     closeMenu,
     reset() {
       closeMenu();

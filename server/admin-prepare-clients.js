@@ -1,3 +1,4 @@
+import { attachDocuments, listDocumentsForClients } from "./clients-documents.js";
 import { requestPath, requestUrl, sendJson } from "./http.js";
 import { requireSupabase, supabaseHeaders } from "./supabase.js";
 import { PREPARE_CLIENTS_SELECT } from "../src/js/prepare-clients-model.js";
@@ -83,7 +84,8 @@ export async function listPrepareClients(query, env = process.env) {
   }
   if (!Array.isArray(items)) items = [];
   const total = parseTotal(response.headers.get("content-range"), items.length);
-  return { items, ...pageMeta(query.page, query.per_page, total) };
+  const rows = await listDocumentsForClients(items.map((item) => item.id), env);
+  return { items: attachDocuments(items, rows), ...pageMeta(query.page, query.per_page, total) };
 }
 
 export async function handleAdminPrepareClients(req, res, env = process.env) {

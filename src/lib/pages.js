@@ -215,6 +215,7 @@ function agreementPayload() {
       email: personEmail(person),
       phone: personPhone(person),
       principal: Boolean(person.principal),
+      sraRegulated: Boolean(person.sraRegulated),
     })),
   };
 }
@@ -390,7 +391,7 @@ function adminPage() {
                   <th scope="col">Occupation</th>
                   <th scope="col">Date of birth</th>
                   <th scope="col">Instructed</th>
-                  <th scope="col">Document</th>
+                  <th scope="col">Documents</th>
                 </tr>
               </thead>
               <tbody data-admin-rows></tbody>
@@ -1434,17 +1435,9 @@ function contactPage() {
       <div class="wrap contact-page">
         ${crumbs([{ label: t("nav.contact") }])}
         <div class="contact-layout">
-          <div class="contact-copy">
+          <div class="contact-copy contact-intro">
             <h1>${esc(page.heading)}</h1>
             <p class="lead muted">${esc(page.lead)}</p>
-            <aside class="safety-callout">
-              <p class="label">${esc(t("safety"))}</p>
-              <p>${esc(page.urgent)}</p>
-            </aside>
-            <div class="contact-direct">
-              <p class="label">${esc(t("writeOrCall"))}</p>
-              ${contactDirectHtml()}
-            </div>
           </div>
           <form class="form" id="contact-form" novalidate data-mailto="${esc(site.email)}" data-ack="${esc(trust.contact.acknowledgementTime)}" data-msg-check="${esc(t("formCheck"))}" data-msg-draft="${esc(t("formDraft"))}" data-msg-subject="${esc(t("formSubject"))}" data-label-name="${esc(t("formName"))}" data-label-email="${esc(t("formEmail"))}" data-label-org="${esc(t("formOrg"))}" data-label-matter="${esc(t("formMatter"))}">
           <p class="form-eta muted">${esc(trust.contact.acknowledgementTime)}</p>
@@ -1476,6 +1469,10 @@ function contactPage() {
             <textarea id="message" name="message" required></textarea>
             <p class="error" data-error-for="message">${esc(t("describeSituation"))}</p>
           </div>
+          <aside class="safety-callout">
+            <p class="label">${esc(t("safety"))}</p>
+            <p>${esc(page.urgent)}</p>
+          </aside>
           <div class="field">
             <label class="checkbox" for="privacy">
               <input id="privacy" name="privacy" type="checkbox" required>
@@ -1491,6 +1488,12 @@ function contactPage() {
               : esc(trust.contact.acknowledgementTime)
           }</p>
         </form>
+          <div class="contact-copy contact-aside">
+            <div class="contact-direct">
+              <p class="label">${esc(t("writeOrCall"))}</p>
+              ${contactDirectHtml()}
+            </div>
+          </div>
         </div>
       </div>
     </main>

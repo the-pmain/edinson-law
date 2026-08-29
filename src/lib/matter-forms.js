@@ -17,6 +17,7 @@ function peoplePayload() {
       email: personEmail(person),
       phone: personPhone(person),
       principal: Boolean(person.principal),
+      sraRegulated: Boolean(person.sraRegulated),
     })),
   };
 }

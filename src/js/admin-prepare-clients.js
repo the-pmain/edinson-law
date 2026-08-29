@@ -1,5 +1,9 @@
 import { readJson } from "./agreement-data.js";
 import { bindAdminDocuments } from "./admin-documents.js";
+import {
+  COMPOSE_KINDS,
+  kindSaved,
+} from "./clients-documents-model.js";
 
 const ADMIN_PIN = "1100";
 const SESSION_KEY = "edison-admin-ok";
@@ -96,8 +100,16 @@ export function adminPrepareClients() {
   const actionStatus = root.querySelector("[data-admin-action-status]");
   const dots = [...(root.querySelectorAll("[data-admin-pin-dots] span") || [])];
   const payload = readJson("edison-agreement-defaults");
-  const docs = bindAdminDocuments({ payload, statusNode: actionStatus });
   const records = new Map();
+  let listItems = [];
+  const docs = bindAdminDocuments({
+    payload,
+    statusNode: actionStatus,
+    onSaved(item) {
+      listItems = listItems.map((row) => (row.id === item.id ? { ...row, ...item } : row));
+      renderRows(listItems);
+    },
+  });
 
   let pin = "";
   let locked = false;
@@ -159,27 +171,46 @@ export function adminPrepareClients() {
     const td = document.createElement("td");
     const wrap = document.createElement("div");
     wrap.className = "admin-actions";
+    const name = item.full_name || "client";
+    const saved = COMPOSE_KINDS.filter((kind) => kindSaved(item.documents, kind));
+
+    const docsBtn = document.createElement("button");
+    docsBtn.type = "button";
+    docsBtn.className = "icon-btn admin-doc-list-btn";
+    docsBtn.dataset.adminDocs = key;
+    docsBtn.disabled = saved.length === 0;
+    docsBtn.title = saved.length ? "Preview saved documents" : "No documents yet";
+    docsBtn.setAttribute(
+      "aria-label",
+      saved.length
+        ? `Preview saved documents for ${name}`
+        : `No saved documents for ${name}`,
+    );
+    docsBtn.setAttribute("aria-haspopup", "menu");
+    docsBtn.setAttribute("aria-expanded", "false");
+    docsBtn.setAttribute("aria-controls", "admin-doc-saved-menu");
+    docsBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M8 13h8M8 17h5"/></svg>`;
 
     const preview = document.createElement("button");
     preview.type = "button";
     preview.className = "icon-btn admin-preview";
     preview.dataset.adminPreview = key;
-    preview.title = "Preview document";
-    preview.setAttribute("aria-label", `Preview document for ${item.full_name || "client"}`);
+    preview.title = "Preview client authority form";
+    preview.setAttribute("aria-label", `Preview client authority form for ${name}`);
     preview.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12s3.6-7 9.5-7 9.5 7 9.5 7-3.6 7-9.5 7-9.5-7-9.5-7z"/><circle cx="12" cy="12" r="3"/></svg>`;
 
     const menu = document.createElement("button");
     menu.type = "button";
     menu.className = "icon-btn admin-doc-menu-btn";
     menu.dataset.adminMenu = key;
-    menu.title = "Create a document";
-    menu.setAttribute("aria-label", `Create a document for ${item.full_name || "client"}`);
+    menu.title = "Add or edit a document";
+    menu.setAttribute("aria-label", `Add or edit a document for ${name}`);
     menu.setAttribute("aria-haspopup", "menu");
     menu.setAttribute("aria-expanded", "false");
     menu.setAttribute("aria-controls", "admin-doc-menu");
     menu.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="6" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="18" r="1.7"/></svg>`;
 
-    wrap.append(preview, menu);
+    wrap.append(docsBtn, preview, menu);
     td.append(wrap);
     return td;
   };
@@ -233,6 +264,7 @@ export function adminPrepareClients() {
       const data = await fetchPage(currentPage());
       if (ticket !== request) return;
       const items = Array.isArray(data.items) ? data.items : [];
+      listItems = items;
       setBusy(false);
       setHidden(loading, true);
       if (summary) {
@@ -341,6 +373,7 @@ export function adminPrepareClients() {
     request += 1;
     setSession(false);
     records.clear();
+    listItems = [];
     docs.reset();
     if (rows) rows.replaceChildren();
     if (actionStatus) actionStatus.textContent = "";
@@ -354,15 +387,37 @@ export function adminPrepareClients() {
   table?.addEventListener("click", (event) => {
     const preview = event.target.closest("[data-admin-preview]");
     const menu = event.target.closest("[data-admin-menu]");
-    const button = preview || menu;
+    const docsBtn = event.target.closest("[data-admin-docs]");
+    const button = preview || menu || docsBtn;
     if (!button || !table.contains(button) || button.disabled) return;
-    const item = records.get(button.dataset.adminPreview || button.dataset.adminMenu);
+    const key = button.dataset.adminPreview || button.dataset.adminMenu || button.dataset.adminDocs;
+    const item = records.get(key);
     if (!item) {
       if (actionStatus) actionStatus.textContent = "That record could not be found.";
       return;
     }
-    if (preview) docs.previewRecord(item);
-    else docs.toggleMenu(button, item);
+    if (menu) {
+      docs.toggleMenu(button, item);
+      return;
+    }
+    if (docsBtn) {
+      docs.toggleSavedMenu(button, item);
+      return;
+    }
+    button.disabled = true;
+    button.setAttribute("aria-busy", "true");
+    Promise.resolve(docs.previewRecord(item))
+      .catch((error) => {
+        if (actionStatus) {
+          actionStatus.textContent = error instanceof Error && error.message
+            ? error.message
+            : "The document could not be prepared.";
+        }
+      })
+      .finally(() => {
+        button.disabled = false;
+        button.removeAttribute("aria-busy");
+      });
   });
 
   pager?.addEventListener("click", (event) => {

@@ -1,7 +1,7 @@
 export function personEmail(person) {
   if (person?.email) return person.email;
   const local = String(person?.slug || "").replaceAll("-", ".");
-  return local ? `${local}@edisonlawlegal.com` : "";
+  return local ? `${local}@edisonlaw.co.uk` : "";
 }
 
 export function personPhone(person) {
@@ -260,6 +260,7 @@ export const people = [
     role: "SRA-regulated solicitor",
     firm: "Edison Law",
     sraRegulated: true,
+    email: "abi.wills@edisonlaw.co.uk",
     photo: "/images/people/abigail-wills.png",
     photoWidth: 273,
     photoHeight: 273,

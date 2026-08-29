@@ -2,6 +2,7 @@ import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { extname, join, normalize, resolve, sep } from "node:path";
 import { loadEnvFile } from "./server/env.js";
+import { handleAdminClientsDocuments, isAdminClientsDocumentsRequest } from "./server/clients-documents.js";
 import { handleAdminPrepareClients, isAdminPrepareClientsRequest } from "./server/admin-prepare-clients.js";
 import { handlePrepareClients, isPrepareClientsRequest } from "./server/prepare-clients.js";
 
@@ -78,6 +79,10 @@ const server = createServer(async (req, res) => {
     }
     if (isAdminPrepareClientsRequest(req)) {
       await handleAdminPrepareClients(req, res);
+      return;
+    }
+    if (isAdminClientsDocumentsRequest(req)) {
+      await handleAdminClientsDocuments(req, res);
       return;
     }
     if (isPrepareClientsRequest(req)) {

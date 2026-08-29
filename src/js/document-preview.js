@@ -114,7 +114,13 @@ function applyCopy(copy) {
   pages.setAttribute("aria-label", copy.title);
 }
 
-export function openDocumentPreview({ copy = DEFAULTS, prepare, onSign, confirm = true }) {
+export function openDocumentPreview({
+  copy = DEFAULTS,
+  prepare,
+  onSign,
+  confirm = true,
+  wait = "close",
+}) {
   ensureDialog();
   const labels = { ...DEFAULTS, ...copy };
   const id = ++generation;
@@ -164,33 +170,55 @@ export function openDocumentPreview({ copy = DEFAULTS, prepare, onSign, confirm 
   };
   sign.onclick = runSign;
 
-  return new Promise((resolve) => {
-    dialog.addEventListener("close", () => resolve(), { once: true });
+  return new Promise((resolve, reject) => {
+    if (wait !== "ready") {
+      dialog.addEventListener("close", () => resolve(), { once: true });
+    }
+
+    const settleReady = (error) => {
+      if (wait !== "ready") return;
+      if (error) reject(error);
+      else resolve();
+    };
 
     Promise.resolve()
       .then(prepare)
       .then(async (result) => {
-        if (id !== generation) return;
+        if (id !== generation) {
+          settleReady();
+          return;
+        }
         packed = result;
         const { createPdfPreview } = await import("./pdf-preview.js");
-        if (id !== generation) return;
+        if (id !== generation) {
+          settleReady();
+          return;
+        }
         preview = preview || createPdfPreview(pages);
         pages.hidden = false;
         await preview.show(result.bytes);
-        if (id !== generation) return;
+        if (id !== generation) {
+          settleReady();
+          return;
+        }
         setStatus("", "ready");
         sign.dataset.ready = "true";
         agree.disabled = !confirm;
         sign.disabled = confirm ? !agree.checked : false;
+        settleReady();
       })
       .catch((error) => {
-        if (id !== generation) return;
+        if (id !== generation) {
+          settleReady();
+          return;
+        }
         setStatus(
           error instanceof Error && error.message ? error.message : labels.fail,
           "error",
         );
         agree.disabled = true;
         sign.disabled = true;
+        settleReady(error instanceof Error ? error : new Error(labels.fail));
       });
   });
 }

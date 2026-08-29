@@ -1,31 +1,36 @@
+import { feeEarnerLine } from "./agreement-data.js";
 import { copyFromForm, openDocumentPreview } from "./document-preview.js";
 
-const MOCK = {
-  claim: {
-    clientName: "Margaret Hollis",
-    clientAddr: "14 Weaver's Row, Leeds LS6 2QT",
-    crimeRef: "NFRC260114882",
-    ourRef: "EL/2026/0431",
-    fraudDates: "11 September and 4 October 2025",
-    lossValue: "£184,500",
-    scamDesc: "an approach on WhatsApp by a person presenting as an account manager for a regulated trading platform, who induced the client to transfer funds to a purported investment account displaying fabricated returns",
-    orderDate: "2026-03-03",
-    exchange: "Bitfinex",
-    wallet: "0x9f2b41c8e07dd5a3f190bb7c26e4a5109d3f41ce",
-    walletHolds: "1,412,000 USDT",
-    claimed: "184,500 USDT",
-    originAddr: "the client's Kraken account, address 0x3ad188b0c41e9f2b07dd5a3f190bb7c26e4a5109",
-    funds: "purchase on Kraken between March and July 2025, funded from a Lloyds Bank account ending 4471, the source being the proceeds of sale of a residential property",
-    provider: "Elliptic",
-    reportDate: "2026-05-19",
-    route: "six intermediate addresses and two cross-chain bridges, applying a last-in-first-out analysis to the mixed balance at paragraphs 44 to 58 of that report",
-    officer: "DC Alan Reeve",
-    agency: "Economic Crime Unit, West Yorkshire Police",
-    claimants: "none",
-    court: "City of London Magistrates' Court",
-    respondent: "",
-    copyTo: "CPS Proceeds of Crime Division",
-  },
+const CLAIM_MOCK = {
+  clientName: "Margaret Hollis",
+  clientAddr: "14 Weaver's Row, Leeds LS6 2QT",
+  crimeRef: "NFRC260114882",
+  ourRef: "EL/2026/0431",
+  fraudDates: "11 September and 4 October 2025",
+  lossValue: "£184,500",
+  scamDesc: "an approach on WhatsApp by a person presenting as an account manager for a regulated trading platform, who induced the client to transfer funds to a purported investment account displaying fabricated returns",
+  orderDate: "2026-03-03",
+  exchange: "Bitfinex",
+  wallet: "0x9f2b41c8e07dd5a3f190bb7c26e4a5109d3f41ce",
+  walletHolds: "1,412,000 USDT",
+  claimed: "184,500 USDT",
+  originAddr: "the client's Kraken account, address 0x3ad188b0c41e9f2b07dd5a3f190bb7c26e4a5109",
+  funds: "purchase on Kraken between March and July 2025, funded from a Lloyds Bank account ending 4471, the source being the proceeds of sale of a residential property",
+  provider: "Elliptic",
+  reportDate: "2026-05-19",
+  route: "six intermediate addresses and two cross-chain bridges, applying a last-in-first-out analysis to the mixed balance at paragraphs 44 to 58 of that report",
+  officer: "DC Alan Reeve",
+  agency: "Economic Crime Unit, West Yorkshire Police",
+  claimants: "none",
+  court: "City of London Magistrates' Court",
+  respondent: "",
+  copyTo: "CPS Proceeds of Crime Division",
+  feeEarner: "Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk",
+};
+
+export const MATTER_MOCK = {
+  claim: CLAIM_MOCK,
+  matter: CLAIM_MOCK,
   release: {
     court: "City of London Magistrates' Court",
     caseRef: "to be allocated",
@@ -48,6 +53,7 @@ const MOCK = {
     agreeWith: "the administrator of the wallet",
     costs: "none",
     costsSum: "",
+    feeEarner: "Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk",
   },
 };
 
@@ -107,7 +113,7 @@ function bindForm(form) {
 
 function addDock(form, sync) {
   const kind = form.getAttribute("data-matter-form");
-  const data = MOCK[kind];
+  const data = MATTER_MOCK[kind];
   if (!data) return;
 
   const dock = document.createElement("div");
@@ -119,19 +125,24 @@ function addDock(form, sync) {
   mock.textContent = "Mock data";
   mock.setAttribute("aria-label", "Fill this form with mock data");
   mock.addEventListener("click", () => {
-    applyMock(form, data);
+    applyMatterMock(form, kind);
     sync();
   });
   dock.append(mock);
   document.body.append(dock);
 }
 
-function applyMock(form, data) {
+export function applyMatterMock(form, kind, { keepFilled = [] } = {}) {
+  const data = MATTER_MOCK[kind];
+  if (!form || !data) return false;
+  const keep = new Set(keepFilled);
   Object.entries(data).forEach(([name, value]) => {
     const field = form.elements.namedItem(name);
-    if (!field || name === "feeEarner") return;
+    if (!field) return;
+    if (keep.has(name) && String(field.value || "").trim()) return;
     field.value = value;
   });
+  return true;
 }
 
 function fillFeeEarner(form) {
@@ -147,9 +158,6 @@ function fillFeeEarner(form) {
     return;
   }
   const people = Array.isArray(payload?.people) ? payload.people : [];
-  const person = people.find((item) => item.slug === slug)
-    || people.find((item) => item.principal)
-    || people[0];
-  if (!person) return;
-  input.value = [person.name, person.phone, person.email].filter(Boolean).join(" · ");
+  const line = feeEarnerLine(people, slug);
+  if (line) input.value = line;
 }

@@ -587,7 +587,7 @@ export function documentPage(page, body) {
           : ""
       }
       <a class="btn btn-ink" href="/contact/">${esc(t("contact"))}</a>
-      <button class="icon-btn menu-btn" type="button" data-menu-open aria-expanded="false" aria-controls="site-drawer">${ICONS.menu}<span>${esc(t("menu"))}</span></button>
+      <button class="icon-btn menu-btn" type="button" data-menu-open aria-label="${esc(t("menu"))}" aria-expanded="false" aria-controls="site-drawer">${ICONS.menu}<span>${esc(t("menu"))}</span></button>
     </div>
   </header>
 

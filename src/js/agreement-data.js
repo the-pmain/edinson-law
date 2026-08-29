@@ -35,6 +35,26 @@ export function resolvePerson(people, slug = "") {
     || null;
 }
 
+/** Prefer the SRA-named solicitor on reserved-work letters. */
+export function resolveFeeEarner(people, slug = "") {
+  const list = Array.isArray(people) ? people : [];
+  const key = String(slug || "").trim();
+  const instructed = list.find((person) => person.slug === key);
+  const solicitor = list.find((person) => person.sraRegulated);
+  return (instructed?.sraRegulated ? instructed : null)
+    || solicitor
+    || instructed
+    || list.find((person) => person.principal)
+    || list[0]
+    || null;
+}
+
+export function feeEarnerLine(people, slug = "") {
+  const person = resolveFeeEarner(people, slug);
+  if (!person) return "";
+  return [person.name, person.phone, person.email].filter(Boolean).join(" · ");
+}
+
 export function buildAgreement(client, payload, options = {}) {
   const firm = payload.firm;
   const when = options.when ? new Date(options.when) : new Date();
