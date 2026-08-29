@@ -64,7 +64,7 @@ test("normalizeDocuments drops extra keys", () => {
   assert.equal(documents.matter.fields.court, "X");
 });
 
-test("mergeKind stores In the matter of without dropping claim", () => {
+test("mergeKind stores Application of release order without dropping claim", () => {
   const next = mergeKind(
     { agreement: null, claim: { fields: { crimeRef: "NFRC1" }, saved_at: "2026-01-02T00:00:00.000Z" } },
     "matter",

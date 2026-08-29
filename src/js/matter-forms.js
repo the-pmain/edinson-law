@@ -36,13 +36,14 @@ export const MATTER_MOCK = {
   release: {
     court: "City of London Magistrates' Court",
     caseRef: "to be allocated",
-    before: "",
-    orderDated: "",
+    before: "District Judge ____",
+    orderDated: "2026-07-14",
     freezeDate: "2026-03-03",
     applicant: "Margaret Hollis",
     clientName: "Margaret Hollis",
     clientAddr: "14 Weaver's Row, Leeds LS6 2QT",
     crimeRef: "NFRC260114882",
+    ourRef: "EL/2026/0431",
     respondent: "The Chief Officer of Police for West Yorkshire",
     applicationDate: "2026-06-02",
     wsName: "Margaret Hollis",
@@ -61,6 +62,25 @@ export const MATTER_MOCK = {
     feeEarner: FIXED_FEE_EARNER_LINE,
   },
 };
+
+const PICKER_FIELDS = "input[type='date'], input[type='time'], input[type='datetime-local'], select";
+
+export function bindFullFieldPickers(root) {
+  if (!root?.querySelectorAll) return;
+  root.querySelectorAll(PICKER_FIELDS).forEach((el) => {
+    if (el.dataset.fullPicker === "1") return;
+    el.dataset.fullPicker = "1";
+    el.addEventListener("click", () => {
+      if (el.disabled || el.readOnly) return;
+      if (typeof el.showPicker !== "function") return;
+      try {
+        el.showPicker();
+      } catch {
+        /* Picker already open, or the browser blocked it. */
+      }
+    });
+  });
+}
 
 export function matterForms() {
   document.querySelectorAll("[data-matter-form]").forEach(bindForm);
@@ -113,6 +133,7 @@ function bindForm(form) {
   form.addEventListener("change", sync);
   form.addEventListener("input", sync);
   fillFeeEarner(form);
+  bindFullFieldPickers(form);
   addDock(form, sync);
   sync();
 }

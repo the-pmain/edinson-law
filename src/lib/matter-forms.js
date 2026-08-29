@@ -42,7 +42,7 @@ export function releaseFormHtml() {
     <div class="wrap">
       ${jsonScript("edison-matter-defaults", peoplePayload())}
       <form class="form matter-form" id="release-form" data-matter-form="release" novalidate ${previewDataAttrs()}>
-        <p class="matter-kicker">Practice note and precedent &nbsp;·&nbsp; <b>s.303Z51 POCA 2002</b></p>
+        <p class="matter-kicker">Release order &nbsp;·&nbsp; <b>s.303Z51 POCA 2002</b></p>
 
         <section class="matter-note">
           <h2>What approval looks like: the release order under s.303Z51</h2>
@@ -72,13 +72,13 @@ export function releaseFormHtml() {
           <p>Section 303Z51 also allows release to a person who was not the person from whom the assets were seized, where the court finds the assets belong to them, the “release condition” is met, and the person from whom they were seized raises no objection. The release condition is satisfied where the grounds for the freezing order no longer apply, or where the court declines to make a forfeiture order. Worth keeping in reserve.</p>
         </section>
 
-        <p class="release-band">Draft order lodged by the applicant — not a sealed order of the court</p>
-        <p class="release-court-label">Precedent · Draft release order</p>
+        <p class="release-band">Release order under section 303Z51</p>
+        <p class="release-court-label">Release order</p>
 
         ${releaseFieldsHtml()}
 
         <section class="matter-note">
-          <h3>Points on the draft</h3>
+          <h3>Points on the order</h3>
           <h4>Recitals earn their place</h4>
           <p>The three “BEING SATISFIED” limbs mirror the statutory conditions word for word. A sealed order that records the court’s satisfaction on each limb is what the exchange and the agency will read, and it forestalls argument later about what was decided.</p>
           <h4>Say where the assets go</h4>
@@ -89,8 +89,7 @@ export function releaseFormHtml() {
           <p>Where the agency has been given a properly evidenced claim and has opposed it without good reason, ask. Where it has been neutral or helpful, no order is usually the right outcome and asking will not help your client’s standing in future matters.</p>
         </section>
 
-        <p class="matter-foot">To be sealed and issued by the court. This draft carries no seal and is of no effect until the court makes an order in these or amended terms.</p>
-        <p class="matter-foot">Edison Law is authorised and regulated by the Solicitors Regulation Authority, SRA number ${esc(sra)}. This document is an internal precedent. It is a draft order for lodging with an application; it is not, and must not be presented as, an order of any court. It has not been settled by counsel and must be checked against the legislation and rules in force at the date of use.</p>
+        <p class="matter-foot">Edison Law is authorised and regulated by the Solicitors Regulation Authority, SRA number ${esc(sra)}.</p>
         <button class="btn btn-signal form-submit" type="submit" data-matter-download>${esc(t("matterDownload"))}</button>
         <p class="matter-foot">${esc(t("matterFieldsNote"))}</p>
       </form>

@@ -81,8 +81,8 @@ test("canonical digest changes when a claimed amount changes", async () => {
 test("release mock includes address and NFRC so save validation can pass", () => {
   assert.equal(MATTER_MOCK.release.clientAddr, "14 Weaver's Row, Leeds LS6 2QT");
   assert.equal(MATTER_MOCK.release.crimeRef, "NFRC260114882");
-  assert.equal(MATTER_MOCK.release.orderDated, "");
-  assert.equal(MATTER_MOCK.release.before, "");
+  assert.equal(MATTER_MOCK.release.ourRef, "EL/2026/0431");
+  assert.equal(MATTER_MOCK.release.orderDated, "2026-07-14");
   assert.match(MATTER_MOCK.release.respondent, /Chief Officer of Police for West Yorkshire/);
   assert.equal(MATTER_MOCK.release.destinationWallet.length, 42);
   const out = validateMatterFields(MATTER_MOCK.release, { people });
@@ -125,33 +125,23 @@ async function pdfText(bytes) {
   return parts.join(" ").replace(/\s+/g, " ");
 }
 
-test("draft release order stays a lodging draft, with a full destination address", async () => {
+test("release order is titled as an order, with a full destination address", async () => {
   const out = await matterPdf("release", MATTER_MOCK.release, { people });
   assert.ok(out.bytes.byteLength > 1000);
   const text = await pdfText(out.bytes);
-  assert.match(text, /DRAFT ORDER FOR LODGING/);
-  assert.match(text, /of no effect/i);
-  assert.match(text, /no court seal/i);
-  assert.match(text, /to be inserted when the court makes the order/);
-  assert.match(text, /the District Judge assigned to the application/);
+  assert.match(text, /RELEASE ORDER/);
+  assert.match(text, /IT IS ORDERED THAT/);
+  assert.match(text, /3\.1/);
+  assert.match(text, /3\.5/);
+  assert.match(text, /EL\/2026\/0431/);
+  assert.match(text, /14 July 2026/);
   assert.match(text, /Chief Officer of Police for West Yorkshire/);
   assert.match(text, /0x3ad188b0c41e9f2b07dd5a3f190bb7c26e4a5109/i);
   assert.match(text, /0x9f2b41c8e07dd5a3f190bb7c26e4a5109d3f41ce/i);
-  assert.match(text, /does not retrieve or verify/);
-  assert.match(text, /lodging checklist/);
-  assert.equal(/District Judge Hale/.test(text), false);
-  assert.equal(/14 July 2026/.test(text), false);
+  assert.match(text, /Parliamentary Debates/);
+  assert.equal(/PRIVATE PROSECUTIONS/.test(text), false);
+  assert.equal(/DRAFT ORDER FOR LODGING/.test(text), false);
+  assert.equal(/lodging checklist/.test(text), false);
   assert.equal(/APPROVED/.test(text), false);
   assert.equal(/Court Registry API/i.test(text), false);
-  assert.equal(/PRIVATE PROSECUTIONS/.test(text), false);
-});
-
-test("a dated lodging draft warns that the order date should be blank", async () => {
-  const out = await matterPdf("release", {
-    ...MATTER_MOCK.release,
-    orderDated: "2026-07-14",
-  }, { people });
-  const text = await pdfText(out.bytes);
-  assert.match(text, /14 July 2026/);
-  assert.match(text, /Leave that field blank until the court makes the order/);
 });

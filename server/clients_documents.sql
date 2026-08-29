@@ -6,12 +6,12 @@
 -- documents jsonb not null
 --   object with exactly the keys agreement, claim, release
 --   each value is null or { fields: object, saved_at: timestamptz }
---   In the matter of is stored at documents.claim.matter
+--   Application of release order is stored at documents.claim.matter
 -- created_at timestamptz not null
 -- updated_at timestamptz not null
 
 -- App keys inside documents:
 --   agreement          = Client authority form
 --   claim              = Victim claim (letter)
---   claim.matter       = In the matter of (court application)
---   release            = Draft release order
+--   claim.matter       = Application of release order (court application)
+--   release            = Release order

@@ -1,15 +1,14 @@
-import { PDFDocument, degrees, rgb } from "pdf-lib";
+import { PDFDocument, StandardFonts, degrees, rgb } from "pdf-lib";
 import { downloadBytes } from "./agreement-data.js";
 import { embedDocumentFonts } from "./document-fonts.js";
-import { buildClaimTrust, sha256Hex, verificationBadge } from "./claim-trust.js";
-import { explorerUrl, extractEthAddress, formatEthAddress } from "./eth-address.js";
+import { buildClaimTrust, verificationBadge } from "./claim-trust.js";
+import { extractEthAddress, formatEthAddress } from "./eth-address.js";
 import {
   coerceSraFeeEarner,
   formatAssetAmount,
   parseMoneyAmount,
   validateMatterFields,
 } from "./matter-validate.js";
-import { encodeQr } from "./qr-matrix.js";
 
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
@@ -108,9 +107,9 @@ function slot(value, fallback) {
 function stem(kind, name) {
   const who = String(name || "matter").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const file = kind === "release"
-    ? "Edison-Law-Draft-Release-Order-s303Z51"
+    ? "Edison-Law-Release-Order-s303Z51"
     : kind === "matter"
-      ? "Edison-Law-In-the-Matter-Of-s303Z51"
+      ? "Edison-Law-Application-of-Release-Order-s303Z51"
       : "Edison-Law-Victim-Claim-s303Z51";
   return `${file}-${who || "completed"}.pdf`;
 }
@@ -124,9 +123,9 @@ const FIRM = {
   sra: "510498",
 };
 
-const LOGO_PATH = "public/brand/letterhead-logo.png";
-const LOGO_HREF = "/brand/letterhead-logo.png";
-const LOGO_W = 64;
+const LOGO_PATH = "public/brand/matter-crest.jpg";
+const LOGO_HREF = "/brand/matter-crest.jpg";
+const LOGO_MAX_H = 84;
 const LETTERHEAD_TITLE = "Edison Law";
 const DRAMA_PHONE = /(?:\+44\s*20|0\s*20)\s*7946\s*0\d{3}/;
 
@@ -149,7 +148,9 @@ async function loadLogoBytes() {
 
 async function embedLogo(pdf) {
   try {
-    return await pdf.embedPng(await loadLogoBytes());
+    const bytes = await loadLogoBytes();
+    if (bytes[0] === 0xff && bytes[1] === 0xd8) return await pdf.embedJpg(bytes);
+    return await pdf.embedPng(bytes);
   } catch {
     return null;
   }
@@ -192,7 +193,6 @@ function letterheadContacts(f, people = []) {
   const earner = feeEarnerParts(coerced);
   return {
     phone: usablePhone(earner.phone) || usablePhone(FIRM.phone),
-    email: earner.email || FIRM.email,
   };
 }
 
@@ -219,10 +219,10 @@ function sanitizeMatterValues(values, people = []) {
   return next;
 }
 
-function drawLetterhead(page, regular, bold, color, { edge, refs = [], logo, phone = "", email = "" } = {}) {
+function drawLetterhead(page, regular, bold, color, { edge, refs = [], logo, phone = "" } = {}) {
   const cx = A4[0] / 2;
-  const logoW = LOGO_W;
-  const logoH = logo ? logoW * (logo.height / logo.width) : 37;
+  const logoH = logo ? LOGO_MAX_H : 37;
+  const logoW = logo ? logoH * (logo.width / logo.height) : 64;
   const logoY = A4[1] - 16 - logoH;
   if (logo) {
     page.drawImage(logo, {
@@ -233,24 +233,22 @@ function drawLetterhead(page, regular, bold, color, { edge, refs = [], logo, pho
     });
   } else {
     drawCrest(page, cx, logoY + logoH / 2, color, 1.15);
-    const nameY = logoY - 18;
-    const nameSize = 15;
-    page.drawText(LETTERHEAD_TITLE, {
-      x: cx - bold.widthOfTextAtSize(LETTERHEAD_TITLE, nameSize) / 2,
-      y: nameY,
-      size: nameSize,
-      font: bold,
-      color,
-    });
   }
-  // Site lockup already includes "EDISON LAW"; only reserve space under the mark.
-  const infoTop = logo ? logoY - 22 : logoY - 46;
+  const nameSize = 15;
+  const nameY = logoY - 18;
+  page.drawText(LETTERHEAD_TITLE, {
+    x: cx - bold.widthOfTextAtSize(LETTERHEAD_TITLE, nameSize) / 2,
+    y: nameY,
+    size: nameSize,
+    font: bold,
+    color,
+  });
+  const infoTop = nameY - 28;
   const infoSize = 11;
   const leading = 14;
   let leftY = infoTop;
   const left = [
     phone ? `Phone: ${phone}` : "",
-    email ? `Email: ${email}` : "",
   ].filter(Boolean);
   left.forEach((text) => {
     page.drawText(text, { x: edge, y: leftY, size: infoSize, font: regular, color });
@@ -316,6 +314,7 @@ async function writePdf(title, blocks, {
   const courtDraft = style === "court-draft";
   const pdf = await PDFDocument.create();
   const { regular, bold, sans, sansBold } = await embedDocumentFonts(pdf);
+  const italic = letterhead ? await pdf.embedFont(StandardFonts.TimesRomanItalic) : null;
   const logo = letterhead ? await embedLogo(pdf) : null;
   const edge = letterhead ? 64 : MARGIN;
   const width = A4[0] - edge * 2;
@@ -370,12 +369,30 @@ async function writePdf(title, blocks, {
   const drawLetterFooter = (target, n) => {
     if (n === 1) {
       target.drawRectangle({ x: edge, y: 44, width: 80, height: 0.5, color: copy });
-      const note = `Edison Law is authorised and regulated by the Solicitors Regulation Authority, SRA number ${FIRM.sra}.`;
-      const notes = wrap(regular, note, 8, width);
-      let fy = 32;
-      notes.forEach((line) => {
-        target.drawText(line, { x: edge, y: fy, size: 8, font: regular, color: copy });
-        fy -= 10;
+      const size = 8;
+      const markSize = 5.5;
+      let fx = edge;
+      const fy = 32;
+      target.drawText("1", {
+        x: fx,
+        y: fy + 3.2,
+        size: markSize,
+        font: regular,
+        color: copy,
+      });
+      fx += regular.widthOfTextAtSize("1", markSize) + 3;
+      const before = "Victoria, ";
+      target.drawText(before, { x: fx, y: fy, size, font: regular, color: copy });
+      fx += regular.widthOfTextAtSize(before, size);
+      const debates = "Parliamentary Debates";
+      target.drawText(debates, { x: fx, y: fy, size, font: italic || regular, color: copy });
+      fx += (italic || regular).widthOfTextAtSize(debates, size);
+      target.drawText(", Legislative Council, 29 February 2012, 1055 (Jaala Pulford)", {
+        x: fx,
+        y: fy,
+        size,
+        font: regular,
+        color: copy,
       });
       return;
     }
@@ -442,7 +459,6 @@ async function writePdf(title, blocks, {
           refs: letterheadInfo.refs || [],
           logo,
           phone: letterheadInfo.phone || "",
-          email: letterheadInfo.email || "",
         })
         : A4[1] - 72;
       return;
@@ -832,7 +848,6 @@ function claimBlocks(f, trust = null) {
     { type: "p", text: "By email", align: "center", size: 10 },
     { type: "p", text: `Dated ${letterDate}`, align: "center", size: 10, after: 8 },
     { type: "rule" },
-    { type: "callout", text: trust?.disclaimer || "This is a solicitor's notice under section 303Z51. It is not a sealed court order. Assertions that have not been independently verified are marked Provisional." },
     { type: "p", text: `IN THE MATTER OF a crypto wallet freezing order made under section 303Z37 of the Proceeds of Crime Act 2002 on ${orderDateL}` },
     { type: "p", text: "AND IN THE MATTER OF a victim claim under section 303Z51 of that Act for the release of cryptoassets", after: 4 },
     { type: "p", text: trust?.citations?.statute || "Cited to ss.303Z37 and 303Z51 POCA 2002 and rule 12 of the Magistrates' Courts (Detention, Freezing and Forfeiture of Cryptoassets, and Miscellaneous Amendments) Rules 2024.", size: 8, after: 8 },
@@ -916,6 +931,7 @@ function matterBlocks(f) {
     : "The Applicant is not aware of any competing claim to the cryptoassets held in the Frozen Wallet.";
 
   return [
+    { type: "title", text: "APPLICATION OF RELEASE ORDER", align: "center", size: 16 },
     { type: "p", text: `IN THE ${slot(f.court, "City of London Magistrates' Court")}`, bold: true, align: "center" },
     { type: "p", text: caseRef, align: "center", size: 10, after: 6 },
     { type: "rule" },
@@ -925,39 +941,25 @@ function matterBlocks(f) {
     { type: "p", text: applicantLine, size: 10 },
     { type: "p", text: `Respondent: ${respondent}`, size: 10, after: 8 },
     { type: "h", text: "1. THE FREEZING ORDER" },
-    { type: "p", n: "1.", text: `On ${orderDateL} this court made a crypto wallet freezing order under section 303Z37 of the Proceeds of Crime Act 2002 in respect of the crypto wallet ${wallet}, administered by ${exchange} (the Frozen Wallet). The Applicant does not seek to disturb that order.` },
-    { type: "p", n: "2.", text: `The Frozen Wallet holds ${holds}. The Applicant demonstrates ownership of ${claimed} of those cryptoassets (the Claimed Assets).` },
+    { type: "p", n: "1.1", text: `On ${orderDateL} this court made a crypto wallet freezing order under section 303Z37 of the Proceeds of Crime Act 2002 in respect of the crypto wallet ${wallet}, administered by ${exchange} (the Frozen Wallet). The Applicant does not seek to disturb that order.` },
+    { type: "p", n: "1.2", text: `The Frozen Wallet holds ${holds}. The Applicant demonstrates ownership of ${claimed} of those cryptoassets (the Claimed Assets).` },
     { type: "h", text: "2. THE ORDER SOUGHT" },
-    { type: "p", n: "3.", text: "The Applicant applies under section 303Z51 for an order that the Claimed Assets be released to the Applicant within seven days, together with such further or other order as the court thinks fit." },
+    { type: "p", n: "2.1", text: "The Applicant applies under section 303Z51 for an order that the Claimed Assets be released to the Applicant within seven days, together with such further or other order as the court thinks fit." },
     { type: "h", text: "3. THE GROUNDS" },
-    { type: "p", n: "4.", text: `The Applicant was deprived of the Claimed Assets, or of property which they represent, by unlawful conduct. On ${slot(f.fraudDates, "the dates of the fraud")} the Applicant was induced by ${slot(f.scamDesc, "the fraudulent conduct")} to transfer ${claimed}, then worth approximately ${slot(f.lossValue, "the value lost")}, from ${slot(f.originAddr, "the origin address")}. That conduct amounted to fraud by false representation contrary to section 2 of the Fraud Act 2006. It was reported to Action Fraud under reference ${crimeRef}.` },
-    { type: "p", n: "5.", text: `The cryptoassets of which the Applicant was deprived were not recoverable property immediately before the Applicant was deprived of them. The Applicant acquired them by ${slot(f.funds, "lawful means")}. The Applicant has no relevant convictions and the funds had no connection with criminal conduct.` },
-    { type: "p", n: "6.", text: `The Claimed Assets belong to the Applicant. The tracing analysis of ${provider} dated ${reportDateL} follows the Applicant's transfers from ${slot(f.originAddr, "the origin address")} through ${slot(f.route, "the tracing route")}. The tracing analysis definitively attributes the assets to the Applicant, including ${claimed} of the cryptoassets held in the Frozen Wallet.` },
+    { type: "p", n: "3.1", text: `The Applicant was deprived of the Claimed Assets, or of property which they represent, by unlawful conduct. On ${slot(f.fraudDates, "the dates of the fraud")} the Applicant was induced by ${slot(f.scamDesc, "the fraudulent conduct")} to transfer ${claimed}, then worth approximately ${slot(f.lossValue, "the value lost")}, from ${slot(f.originAddr, "the origin address")}. That conduct amounted to fraud by false representation contrary to section 2 of the Fraud Act 2006. It was reported to Action Fraud under reference ${crimeRef}.` },
+    { type: "p", n: "3.2", text: `The cryptoassets of which the Applicant was deprived were not recoverable property immediately before the Applicant was deprived of them. The Applicant acquired them by ${slot(f.funds, "lawful means")}. The Applicant has no relevant convictions and the funds had no connection with criminal conduct.` },
+    { type: "p", n: "3.3", text: `The Claimed Assets belong to the Applicant. The tracing analysis of ${provider} dated ${reportDateL} follows the Applicant's transfers from ${slot(f.originAddr, "the origin address")} through ${slot(f.route, "the tracing route")}. The tracing analysis definitively attributes the assets to the Applicant, including ${claimed} of the cryptoassets held in the Frozen Wallet.` },
     { type: "h", text: "4. OTHER CLAIMANTS" },
-    { type: "p", n: "7.", text: claimantsLine },
+    { type: "p", n: "4.1", text: claimantsLine },
     { type: "h", text: "5. EVIDENCE RELIED UPON" },
-    { type: "p", n: "8.", text: `The witness statement of ${wsName} dated ${wsDate}, with exhibit ${exhibit}, is filed with this application.` },
-    { type: "p", n: "9.", text: `The tracing report of ${provider} dated ${reportDateL} is attached to this application.` },
-    { type: "p", n: "10.", text: `The Action Fraud report under reference ${crimeRef} is filed with this application.` },
+    { type: "p", n: "5.1", text: `The witness statement of ${wsName} dated ${wsDate}, with exhibit ${exhibit}, is filed with this application.` },
+    { type: "p", n: "5.2", text: `The tracing report of ${provider} dated ${reportDateL} is attached to this application.` },
+    { type: "p", n: "5.3", text: `The Action Fraud report under reference ${crimeRef} is filed with this application.` },
     { type: "h", text: "6. NOTICE AND LISTING" },
-    { type: "p", n: "11.", text: `This application is made pursuant to section 303Z51 of the Proceeds of Crime Act 2002. It is made in writing and specifies the grounds on which it is made, in accordance with rule 12(1) of the Magistrates' Courts (Detention, Freezing and Forfeiture of Cryptoassets, and Miscellaneous Amendments) Rules 2024. Copies have been sent to the Respondent and to ${exchange}. The Applicant asks the court to fix a hearing date under rule 12(5), and invites the court to expedite the listing having regard to the expiry of the freezing order on ${orderExpiry} and to the volatility of the assets.` },
+    { type: "p", n: "6.1", text: `This application is made pursuant to section 303Z51 of the Proceeds of Crime Act 2002. It is made in writing and specifies the grounds on which it is made, in accordance with rule 12(1) of the Magistrates' Courts (Detention, Freezing and Forfeiture of Cryptoassets, and Miscellaneous Amendments) Rules 2024. Copies have been sent to the Respondent and to ${exchange}. The Applicant asks the court to fix a hearing date under rule 12(5), and invites the court to expedite the listing having regard to the expiry of the freezing order on ${orderExpiry} and to the volatility of the assets.` },
     { type: "space", h: 20 },
     { type: "p", text: `Signed                    Edison Law, solicitors for the Applicant    ·    Dated  ${letterDate}` },
   ];
-}
-
-function inTheCourt(court) {
-  const name = clean(court).replace(/^in the\s+/i, "");
-  if (!name) return "IN THE [NAME OF COURT]";
-  return `IN THE ${name.toUpperCase()}`;
-}
-
-function caseNoLine(value) {
-  const text = clean(value);
-  if (!text || /to be allocated|tbc|tba|\[/i.test(text)) {
-    return "Case No.  [to be allocated by the court office]";
-  }
-  return `Case No.  ${text}`;
 }
 
 function walletDisplay(value, placeholder) {
@@ -966,41 +968,21 @@ function walletDisplay(value, placeholder) {
   return hex || slot(formatted, placeholder);
 }
 
-function walletQrBlock(address, caption) {
-  const hex = extractEthAddress(address);
-  if (!hex) return [];
-  const url = explorerUrl(hex);
-  const qr = encodeQr(url);
-  return [{
-    type: "qr",
-    matrix: qr.data,
-    size: qr.size,
-    cell: 1.15,
-    url,
-    caption,
-    status: "Address format checked. Scan to open an independent explorer. On-chain history is not verified in this tool. This is not a court seal.",
-  }];
-}
-
-function lodgingDateWarning(orderDated) {
-  if (!clean(orderDated)) return "";
-  return "This lodging draft currently carries a date of order. Leave that field blank until the court makes the order, so the draft is not mistaken for a sealed instrument.";
-}
-
 function releaseBlocks(f) {
-  const dated = slot(fmt(f.orderDated), "[to be inserted when the court makes the order]");
-  const freeze = slot(fmt(f.freezeDate), "[date of the freezing order]");
-  const appDate = slot(fmt(f.applicationDate), "[date of the application]");
+  const dated = slot(fmt(f.orderDated), "[date]");
+  const freeze = slot(fmt(f.freezeDate), "the date of the freezing order");
+  const appDate = slot(fmt(f.applicationDate), "[date]");
   const wsDate = slot(fmt(f.wsDate), "[date]");
-  const reportDate = slot(fmt(f.reportDate), "[date of the tracing report]");
-  const applicant = slot(f.applicant, "[name of applicant]");
-  const address = slot(f.clientAddr, "[applicant's address]");
-  const before = slot(f.before, "[the District Judge assigned to the application]");
+  const reportDate = slot(fmt(f.reportDate), "the date of the tracing report");
+  const applicant = slot(f.applicant, "[name]");
+  const address = clean(f.clientAddr);
+  const applicantLine = address
+    ? `Applicant: ${applicant}, of ${address}`
+    : `Applicant: ${applicant}`;
   const respondent = slot(
     f.respondent,
     "[the Chief Officer of Police for ____ / the National Crime Agency / HMRC]",
   );
-  const frozenWallet = walletDisplay(f.wallet, "[0x followed by 40 hexadecimal characters]");
   const destWallet = walletDisplay(
     f.destinationWallet,
     "[0x followed by 40 hexadecimal characters]",
@@ -1020,70 +1002,41 @@ function releaseBlocks(f) {
     : f.costs === "none"
       ? "There be no order as to costs."
       : "[The Respondent shall pay the Applicant's costs of this application, summarily assessed in the sum of £____, within 14 days. / There be no order as to costs.]";
-  const dateWarning = lodgingDateWarning(f.orderDated);
   const destBlocks = nominatedWallet
     ? [{ type: "p", text: destWallet, bold: true, size: 11, after: 8 }]
     : [];
+  const letterDate = slot(fmt(f.orderDated), dated);
 
   return [
-    {
-      type: "notice",
-      text: "DRAFT ORDER FOR LODGING. This document carries no court seal, has no case number until the court office allocates one, and is of no effect until the court makes an order in these or amended terms and the court office issues it. It must not be presented as an order of any court.",
-    },
-    { type: "title", text: "DRAFT RELEASE ORDER", align: "center", size: 14 },
-    { type: "p", text: "section 303Z51 of the Proceeds of Crime Act 2002", align: "center", size: 10, after: 6 },
-    { type: "p", text: inTheCourt(f.court), bold: true, align: "center" },
-    { type: "p", text: caseNoLine(f.caseRef), align: "center", size: 10 },
-    { type: "p", text: `Before  ${before}`, align: "center", size: 10 },
-    { type: "p", text: `Dated  ${dated}`, align: "center", size: 10, after: 8 },
-    ...(dateWarning ? [{ type: "p", text: dateWarning, size: 8, after: 8 }] : []),
+    { type: "title", text: "RELEASE ORDER", align: "center", size: 16 },
+    { type: "p", text: `IN THE ${slot(f.court, "City of London Magistrates' Court")}`, bold: true, align: "center" },
+    { type: "p", text: caseReferenceLine(f.caseRef), align: "center", size: 10 },
+    { type: "p", text: `Before ${slot(f.before, "[District Judge ____ / the bench]")}`, align: "center", size: 10 },
+    { type: "p", text: `Dated ${dated}`, align: "center", size: 10, after: 6 },
     { type: "rule" },
-    { type: "p", text: "BETWEEN:", bold: true, align: "center", after: 8 },
-    { type: "p", text: applicant, bold: true, align: "center" },
-    { type: "p", text: `of ${address}`, align: "center", size: 10 },
-    { type: "p", text: "Applicant", align: "center", size: 10, after: 8 },
-    { type: "p", text: "and", align: "center", size: 10, after: 8 },
-    { type: "p", text: respondent, bold: true, align: "center" },
-    { type: "p", text: "Respondent", align: "center", size: 10, after: 8 },
     { type: "p", text: `IN THE MATTER OF a crypto wallet freezing order made under section 303Z37 of the Proceeds of Crime Act 2002 on ${freeze}`, align: "center", size: 10 },
-    { type: "p", text: "AND IN THE MATTER OF an application under section 303Z51 of that Act for the release of cryptoassets", align: "center", size: 10, after: 8 },
+    { type: "p", text: "AND IN THE MATTER OF an application under section 303Z51 of that Act for the release of cryptoassets", align: "center", size: 10, after: 6 },
     { type: "rule" },
-    { type: "p", text: `UPON the application of the Applicant dated ${appDate}` },
-    { type: "p", text: `AND UPON reading the witness statement of ${slot(f.wsName, "[name]")} dated ${wsDate} and the tracing report of ${slot(f.provider, "[analytics provider]")} dated ${reportDate} (particulars as supplied on this file; this tool does not retrieve or verify the report from the provider)` },
-    { type: "p", text: `AND UPON hearing ${slot(f.hearing, "[the solicitor for the Applicant and the representative of the Respondent / the Respondent neither supporting nor opposing the application]")}`, after: 8 },
-    { type: "p", text: "AND THE COURT BEING SATISFIED that:", bold: true },
-    { type: "p", n: "(a)", text: "the Applicant was deprived of the cryptoassets to which the application relates, or of property which they represent, by unlawful conduct;" },
-    { type: "p", n: "(b)", text: "the cryptoassets of which the Applicant was deprived were not recoverable property immediately before the Applicant was deprived of them; and" },
-    { type: "p", n: "(c)", text: "those cryptoassets belong to the Applicant", after: 6 },
-    { type: "p", text: "AND THE COURT BEING FURTHER SATISFIED that no proceedings for forfeiture under section 303Z41 of that Act are ongoing in respect of the cryptoassets to be released", after: 8 },
-    { type: "break" },
-    { type: "p", text: "IT IS ORDERED that:", bold: true, after: 8 },
-    { type: "p", n: "[1]", text: `Pursuant to section 303Z51 of the Proceeds of Crime Act 2002, ${slot(f.releasedAssets, "[quantity and asset]")} of the cryptoassets held in the crypto wallet identified in Schedule 1, administered by ${slot(f.exchange, "[exchange]")} and the subject of the crypto wallet freezing order dated ${freeze} (the Released Assets), be released to the Applicant.` },
-    { type: "p", n: "[2]", text: `The Released Assets shall be transferred, within seven days of the date of this order unless a longer period is agreed between the Applicant and ${slot(f.agreeWith, "[the Respondent / the administrator of the wallet]")}, to ${destinationClause}` },
+    { type: "p", text: applicantLine, size: 10 },
+    { type: "p", text: `Respondent: ${respondent}`, size: 10, after: 8 },
+    { type: "h", text: "1. THE APPLICATION" },
+    { type: "p", n: "1.1", text: `Upon the application of the Applicant dated ${appDate}.` },
+    { type: "p", n: "1.2", text: `And upon reading the witness statement of ${slot(f.wsName, "[name]")} dated ${wsDate} and the tracing report of ${slot(f.provider, "[provider]")} dated ${reportDate}.` },
+    { type: "p", n: "1.3", text: `And upon hearing ${slot(f.hearing, "[the solicitor for the Applicant and the representative of the Respondent / the Respondent neither supporting nor opposing the application]")}.` },
+    { type: "h", text: "2. THE COURT BEING SATISFIED" },
+    { type: "p", n: "2.1", text: "The Applicant was deprived of the cryptoassets to which the application relates, or of property which they represent, by unlawful conduct." },
+    { type: "p", n: "2.2", text: "The cryptoassets of which the Applicant was deprived were not recoverable property immediately before the Applicant was deprived of them." },
+    { type: "p", n: "2.3", text: "Those cryptoassets belong to the Applicant." },
+    { type: "p", n: "2.4", text: "No proceedings for forfeiture under section 303Z41 of that Act are ongoing in respect of the cryptoassets to be released." },
+    { type: "h", text: "3. IT IS ORDERED THAT" },
+    { type: "p", n: "3.1", text: `Pursuant to section 303Z51 of the Proceeds of Crime Act 2002, ${slot(f.releasedAssets, "[quantity and asset]")} of the cryptoassets held in the crypto wallet ${walletDisplay(f.wallet, "[address]")}, administered by ${slot(f.exchange, "[exchange]")} and the subject of the crypto wallet freezing order dated ${freeze} (the Released Assets), be released to the Applicant.` },
+    { type: "p", n: "3.2", text: `The Released Assets shall be transferred, within seven days of the date of this order unless a longer period is agreed between the Applicant and ${slot(f.agreeWith, "[the Respondent / the administrator of the wallet]")}, to ${destinationClause}` },
     ...destBlocks,
-    { type: "p", n: "[3]", text: `The crypto wallet freezing order dated ${freeze} shall continue in respect of the balance of the cryptoassets held in the wallet identified in Schedule 1.` },
-    { type: "p", n: "[4]", text: costs },
-    { type: "p", n: "[5]", text: "Liberty to apply in respect of the implementation of paragraph [2].", after: 10 },
-    { type: "p", text: "To be sealed and issued by the court. This draft carries no seal and is of no effect until the court makes an order in these or amended terms.", size: 9, after: 8 },
-    { type: "h", text: "Schedule 1  Crypto wallet addresses" },
-    { type: "p", text: "Frozen wallet (subject of the section 303Z37 order)", size: 9 },
-    { type: "p", text: frozenWallet, bold: true, size: 11, after: 4 },
-    ...walletQrBlock(f.wallet, "Independent explorer for the frozen wallet"),
-    ...(nominatedWallet ? [
-      { type: "p", text: "Destination wallet nominated by the Applicant", size: 9, after: 4 },
-      { type: "p", text: destWallet, bold: true, size: 11, after: 4 },
-      ...walletQrBlock(f.destinationWallet, "Independent explorer for the destination wallet"),
-    ] : []),
-    { type: "p", text: "Each address is printed in full (0x and 40 hexadecimal characters). Explorer codes open a public block explorer. They are not a court, SRA, or analytics-provider verification.", size: 8, after: 10 },
-    { type: "h", text: "Solicitor's lodging checklist" },
-    { type: "p", text: "For the fee earner. Not a finding by the court.", size: 8, after: 6 },
-    { type: "p", n: "[ ]", text: "Draft checked against sections 303Z37 and 303Z51 of the Proceeds of Crime Act 2002 and rule 12 of the Magistrates' Courts (Detention, Freezing and Forfeiture of Cryptoassets, and Miscellaneous Amendments) Rules 2024." },
-    { type: "p", n: "[ ]", text: "Case number, judge and date of order left blank, or completed only from the court office." },
-    { type: "p", n: "[ ]", text: "Each wallet address is a complete 0x + 40-hex string and matches the client's instructions and the freezing order." },
-    { type: "p", n: "[ ]", text: "Tracing report particulars match the exhibit to be lodged. Existence of the report is not confirmed by this tool." },
-    { type: "p", n: "[ ]", text: "Not to be served or presented as a sealed order.", after: 10 },
-    { type: "p", text: "The Respondent is named as the enforcement officer, or the chief officer of the police force, who obtained the crypto wallet freezing order under section 303Z37. That officer is the usual respondent on a victim's application for release under section 303Z51.", size: 8, after: 8 },
-    { type: "p", text: `Prepared by Edison Law, solicitors for the Applicant, authorised and regulated by the Solicitors Regulation Authority, organisation ${FIRM.sra}. This is a draft order for lodging with an application. It has not been settled by counsel and must be checked against the legislation and rules in force at the date of use.`, size: 8 },
+    { type: "p", n: "3.3", text: `The crypto wallet freezing order dated ${freeze} shall continue in respect of the balance of the cryptoassets held in the wallet.` },
+    { type: "p", n: "3.4", text: costs },
+    { type: "p", n: "3.5", text: "Liberty to apply in respect of the implementation of paragraph 3.2." },
+    { type: "space", h: 20 },
+    { type: "p", text: `Signed                    Edison Law, solicitors for the Applicant    ·    Dated  ${letterDate}` },
   ];
 }
 
@@ -1098,35 +1051,22 @@ export async function matterPdf(kind, values, options = {}) {
       ? matterBlocks(sanitized)
       : claimBlocks(sanitized, trust);
   const title = kind === "release"
-    ? `Draft release order (not sealed) - ${name || "s.303Z51"}`
+    ? `Edison Law release order - ${name || "s.303Z51"}`
     : kind === "matter"
-      ? `Edison Law in the matter of - ${name || "s.303Z51"}`
+      ? `Edison Law application of release order - ${name || "s.303Z51"}`
       : `Edison Law victim claim - ${name || "s.303Z51"}`;
   const footer = kind === "release"
-    ? "Edison Law · Draft release order · not sealed"
+    ? "Edison Law · Release order"
     : kind === "matter"
-      ? "Edison Law · In the matter of"
+      ? "Edison Law · Application of release order"
       : "Edison Law · Victim claim to frozen cryptoassets";
-  const letterhead = kind === "matter";
-  const courtDraft = kind === "release";
-  const documentId = courtDraft
-    ? `EL-DRAFT-${(await sha256Hex([
-      sanitized.applicant,
-      sanitized.wallet,
-      sanitized.destinationWallet,
-      sanitized.freezeDate,
-      sanitized.applicationDate,
-    ].join("|"))).slice(0, 12).toUpperCase()}`
-    : "";
+  const letterhead = kind === "matter" || kind === "release";
   const bytes = await writePdf(title, blocks, {
     footer,
-    style: letterhead ? "letterhead" : courtDraft ? "court-draft" : "brand",
+    style: letterhead ? "letterhead" : "brand",
     letterheadInfo: letterhead
       ? { refs: letterheadRefs(sanitized), ...letterheadContacts(sanitized, people) }
       : {},
-    watermark: courtDraft ? "DRAFT" : "",
-    documentId,
-    generatedAt: courtDraft ? fmt(todayIso()) : "",
   });
   return {
     bytes,

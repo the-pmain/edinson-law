@@ -17,7 +17,7 @@ import {
   FIXED_FEE_EARNER_LINE,
   releaseFieldsHtml,
 } from "../lib/matter-fields.js";
-import { applyMatterMock, MATTER_MOCK } from "./matter-forms.js";
+import { applyMatterMock, bindFullFieldPickers, MATTER_MOCK } from "./matter-forms.js";
 
 const ADMIN_COPY = {
   title: "Preview",
@@ -408,6 +408,7 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
     lockFeeEarner(form);
     const dob = form.elements.namedItem("clientDob");
     if (dob) dob.max = todayIso();
+    bindFullFieldPickers(form);
     syncShowWhen(form);
     if (!compose.open) compose.showModal();
     title.focus();

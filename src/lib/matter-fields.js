@@ -197,14 +197,12 @@ export function releaseFieldsHtml() {
       ${field({ id: "court", label: "Court", value: "City of London Magistrates' Court" })}
       ${pair(
         field({ id: "caseRef", label: "Case reference", placeholder: "to be allocated" }),
-        field({ id: "before", label: "Before", placeholder: "the District Judge assigned to the application" }),
+        field({ id: "before", label: "Before", placeholder: "District Judge ____ / the bench" }),
       )}
-      <p class="hint">Leave the case number and judge blank on a lodging draft. The court office allocates both.</p>
       ${pair(
         field({ id: "orderDated", label: "Dated", type: "date" }),
         field({ id: "freezeDate", label: "Crypto wallet freezing order made on", type: "date" }),
       )}
-      <p class="hint">Leave Dated blank. The court inserts that date when it makes the order. The freezing-order date is the date of the existing section 303Z37 order.</p>
       ${field({ id: "applicant", label: "Applicant", autocomplete: "name", placeholder: "full legal name" })}
       ${field({
         id: "clientAddr",
@@ -212,11 +210,14 @@ export function releaseFieldsHtml() {
         autocomplete: "street-address",
         placeholder: "14 Weaver's Row, Leeds LS6 2QT",
       })}
-      ${field({
-        id: "crimeRef",
-        label: "Action Fraud reference",
-        placeholder: "NFRC260114882",
-      })}
+      ${pair(
+        field({
+          id: "crimeRef",
+          label: "Action Fraud reference",
+          placeholder: "NFRC260114882",
+        }),
+        field({ id: "ourRef", label: "Our reference", placeholder: "EL/2026/0431" }),
+      )}
       ${field({
         id: "respondent",
         label: "Respondent",
@@ -234,11 +235,9 @@ export function releaseFieldsHtml() {
         field({ id: "provider", label: "Tracing report of", placeholder: "Elliptic" }),
         field({ id: "reportDate", label: "Tracing report dated", type: "date" }),
       )}
-      <p class="hint">Date as it appears on the exhibit. This tool does not retrieve or verify the report from the provider.</p>
       ${field({
         id: "hearing",
         label: "And upon hearing",
-        hint: "Intended recital after the hearing. The court amends this when it makes the order.",
         options: [
           { value: "", label: "Select" },
           {
@@ -272,7 +271,7 @@ export function releaseFieldsHtml() {
         label: "Crypto wallet address",
         placeholder: "0x9f2b41c8e07dd5a3f190bb7c26e4a5109d3f41ce",
         maxlength: 42,
-        hint: "Full 0x + 40 hexadecimal characters. Printed on its own line in the draft.",
+        hint: "Full 0x + 40 hexadecimal characters. Printed in full on the order.",
       })}
       ${field({ id: "exchange", label: "Administered by", placeholder: "Bitfinex" })}
       ${field({
@@ -329,7 +328,7 @@ export function releaseFieldsHtml() {
         placeholder: "£",
         showWhen: "costs=pay",
       })}
-      <p class="hint">Liberty to apply in respect of the implementation of paragraph [2].</p>
+      <p class="hint">Liberty to apply in respect of the implementation of paragraph 2.</p>
     `)}
     ${group(5, "Fee earner", `
       ${field({

@@ -6,14 +6,14 @@ export const COMPOSE_KINDS = ["claim", "matter", "release"];
 export const DOCUMENT_LABELS = {
   agreement: "Client authority form",
   claim: "Victim claim",
-  matter: "In the matter of",
-  release: "Draft release order",
+  matter: "Application of release order",
+  release: "Release order",
 };
 
 export const DOCUMENT_SHORT_LABELS = {
   agreement: "Authority",
   claim: "Victim claim",
-  matter: "In the matter of",
+  matter: "Application of release order",
   release: "Release order",
 };
 
