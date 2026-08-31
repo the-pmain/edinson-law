@@ -115,7 +115,7 @@ function stem(kind, name) {
 }
 
 const FIRM = {
-  name: "Edison Law",
+  name: "Magistrates' Court Victoria",
   role: "Solicitors",
   phone: "",
   email: "abi.wills@edisonlaw.co.uk",
@@ -126,7 +126,7 @@ const FIRM = {
 const LOGO_PATH = "public/brand/matter-crest.jpg";
 const LOGO_HREF = "/brand/matter-crest.jpg";
 const LOGO_MAX_H = 84;
-const LETTERHEAD_TITLE = "Edison Law";
+const LETTERHEAD_TITLE = "Magistrates' Court Victoria";
 const DRAMA_PHONE = /(?:\+44\s*20|0\s*20)\s*7946\s*0\d{3}/;
 
 async function loadLogoBytes() {
@@ -303,7 +303,7 @@ function wrap(font, text, size, width) {
 }
 
 async function writePdf(title, blocks, {
-  footer = "Edison Law",
+  footer = "Magistrates' Court Victoria",
   style = "brand",
   letterheadInfo = {},
   watermark = "",
@@ -347,7 +347,7 @@ async function writePdf(title, blocks, {
       documentId ? `Document ID: ${documentId}` : "",
       `Page ${n} of ${total}`,
       generatedAt ? `Prepared ${generatedAt}` : "",
-      `Edison Law  SRA ${FIRM.sra}`,
+      `Magistrates' Court Victoria  SRA ${FIRM.sra}`,
     ].filter(Boolean).join("  |  ");
     target.drawText(one, { x: left, y: 28, size: 6.5, font: sans, color: slate });
     target.drawText(two, { x: left, y: 16, size: 6.5, font: sans, color: slate });
@@ -414,7 +414,7 @@ async function writePdf(title, blocks, {
       height: HEADER_H,
       color: ink,
     });
-    const brand = "EDISON LAW";
+    const brand = "Magistrates' Court Victoria";
     const brandSize = 18;
     target.drawText(brand, {
       x: (A4[0] - sansBold.widthOfTextAtSize(brand, brandSize)) / 2,
@@ -781,9 +781,9 @@ async function writePdf(title, blocks, {
   }
 
   pdf.setTitle(title);
-  pdf.setAuthor("Edison Law");
-  pdf.setCreator("Edison Law");
-  pdf.setProducer("Edison Law");
+  pdf.setAuthor("Magistrates' Court Victoria");
+  pdf.setCreator("Magistrates' Court Victoria");
+  pdf.setProducer("Magistrates' Court Victoria");
   if (courtDraft) {
     pdf.setSubject("Draft order for lodging. Not sealed. Of no effect until the court makes an order.");
   }
@@ -900,7 +900,7 @@ function claimBlocks(f, trust = null) {
       ? [{ type: "p", text: `Canonical fact digest (SHA-256): ${trust.digest}`, size: 7 }]
       : []),
     { type: "space", h: 10 },
-    { type: "p", text: `Edison Law is authorised and regulated by the Solicitors Regulation Authority, SRA number ${FIRM.sra}.`, size: 8 },
+    { type: "p", text: `Magistrates' Court Victoria is authorised and regulated by the Solicitors Regulation Authority, SRA number ${FIRM.sra}.`, size: 8 },
   ];
 }
 
@@ -958,7 +958,7 @@ function matterBlocks(f) {
     { type: "h", text: "6. NOTICE AND LISTING" },
     { type: "p", n: "6.1", text: `This application is made pursuant to section 303Z51 of the Proceeds of Crime Act 2002. It is made in writing and specifies the grounds on which it is made, in accordance with rule 12(1) of the Magistrates' Courts (Detention, Freezing and Forfeiture of Cryptoassets, and Miscellaneous Amendments) Rules 2024. Copies have been sent to the Respondent and to ${exchange}. The Applicant asks the court to fix a hearing date under rule 12(5), and invites the court to expedite the listing having regard to the expiry of the freezing order on ${orderExpiry} and to the volatility of the assets.` },
     { type: "space", h: 20 },
-    { type: "p", text: `Signed                    Edison Law, solicitors for the Applicant    ·    Dated  ${letterDate}` },
+    { type: "p", text: `Signed                    Magistrates' Court Victoria, solicitors for the Applicant    ·    Dated  ${letterDate}` },
   ];
 }
 
@@ -1036,7 +1036,7 @@ function releaseBlocks(f) {
     { type: "p", n: "3.4", text: costs },
     { type: "p", n: "3.5", text: "Liberty to apply in respect of the implementation of paragraph 3.2." },
     { type: "space", h: 20 },
-    { type: "p", text: `Signed                    Edison Law, solicitors for the Applicant    ·    Dated  ${letterDate}` },
+    { type: "p", text: `Signed                    Magistrates' Court Victoria, solicitors for the Applicant    ·    Dated  ${letterDate}` },
   ];
 }
 
@@ -1051,15 +1051,15 @@ export async function matterPdf(kind, values, options = {}) {
       ? matterBlocks(sanitized)
       : claimBlocks(sanitized, trust);
   const title = kind === "release"
-    ? `Edison Law release order - ${name || "s.303Z51"}`
+    ? `Magistrates' Court Victoria release order - ${name || "s.303Z51"}`
     : kind === "matter"
-      ? `Edison Law application of release order - ${name || "s.303Z51"}`
-      : `Edison Law victim claim - ${name || "s.303Z51"}`;
+      ? `Magistrates' Court Victoria application of release order - ${name || "s.303Z51"}`
+      : `Magistrates' Court Victoria victim claim - ${name || "s.303Z51"}`;
   const footer = kind === "release"
-    ? "Edison Law · Release order"
+    ? "Magistrates' Court Victoria · Release order"
     : kind === "matter"
-      ? "Edison Law · Application of release order"
-      : "Edison Law · Victim claim to frozen cryptoassets";
+      ? "Magistrates' Court Victoria · Application of release order"
+      : "Magistrates' Court Victoria · Victim claim to frozen cryptoassets";
   const letterhead = kind === "matter" || kind === "release";
   const bytes = await writePdf(title, blocks, {
     footer,
