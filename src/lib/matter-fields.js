@@ -117,7 +117,11 @@ export function claimFieldsHtml() {
         field({ id: "orderDate", label: "Date of the freezing order", type: "date" }),
         field({ id: "exchange", label: "Administered by", placeholder: "Bitfinex" }),
       )}
-      ${field({ id: "wallet", label: "Frozen wallet address", placeholder: "0x9f2b…41ce" })}
+      ${field({
+        id: "wallet",
+        label: "Frozen wallet address",
+        hint: "Full 0x + 40 hexadecimal characters.",
+      })}
       ${pair(
         field({ id: "walletHolds", label: "Wallet holds", placeholder: "1,412,000 USDT" }),
         field({ id: "claimed", label: "Your client claims", placeholder: "184,500 USDT" }),
@@ -125,7 +129,7 @@ export function claimFieldsHtml() {
       ${field({
         id: "originAddr",
         label: "Client sent the funds from",
-        placeholder: "the client's Kraken account, address 0x3ad1…88b0",
+        placeholder: "the client's exchange account",
       })}
     `)}
     ${group(3, "Evidence", `
@@ -269,7 +273,6 @@ export function releaseFieldsHtml() {
       ${field({
         id: "wallet",
         label: "Crypto wallet address",
-        placeholder: "0x9f2b41c8e07dd5a3f190bb7c26e4a5109d3f41ce",
         maxlength: 42,
         hint: "Full 0x + 40 hexadecimal characters. Printed in full on the order.",
       })}
@@ -292,7 +295,6 @@ export function releaseFieldsHtml() {
       ${field({
         id: "destinationWallet",
         label: "Wallet address nominated by the Applicant",
-        placeholder: "0x3ad188b0c41e9f2b07dd5a3f190bb7c26e4a5109",
         maxlength: 42,
         hint: "Full 0x + 40 hexadecimal characters. Do not wrap this inside a sentence.",
         showWhen: "destination=the wallet address nominated by the Applicant",

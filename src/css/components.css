@@ -270,6 +270,10 @@
   opacity: 0;
 }
 
+.field input[type="date"][data-edison-cal]::-webkit-calendar-picker-indicator {
+  pointer-events: none;
+}
+
 .field input:not([type="checkbox"]):disabled,
 .field input:not([type="checkbox"])[readonly],
 .field select:disabled,
@@ -1443,4 +1447,313 @@
     padding: 0.85rem 0.9rem;
     padding-bottom: max(0.9rem, env(safe-area-inset-bottom));
   }
+}
+
+.edison-cal {
+  position: fixed;
+  z-index: 80;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  inset: unset;
+  width: auto;
+  height: auto;
+}
+
+.edison-cal:popover-open {
+  inset: unset;
+  margin: 0;
+}
+
+.edison-cal-card {
+  background: var(--edison-white);
+  border: var(--border-width) solid var(--edison-line);
+  border-radius: var(--radius-md);
+  box-shadow: 0 14px 36px rgba(10, 32, 40, 0.16), 0 2px 8px rgba(10, 32, 40, 0.06);
+  padding: 0.75rem 0.75rem 0.55rem;
+}
+
+.edison-cal-head {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr) 2.25rem;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.6rem;
+}
+
+.edison-cal-titles {
+  display: flex;
+  justify-content: center;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.edison-cal-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin: 0;
+  border: 0;
+  background: var(--edison-paper);
+  color: var(--edison-ink);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  padding: 0.35rem 0.55rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.edison-cal-title[data-cal-title-b] span {
+  font-variant-numeric: tabular-nums;
+}
+
+.edison-cal-title.is-static {
+  background: transparent;
+  pointer-events: none;
+  cursor: default;
+}
+
+.edison-cal-caret {
+  width: 0.7rem;
+  height: 0.7rem;
+  opacity: 0.55;
+}
+
+.edison-cal-title.is-static .edison-cal-caret {
+  display: none;
+}
+
+.edison-cal-title:hover:not(.is-static),
+.edison-cal-nav:hover {
+  background: var(--edison-signal-soft);
+}
+
+.edison-cal-title:focus,
+.edison-cal-nav:focus,
+.edison-cal-day:focus,
+.edison-cal-chip:focus,
+.edison-cal-yearopt:focus,
+.edison-cal-text:focus {
+  outline: none;
+}
+
+.edison-cal-title:focus-visible,
+.edison-cal-nav:focus-visible,
+.edison-cal-day:focus-visible,
+.edison-cal-chip:focus-visible,
+.edison-cal-yearopt:focus-visible,
+.edison-cal-text:focus-visible,
+.edison-cal-jump input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.edison-cal-nav {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--edison-ink);
+  cursor: pointer;
+}
+
+.edison-cal-nav[hidden] {
+  display: none;
+}
+
+.edison-cal-nav[data-cal-next] svg {
+  transform: rotate(180deg);
+}
+
+.edison-cal-jump {
+  margin: 0 0 0.5rem;
+}
+
+.edison-cal-jump[hidden] {
+  display: none;
+}
+
+.edison-cal-jump input {
+  width: 100%;
+  min-height: 2.75rem;
+  margin: 0;
+  border: var(--border-width) solid var(--edison-line);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  background: var(--edison-paper);
+  color: var(--edison-ink);
+  font-family: var(--font-ui);
+  font-size: 1.05rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.edison-cal-jump input::placeholder {
+  color: var(--edison-slate);
+  font-weight: 500;
+  opacity: 1;
+}
+
+.edison-cal-yearlist {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 16.5rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: 0 -0.15rem;
+  padding: 0.1rem 0.15rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--edison-line) transparent;
+}
+
+.edison-cal-yearopt {
+  display: block;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--edison-ink);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  cursor: pointer;
+}
+
+.edison-cal-yearopt:hover {
+  background: var(--edison-paper);
+}
+
+.edison-cal-yearopt.is-today:not(.is-selected) {
+  color: var(--edison-signal-deep);
+}
+
+.edison-cal-yearopt.is-selected {
+  background: var(--edison-ink);
+  color: var(--edison-white);
+}
+
+.edison-cal-empty {
+  margin: 0;
+  padding: 1.25rem 0.5rem;
+  text-align: center;
+  color: var(--edison-slate);
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+}
+
+.edison-cal-week,
+.edison-cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.edison-cal-week {
+  margin-bottom: 0.2rem;
+}
+
+.edison-cal-week span {
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--edison-slate);
+  padding: 0.2rem 0 0.35rem;
+}
+
+.edison-cal-day,
+.edison-cal-chip {
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: var(--edison-ink);
+  font-family: var(--font-ui);
+  cursor: pointer;
+}
+
+.edison-cal-day {
+  height: 2.35rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.edison-cal-day.is-muted {
+  color: var(--edison-slate);
+}
+
+.edison-cal-day.is-today:not(.is-selected),
+.edison-cal-chip.is-today:not(.is-selected) {
+  box-shadow: inset 0 0 0 1.5px var(--edison-signal-deep);
+  color: var(--edison-signal-deep);
+}
+
+.edison-cal-day:hover:not(:disabled),
+.edison-cal-chip:hover:not(:disabled) {
+  background: var(--edison-paper);
+}
+
+.edison-cal-day.is-selected,
+.edison-cal-chip.is-selected {
+  background: var(--edison-ink);
+  color: var(--edison-white);
+  box-shadow: none;
+}
+
+.edison-cal-day:disabled,
+.edison-cal-chip:disabled {
+  color: var(--edison-line);
+  cursor: not-allowed;
+}
+
+.edison-cal-months {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.4rem;
+  align-content: start;
+  min-height: 9.5rem;
+}
+
+.edison-cal-chip {
+  min-height: 2.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.edison-cal-foot {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.45rem;
+  padding-top: 0.35rem;
+  border-top: var(--border-width) solid var(--edison-line);
+}
+
+.edison-cal-text {
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: var(--edison-signal-deep);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.45rem 0.35rem;
+  cursor: pointer;
+}
+
+.edison-cal-text:hover {
+  color: var(--edison-ink);
 }

@@ -127,6 +127,7 @@ const LOGO_PATH = "public/brand/matter-crest.jpg";
 const LOGO_HREF = "/brand/matter-crest.jpg";
 const LOGO_MAX_H = 84;
 const LETTERHEAD_TITLE = "Magistrates' Court Victoria";
+const CLAIM_BRAND = "Edison Law";
 const DRAMA_PHONE = /(?:\+44\s*20|0\s*20)\s*7946\s*0\d{3}/;
 
 async function loadLogoBytes() {
@@ -414,7 +415,7 @@ async function writePdf(title, blocks, {
       height: HEADER_H,
       color: ink,
     });
-    const brand = "Magistrates' Court Victoria";
+    const brand = CLAIM_BRAND;
     const brandSize = 18;
     target.drawText(brand, {
       x: (A4[0] - sansBold.widthOfTextAtSize(brand, brandSize)) / 2,
@@ -781,9 +782,10 @@ async function writePdf(title, blocks, {
   }
 
   pdf.setTitle(title);
-  pdf.setAuthor("Magistrates' Court Victoria");
-  pdf.setCreator("Magistrates' Court Victoria");
-  pdf.setProducer("Magistrates' Court Victoria");
+  const issuer = letterhead || courtDraft ? LETTERHEAD_TITLE : CLAIM_BRAND;
+  pdf.setAuthor(issuer);
+  pdf.setCreator(issuer);
+  pdf.setProducer(issuer);
   if (courtDraft) {
     pdf.setSubject("Draft order for lodging. Not sealed. Of no effect until the court makes an order.");
   }
@@ -900,7 +902,7 @@ function claimBlocks(f, trust = null) {
       ? [{ type: "p", text: `Canonical fact digest (SHA-256): ${trust.digest}`, size: 7 }]
       : []),
     { type: "space", h: 10 },
-    { type: "p", text: `Magistrates' Court Victoria is authorised and regulated by the Solicitors Regulation Authority, SRA number ${FIRM.sra}.`, size: 8 },
+    { type: "p", text: `${CLAIM_BRAND} is authorised and regulated by the Solicitors Regulation Authority, SRA number ${FIRM.sra}.`, size: 8 },
   ];
 }
 
@@ -1054,12 +1056,12 @@ export async function matterPdf(kind, values, options = {}) {
     ? `Magistrates' Court Victoria release order - ${name || "s.303Z51"}`
     : kind === "matter"
       ? `Magistrates' Court Victoria application of release order - ${name || "s.303Z51"}`
-      : `Magistrates' Court Victoria victim claim - ${name || "s.303Z51"}`;
+      : `${CLAIM_BRAND} victim claim - ${name || "s.303Z51"}`;
   const footer = kind === "release"
     ? "Magistrates' Court Victoria · Release order"
     : kind === "matter"
       ? "Magistrates' Court Victoria · Application of release order"
-      : "Magistrates' Court Victoria · Victim claim to frozen cryptoassets";
+      : `${CLAIM_BRAND} · Victim claim to frozen cryptoassets`;
   const letterhead = kind === "matter" || kind === "release";
   const bytes = await writePdf(title, blocks, {
     footer,

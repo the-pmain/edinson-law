@@ -1,3 +1,4 @@
+import { bindDatePickers } from "./date-picker.js";
 import { copyFromForm, openDocumentPreview } from "./document-preview.js";
 import { FIXED_FEE_EARNER_LINE } from "../lib/matter-fields.js";
 import { isRejectedApplicantName } from "./matter-validate.js";
@@ -13,10 +14,9 @@ const CLAIM_MOCK = {
   scamDesc: "an approach on WhatsApp by a person presenting as an account manager for a regulated trading platform, who induced the client to transfer funds to a purported investment account displaying fabricated returns",
   orderDate: "2026-03-03",
   exchange: "Bitfinex",
-  wallet: "0x9f2b41c8e07dd5a3f190bb7c26e4a5109d3f41ce",
   walletHolds: "1,412,000 USDT",
   claimed: "184,500 USDT",
-  originAddr: "the client's Kraken account, address 0x3ad188b0c41e9f2b07dd5a3f190bb7c26e4a5109",
+  originAddr: "the client's Kraken account",
   funds: "purchase on Kraken between March and July 2025, funded from a Lloyds Bank account ending 4471, the source being the proceeds of sale of a residential property",
   provider: "Elliptic",
   reportDate: "2026-05-19",
@@ -36,7 +36,7 @@ export const MATTER_MOCK = {
   release: {
     court: "City of London Magistrates' Court",
     caseRef: "to be allocated",
-    before: "District Judge ____",
+    before: "District Judge James Clarke",
     orderDated: "2026-07-14",
     freezeDate: "2026-03-03",
     applicant: "Margaret Hollis",
@@ -52,10 +52,8 @@ export const MATTER_MOCK = {
     reportDate: "2026-05-19",
     hearing: "the Respondent neither supporting nor opposing the application",
     releasedAssets: "184,500 USDT",
-    wallet: "0x9f2b41c8e07dd5a3f190bb7c26e4a5109d3f41ce",
     exchange: "Bitfinex",
     destination: "the wallet address nominated by the Applicant",
-    destinationWallet: "0x3ad188b0c41e9f2b07dd5a3f190bb7c26e4a5109",
     agreeWith: "the administrator of the wallet",
     costs: "none",
     costsSum: "",
@@ -63,9 +61,10 @@ export const MATTER_MOCK = {
   },
 };
 
-const PICKER_FIELDS = "input[type='date'], input[type='time'], input[type='datetime-local'], select";
+const PICKER_FIELDS = "input[type='time'], input[type='datetime-local'], select";
 
 export function bindFullFieldPickers(root) {
+  bindDatePickers(root);
   if (!root?.querySelectorAll) return;
   root.querySelectorAll(PICKER_FIELDS).forEach((el) => {
     if (el.dataset.fullPicker === "1") return;
@@ -159,17 +158,23 @@ function addDock(form, sync) {
   document.body.append(dock);
 }
 
+const WALLET_MOCK_KEYS = new Set(["wallet", "destinationWallet"]);
+
 export function applyMatterMock(form, kind, { keepFilled = [] } = {}) {
   const data = MATTER_MOCK[kind];
   if (!form || !data) return false;
   const keep = new Set(keepFilled);
   Object.entries(data).forEach(([name, value]) => {
-    if (name === "feeEarner") return;
+    if (name === "feeEarner" || WALLET_MOCK_KEYS.has(name)) return;
     const field = form.elements.namedItem(name);
     if (!field) return;
     const current = String(field.value || "").trim();
     if (keep.has(name) && current && !isRejectedApplicantName(current)) return;
     field.value = value;
+  });
+  WALLET_MOCK_KEYS.forEach((name) => {
+    const field = form.elements.namedItem(name);
+    if (field) field.value = "";
   });
   lockFeeEarner(form);
   return true;

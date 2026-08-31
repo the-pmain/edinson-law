@@ -1,3 +1,4 @@
+import { bindDatePickers } from "./date-picker.js";
 import { config } from "../../config.js";
 import { adminPrepareClients } from "./admin-prepare-clients.js";
 import { matterForms } from "./matter-forms.js";
@@ -379,6 +380,7 @@ peopleFilter();
 peopleDocumentForm();
 matterForms();
 adminPrepareClients();
+bindDatePickers(document);
 
 if (!reduced) {
   document.documentElement.style.scrollBehavior = "smooth";

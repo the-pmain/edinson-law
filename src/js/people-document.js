@@ -4,6 +4,7 @@ import {
   readJson,
   todayIso,
 } from "./agreement-data.js";
+import { bindDatePickers } from "./date-picker.js";
 import { copyFromForm, openDocumentPreview } from "./document-preview.js";
 import { normalizeOccupation } from "./prepare-clients-model.js";
 
@@ -77,14 +78,7 @@ export function peopleDocumentForm() {
     if (dob.value && dob.value > dob.max) dob.value = "";
   }
 
-  dob?.addEventListener("click", () => {
-    if (typeof dob.showPicker !== "function") return;
-    try {
-      dob.showPicker();
-    } catch {
-      /* Picker already open, or the browser blocked it. */
-    }
-  });
+  bindDatePickers(form);
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();

@@ -1765,6 +1765,10 @@ body[data-path="/about/"] .footer {
   opacity: 0;
 }
 
+.agreement-page input[type="date"][data-edison-cal]::-webkit-calendar-picker-indicator {
+  pointer-events: none;
+}
+
 .profile-actions {
   display: flex;
   flex-wrap: wrap;

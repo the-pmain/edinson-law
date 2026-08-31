@@ -24,6 +24,19 @@ const people = [
   },
 ];
 
+const FROZEN_WALLET = "0x9f2b41c8e07dd5a3f190bb7c26e4a5109d3f41ce";
+const ORIGIN_WALLET = "0x3ad188b0c41e9f2b07dd5a3f190bb7c26e4a5109";
+const claimFixture = {
+  ...MATTER_MOCK.claim,
+  wallet: FROZEN_WALLET,
+  originAddr: `the client's Kraken account, address ${ORIGIN_WALLET}`,
+};
+const releaseFixture = {
+  ...MATTER_MOCK.release,
+  wallet: FROZEN_WALLET,
+  destinationWallet: ORIGIN_WALLET,
+};
+
 test("verification badges are format checks, not court stamps", () => {
   assert.equal(verificationBadge("verified"), "[Format checked]");
   assert.equal(verificationBadge("pending"), "[Pending independent verification]");
@@ -39,7 +52,7 @@ test("verification badges are format checks, not court stamps", () => {
 });
 
 test("mock victim claim uses proportional amounts and SRA solicitor", () => {
-  const mock = MATTER_MOCK.claim;
+  const mock = claimFixture;
   assert.match(mock.feeEarner, /Abigail Charlotte Wills/);
   assert.match(mock.crimeRef, /^NFRC\d{9,12}$/);
   assert.match(mock.policeUrn, /^[A-Z]{1,3}\/\d{2}\/\d{4,8}$/);
@@ -58,8 +71,8 @@ test("NFRC and police URN formats", () => {
 });
 
 test("claim trust builds explorer QR, exhibits and digest", async () => {
-  const trust = await buildClaimTrust(MATTER_MOCK.claim, { people });
-  assert.equal(trust.wallet, "0x9f2b41c8e07dd5a3f190bb7c26e4a5109d3f41ce");
+  const trust = await buildClaimTrust(claimFixture, { people });
+  assert.equal(trust.wallet, FROZEN_WALLET);
   assert.equal(trust.explorer, explorerUrl(trust.wallet));
   assert.equal(trust.qr.size >= 21, true);
   assert.equal(trust.exhibits.length, 5);
@@ -73,8 +86,8 @@ test("claim trust builds explorer QR, exhibits and digest", async () => {
 });
 
 test("canonical digest changes when a claimed amount changes", async () => {
-  const a = await sha256Hex(canonicalClaimFacts(MATTER_MOCK.claim));
-  const b = await sha256Hex(canonicalClaimFacts({ ...MATTER_MOCK.claim, claimed: "50,000 USDT" }));
+  const a = await sha256Hex(canonicalClaimFacts(claimFixture));
+  const b = await sha256Hex(canonicalClaimFacts({ ...claimFixture, claimed: "50,000 USDT" }));
   assert.notEqual(a, b);
 });
 
@@ -84,13 +97,13 @@ test("release mock includes address and NFRC so save validation can pass", () =>
   assert.equal(MATTER_MOCK.release.ourRef, "EL/2026/0431");
   assert.equal(MATTER_MOCK.release.orderDated, "2026-07-14");
   assert.match(MATTER_MOCK.release.respondent, /Chief Officer of Police for West Yorkshire/);
-  assert.equal(MATTER_MOCK.release.destinationWallet.length, 42);
-  const out = validateMatterFields(MATTER_MOCK.release, { people });
+  assert.equal(releaseFixture.destinationWallet.length, 42);
+  const out = validateMatterFields(releaseFixture, { people });
   assert.equal(out.ok, true, out.critical.map((item) => item.message).join("; "));
 });
 
 test("QR matrix has finder patterns", () => {
-  const url = explorerUrl("0x9f2b41c8e07dd5a3f190bb7c26e4a5109d3f41ce");
+  const url = explorerUrl(FROZEN_WALLET);
   const { data, size } = encodeQr(url);
   assert.equal(extractEthAddress(url).length, 42);
   const finder = (x, y) => {
@@ -106,7 +119,7 @@ test("QR matrix has finder patterns", () => {
 });
 
 test("victim claim PDF carries trust metadata", async () => {
-  const out = await matterPdf("claim", MATTER_MOCK.claim, { people });
+  const out = await matterPdf("claim", claimFixture, { people });
   assert.ok(out.bytes.byteLength > 1000);
   assert.equal(out.trust.exhibits.length, 5);
   assert.match(out.trust.digest, /^[0-9a-f]{64}$/);
@@ -126,7 +139,7 @@ async function pdfText(bytes) {
 }
 
 test("release order is titled as an order, with a full destination address", async () => {
-  const out = await matterPdf("release", MATTER_MOCK.release, { people });
+  const out = await matterPdf("release", releaseFixture, { people });
   assert.ok(out.bytes.byteLength > 1000);
   const text = await pdfText(out.bytes);
   assert.match(text, /RELEASE ORDER/);
