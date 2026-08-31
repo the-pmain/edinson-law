@@ -106,7 +106,7 @@ function ensureShell() {
   shell.querySelector("[data-cal-prev]").innerHTML = CHEVRON;
   shell.querySelector("[data-cal-next]").innerHTML = CHEVRON;
   jumpInput = shell.querySelector("#edison-cal-year-jump");
-  document.body.append(shell);
+  document.documentElement.append(shell);
 
   shell.querySelector("[data-cal-prev]").addEventListener("click", () => step(-1));
   shell.querySelector("[data-cal-next]").addEventListener("click", () => step(1));
@@ -196,26 +196,80 @@ function applyTypedDate(input, text) {
   text.value = formatUkDate(date);
 }
 
-function hostFor(input) {
-  return input.closest("dialog[open]") || document.body;
+function overlayHost(input) {
+  return input?.closest("dialog[open]") || document.documentElement;
+}
+
+function hideShellPopover() {
+  try {
+    if (shell && typeof shell.hidePopover === "function" && shell.matches(":popover-open")) {
+      shell.hidePopover();
+    }
+  } catch {
+    /* already closed */
+  }
+}
+
+function attachShell(input) {
+  const host = overlayHost(input);
+  if (!shell || shell.parentNode === host) return;
+  hideShellPopover();
+  host.append(shell);
+}
+
+function showShell() {
+  shell.hidden = false;
+  if (typeof shell.showPopover !== "function") return;
+  if (!shell.hasAttribute("popover")) shell.setAttribute("popover", "manual");
+  try {
+    shell.showPopover();
+  } catch {
+    shell.removeAttribute("popover");
+  }
+}
+
+function calendarOpen() {
+  if (!shell) return false;
+  try {
+    if (shell.matches(":popover-open")) return true;
+  } catch {
+    /* :popover-open is not available */
+  }
+  return !shell.hidden;
 }
 
 function place() {
-  if (!activeInput || !shell) return;
-  const rect = displayOf(activeInput).getBoundingClientRect();
-  const width = Math.min(22 * 16, Math.max(20 * 16, rect.width));
+  if (!activeInput || !shell || !calendarOpen()) return;
+  const anchor = displayOf(activeInput).getBoundingClientRect();
+  const width = Math.min(22 * 16, Math.max(20 * 16, anchor.width));
   const gap = 8;
-  let left = rect.left;
-  if (left + width > window.innerWidth - 12) left = window.innerWidth - width - 12;
-  if (left < 12) left = 12;
-  const estimated = view === "year" ? 22 * 16 : view === "day" ? 24 * 16 : 20 * 16;
-  const below = rect.bottom + gap;
-  const top = below + estimated > window.innerHeight - 12 && rect.top - estimated - gap > 12
-    ? rect.top - estimated - gap
-    : below;
+  const pad = 12;
   shell.style.width = `${width}px`;
-  shell.style.left = `${left}px`;
-  shell.style.top = `${Math.max(12, top)}px`;
+  shell.style.left = "0px";
+  shell.style.top = "0px";
+  const origin = shell.getBoundingClientRect();
+  const height = shell.offsetHeight
+    || (view === "year" ? 22 * 16 : view === "day" ? 24 * 16 : 20 * 16);
+
+  const viewLeft = pad;
+  const viewRight = window.innerWidth - pad;
+  const viewTop = pad;
+  const viewBottom = window.innerHeight - pad;
+
+  let left = anchor.left;
+  if (left + width > viewRight) left = viewRight - width;
+  if (left < viewLeft) left = viewLeft;
+
+  const below = anchor.bottom + gap;
+  const spaceBelow = viewBottom - below;
+  const spaceAbove = anchor.top - gap - viewTop;
+  const openBelow = spaceBelow >= height || spaceBelow >= spaceAbove;
+  let top = openBelow ? below : anchor.top - gap - height;
+  if (top + height > viewBottom) top = Math.max(viewTop, viewBottom - height);
+  if (top < viewTop) top = viewTop;
+
+  shell.style.left = `${Math.round(left - origin.left)}px`;
+  shell.style.top = `${Math.round(top - origin.top)}px`;
 }
 
 function setTitle(button, label, { hidden = false, drillable = true, aria } = {}) {
@@ -416,13 +470,9 @@ function commit(iso) {
 }
 
 function close() {
-  if (!shell || shell.hidden) return;
+  if (!shell || !calendarOpen()) return;
+  hideShellPopover();
   shell.hidden = true;
-  try {
-    if (typeof shell.hidePopover === "function" && shell.matches(":popover-open")) shell.hidePopover();
-  } catch {
-    /* already closed */
-  }
   activeInput = null;
 }
 
@@ -439,35 +489,30 @@ function open(input) {
   if (input.disabled) return;
   if (input.readOnly && input.dataset.edisonCalLock !== "1") return;
   ensureShell();
-  if (activeInput === input && !shell.hidden) {
+  if (activeInput === input && calendarOpen()) {
     place();
     return;
   }
-  const host = hostFor(input);
-  if (shell.parentNode !== host && typeof shell.showPopover !== "function") host.append(shell);
+  attachShell(input);
   activeInput = input;
   selected = parseIso(input.value);
   cursor = selected ? new Date(selected) : startOfDay(new Date());
   const { min, max } = yearLimits();
   cursor = bound(cursor, min, max);
   view = "day";
-  shell.hidden = false;
-  try {
-    if (typeof shell.showPopover === "function") shell.showPopover();
-  } catch {
-    host.append(shell);
-  }
+  showShell();
   render();
+  requestAnimationFrame(place);
 }
 
 function onDocPointer(event) {
-  if (!activeInput || !shell || shell.hidden) return;
+  if (!activeInput || !shell || !calendarOpen()) return;
   if (shell.contains(event.target) || wrapOf(activeInput)?.contains(event.target)) return;
   close();
 }
 
 function onDocKey(event) {
-  if (!activeInput || !shell || shell.hidden) return;
+  if (!activeInput || !shell || !calendarOpen()) return;
   if (event.key === "Escape") {
     event.preventDefault();
     const input = activeInput;
@@ -494,11 +539,19 @@ function onDocKey(event) {
   }
 }
 
+function anchorInView(rect) {
+  if (rect.bottom < 8 || rect.top > window.innerHeight - 8) return false;
+  const clip = activeInput?.closest("dialog[open] .admin-compose-body, dialog[open] .preview-pages, dialog[open]");
+  if (!clip) return true;
+  const box = clip.getBoundingClientRect();
+  return rect.bottom > box.top + 4 && rect.top < box.bottom - 4;
+}
+
 function onScroll(event) {
-  if (!activeInput || !shell || shell.hidden) return;
+  if (!activeInput || !shell || !calendarOpen()) return;
   if (shell.contains(event.target)) return;
   const rect = displayOf(activeInput).getBoundingClientRect();
-  if (rect.bottom < 8 || rect.top > window.innerHeight - 8) close();
+  if (!anchorInView(rect)) close();
   else place();
 }
 
@@ -599,4 +652,7 @@ if (typeof document !== "undefined") {
     if (activeInput) place();
   });
   window.addEventListener("scroll", onScroll, true);
+  document.addEventListener("close", (event) => {
+    if (event.target instanceof HTMLDialogElement) close();
+  }, true);
 }

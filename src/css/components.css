@@ -1379,7 +1379,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  overflow: hidden;
+  overflow: visible;
   overscroll-behavior: contain;
 }
 
@@ -1388,6 +1388,8 @@
 }
 
 .admin-compose-panel {
+  position: relative;
+  z-index: 0;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   height: 100%;
@@ -1510,7 +1512,7 @@
 
 .edison-cal {
   position: fixed;
-  z-index: 80;
+  z-index: 200;
   margin: 0;
   padding: 0;
   border: 0;
@@ -1518,11 +1520,14 @@
   inset: unset;
   width: auto;
   height: auto;
+  overflow: visible;
 }
 
 .edison-cal:popover-open {
+  position: fixed;
   inset: unset;
   margin: 0;
+  overflow: visible;
 }
 
 .edison-cal-card {
