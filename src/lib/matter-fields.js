@@ -1,3 +1,4 @@
+import { UK_DATE_PLACEHOLDER } from "./dates.js";
 import { esc } from "./html.js";
 
 /** Locked fee earner — matches FIRM_SRA_REGISTER.namedSolicitor in matter-validate.js. */
@@ -20,10 +21,12 @@ export function field({
   disabled = false,
   className = "",
 }) {
+  const datePlaceholder = type === "date" ? placeholder || UK_DATE_PLACEHOLDER : placeholder;
   const auto = autocomplete ? ` autocomplete="${esc(autocomplete)}"` : "";
   const maxLengthAttr = maxlength ? ` maxlength="${esc(String(maxlength))}"` : "";
   const val = value ? ` value="${esc(value)}"` : "";
-  const ph = placeholder ? ` placeholder="${esc(placeholder)}"` : "";
+  const ph = datePlaceholder ? ` placeholder="${esc(datePlaceholder)}"` : "";
+  const titleAttr = type === "date" ? ` title="${esc(UK_DATE_PLACEHOLDER)}"` : "";
   const when = showWhen ? ` data-show-when="${esc(showWhen)}" hidden` : "";
   const reqAttr = required ? " required" : "";
   const readAttr = readonly ? " readonly" : "";
@@ -45,9 +48,9 @@ export function field({
     control = `<textarea id="${id}" name="${id}" rows="${rows}"${cls}${auto}${maxLengthAttr}${ph}${reqAttr}${readAttr}${disAttr}>${esc(value)}</textarea>`;
   } else if (disabled) {
     // Disabled controls are omitted from FormData — keep a hidden twin for submit.
-    control = `<input type="hidden" name="${id}" value="${esc(value)}"><input id="${id}" type="${esc(type)}" value="${esc(value)}" disabled${required ? " aria-required=\"true\"" : ""}${auto}${maxLengthAttr}${ph}${cls}>`;
+    control = `<input type="hidden" name="${id}" value="${esc(value)}"><input id="${id}" type="${esc(type)}" value="${esc(value)}" disabled${required ? " aria-required=\"true\"" : ""}${auto}${maxLengthAttr}${ph}${titleAttr}${cls}>`;
   } else {
-    control = `<input id="${id}" name="${id}" type="${esc(type)}"${cls}${auto}${maxLengthAttr}${val}${ph}${reqAttr}${readAttr}>`;
+    control = `<input id="${id}" name="${id}" type="${esc(type)}"${cls}${auto}${maxLengthAttr}${val}${ph}${titleAttr}${reqAttr}${readAttr}>`;
   }
   return `<div class="field"${when}>
     <label for="${id}">${esc(label)}${reqLabel}</label>
@@ -78,7 +81,7 @@ export function agreementFieldsHtml() {
       autocomplete: "organization-title",
       maxlength: 80,
     })}
-    ${field({ id: "clientDob", label: "Date of birth", type: "date", autocomplete: "bday" })}
+    ${field({ id: "clientDob", label: "Date of birth", type: "date", autocomplete: "bday", hint: UK_DATE_PLACEHOLDER })}
   `;
 }
 

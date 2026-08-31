@@ -17,6 +17,7 @@ import {
   FIXED_FEE_EARNER_LINE,
   releaseFieldsHtml,
 } from "../lib/matter-fields.js";
+import { formControl } from "./form-control.js";
 import { applyMatterMock, bindFullFieldPickers, MATTER_MOCK } from "./matter-forms.js";
 
 const ADMIN_COPY = {
@@ -35,9 +36,10 @@ function setStatus(node, text) {
 
 function fillForm(form, values) {
   Object.entries(values).forEach(([name, value]) => {
-    const field = form.elements.namedItem(name);
+    const field = formControl(form, name);
     if (!field || value == null) return;
     field.value = String(value);
+    field.dispatchEvent(new Event("input", { bubbles: true }));
   });
 }
 
@@ -48,7 +50,7 @@ function syncShowWhen(form) {
     if (eq < 0) return;
     const name = rule.slice(0, eq);
     const want = rule.slice(eq + 1);
-    const field = form.elements.namedItem(name);
+    const field = formControl(form, name);
     node.hidden = String(field?.value || "") !== want;
   });
 }
@@ -102,12 +104,13 @@ function firstAgreementInvalid(form) {
     ["clientDob", (value) => !value || value > todayIso()],
   ];
   for (const [name, invalid] of checks) {
-    const input = form.elements.namedItem(name);
+    const input = formControl(form, name);
     const value = String(input?.value || "").trim();
     const on = invalid(value);
+    const visible = input?.closest(".edison-date")?.querySelector(".edison-date-text") || input;
     input?.closest(".field")?.classList.toggle("is-invalid", on);
-    input?.setAttribute("aria-invalid", on ? "true" : "false");
-    if (on) return input;
+    visible?.setAttribute("aria-invalid", on ? "true" : "false");
+    if (on) return visible;
   }
   return null;
 }
@@ -406,7 +409,7 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
       feeEarner: FIXED_FEE_EARNER_LINE,
     });
     lockFeeEarner(form);
-    const dob = form.elements.namedItem("clientDob");
+    const dob = formControl(form, "clientDob");
     if (dob) dob.max = todayIso();
     bindFullFieldPickers(form);
     syncShowWhen(form);

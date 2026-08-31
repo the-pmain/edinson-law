@@ -3,6 +3,7 @@ import { downloadBytes } from "./agreement-data.js";
 import { embedDocumentFonts } from "./document-fonts.js";
 import { buildClaimTrust, verificationBadge } from "./claim-trust.js";
 import { extractEthAddress, formatEthAddress } from "./eth-address.js";
+import { formatUkLong } from "../lib/dates.js";
 import {
   coerceSraFeeEarner,
   formatAssetAmount,
@@ -10,10 +11,6 @@ import {
   validateMatterFields,
 } from "./matter-validate.js";
 
-const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
 const ink = rgb(10 / 255, 32 / 255, 40 / 255);
 const slate = rgb(83 / 255, 103 / 255, 109 / 255);
 const line = rgb(203 / 255, 218 / 255, 214 / 255);
@@ -46,12 +43,7 @@ export function formValues(form) {
 }
 
 function fmt(iso) {
-  if (!iso) return "";
-  const p = String(iso).split("-");
-  if (p.length !== 3) return iso;
-  const date = new Date(+p[0], +p[1] - 1, +p[2]);
-  if (Number.isNaN(date.valueOf())) return iso;
-  return `${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+  return formatUkLong(iso);
 }
 
 function shift(iso, days = 0, years = 0) {

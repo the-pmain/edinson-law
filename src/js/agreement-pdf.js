@@ -1,6 +1,7 @@
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import { privacyNoticeUrl } from "./agreement-data.js";
+import { formatUkDate, formatUkLong } from "../lib/dates.js";
 
 const TEMPLATE = "/documents/client-authority-consent.pdf";
 const SCRIPT_FONT = "/fonts/GreatVibes-Regular.ttf";
@@ -22,20 +23,11 @@ function safeText(value) {
 }
 
 export function formatAgreementDate(value) {
-  if (!value) return "";
-  const date = new Date(`${value}T12:00:00`);
-  if (Number.isNaN(date.valueOf())) return value;
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(date);
+  return formatUkLong(value);
 }
 
 function formatDob(value) {
-  if (!value) return "";
-  const [year, month, day] = String(value).split("-");
-  return year && month && day ? `${day}/${month}/${year}` : value;
+  return formatUkDate(value);
 }
 
 function fitText(font, text, size, maxWidth) {

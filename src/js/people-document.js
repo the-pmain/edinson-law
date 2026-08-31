@@ -5,6 +5,7 @@ import {
   todayIso,
 } from "./agreement-data.js";
 import { bindDatePickers } from "./date-picker.js";
+import { formControl } from "./form-control.js";
 import { copyFromForm, openDocumentPreview } from "./document-preview.js";
 import { normalizeOccupation } from "./prepare-clients-model.js";
 
@@ -16,14 +17,12 @@ function fieldWrap(input) {
 
 function setInvalid(input, on) {
   fieldWrap(input)?.classList.toggle("is-invalid", Boolean(on));
-  if (input) input.setAttribute("aria-invalid", on ? "true" : "false");
+  const visible = input?.closest(".edison-date")?.querySelector(".edison-date-text") || input;
+  if (visible) visible.setAttribute("aria-invalid", on ? "true" : "false");
 }
 
 function valueOf(form, name) {
-  const field = form.elements.namedItem(name);
-  if (!field) return "";
-  if (field instanceof RadioNodeList) return String(field.value || "").trim();
-  return String(field.value || "").trim();
+  return String(formControl(form, name)?.value || "").trim();
 }
 
 function instructSlug() {
@@ -47,7 +46,7 @@ function agreementFromForm(form, payload) {
 function firstInvalid(form) {
   const missing = [];
   CLIENT_FIELDS.forEach((name) => {
-    const input = form.elements.namedItem(name);
+    const input = formControl(form, name);
     const value = valueOf(form, name);
     const invalid =
       name === "clientDob" ? !value || value > todayIso()
@@ -55,7 +54,7 @@ function firstInvalid(form) {
       : name === "clientEmail" ? !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
       : !value;
     setInvalid(input, invalid);
-    if (invalid) missing.push(input);
+    if (invalid) missing.push(input?.closest(".edison-date")?.querySelector(".edison-date-text") || input);
   });
   const privacy = form.elements.namedItem("agreementPrivacy");
   setInvalid(privacy, !privacy?.checked);
@@ -72,7 +71,7 @@ export function peopleDocumentForm() {
 
   const status = form.querySelector("[data-form-status]");
   const submit = form.querySelector("[data-agreement-submit]");
-  const dob = form.elements.namedItem("clientDob");
+  const dob = formControl(form, "clientDob");
   if (dob) {
     dob.max = todayIso();
     if (dob.value && dob.value > dob.max) dob.value = "";

@@ -177,27 +177,32 @@
           <div class="field">
     <label for="clientName">Fullständigt juridiskt namn <span class="req">obligatoriskt</span></label>
     <input id="clientName" name="clientName" type="text" required autocomplete="name">
+    
     <p class="error">Ange ditt namn.</p>
   </div>
           <div class="field">
     <label for="clientEmail">E-post <span class="req">obligatoriskt</span></label>
     <input id="clientEmail" name="clientEmail" type="email" required autocomplete="email">
+    
     <p class="error">Ange en giltig e-postadress.</p>
   </div>
           <div class="field">
     <label for="clientPhone">Telefon <span class="req">obligatoriskt</span></label>
     <input id="clientPhone" name="clientPhone" type="tel" required autocomplete="tel">
+    
     <p class="error">Ange ditt telefonnummer.</p>
   </div>
           <div class="field">
     <label for="clientOccupation">Sysselsättning</label>
     <input id="clientOccupation" name="clientOccupation" type="text" autocomplete="organization-title" maxlength="80">
     
+    
   </div>
           <div class="field">
     <label for="clientDob">Födelsedatum <span class="req">obligatoriskt</span></label>
-    <input id="clientDob" name="clientDob" type="date" required autocomplete="bday" max="2026-08-31">
-    <p class="error">Ange ditt födelsedatum.</p>
+    <input id="clientDob" name="clientDob" type="date" required autocomplete="bday" max="2026-08-31" placeholder="DD/MM/YYYY" title="DD/MM/YYYY" aria-describedby="clientDob-hint">
+    <p class="hint" id="clientDob-hint">Infogas i fullmakten i schema 2. Använd DD/MM/YYYY.</p>
+    <p class="error">Ange ditt födelsedatum som DD/MM/YYYY.</p>
   </div>
         </div>
         <div class="field">

@@ -4,6 +4,7 @@ import {
   COMPOSE_KINDS,
   kindSaved,
 } from "./clients-documents-model.js";
+import { formatUkDate, formatUkDateTime } from "../lib/dates.js";
 
 const ADMIN_PIN = "1100";
 const SESSION_KEY = "edison-admin-ok";
@@ -30,17 +31,11 @@ function currentPage() {
 }
 
 function formatDateTime(value) {
-  if (!value) return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return String(value);
-  return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" }).format(date);
+  return formatUkDateTime(value) || "—";
 }
 
 function formatDate(value) {
-  if (!value) return "—";
-  const date = new Date(`${String(value).slice(0, 10)}T00:00:00Z`);
-  if (Number.isNaN(date.getTime())) return String(value);
-  return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeZone: "UTC" }).format(date);
+  return formatUkDate(value) || "—";
 }
 
 function cell(text) {

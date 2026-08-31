@@ -4,6 +4,7 @@ import { TEXT_FIELD_MAX } from "../js/prepare-clients-model.js";
 import { crumbs, documentPage, fieldMark, insightIcon, practiceIcon, whyIcon } from "./layout.js";
 import { claimFormHtml, releaseFormHtml } from "./matter-forms.js";
 import { previewDataAttrs } from "./preview-copy.js";
+import { todayIso, UK_DATE_PLACEHOLDER } from "./dates.js";
 import { esc } from "./html.js";
 import {
   complaintsHtml,
@@ -159,6 +160,7 @@ function agreementField({
   type = "text",
   autocomplete = "",
   error = "",
+  hint = "",
   max = "",
   maxlength = "",
   required = true,
@@ -168,13 +170,17 @@ function agreementField({
   const maxAttr = max ? ` max="${esc(max)}"` : "";
   const maxLengthAttr = maxlength ? ` maxlength="${esc(String(maxlength))}"` : "";
   const reqAttr = required ? " required" : "";
+  const hintId = hint ? `${id}-hint` : "";
+  const described = hintId ? ` aria-describedby="${esc(hintId)}"` : "";
+  const dateAttrs = type === "date" ? ` placeholder="${esc(UK_DATE_PLACEHOLDER)}" title="${esc(UK_DATE_PLACEHOLDER)}"` : "";
   const control =
     type === "textarea"
-      ? `<textarea id="${id}" name="${id}" rows="4"${reqAttr}${auto}${maxLengthAttr}></textarea>`
-      : `<input id="${id}" name="${id}" type="${esc(type)}"${reqAttr}${auto}${maxAttr}${maxLengthAttr}>`;
+      ? `<textarea id="${id}" name="${id}" rows="4"${reqAttr}${auto}${maxLengthAttr}${described}></textarea>`
+      : `<input id="${id}" name="${id}" type="${esc(type)}"${reqAttr}${auto}${maxAttr}${maxLengthAttr}${dateAttrs}${described}>`;
   return `<div class="field">
     <label for="${id}">${esc(label)}${req}</label>
     ${control}
+    ${hint ? `<p class="hint" id="${esc(hintId)}">${esc(hint)}</p>` : ""}
     ${error ? `<p class="error">${esc(error)}</p>` : ""}
   </div>`;
 }
@@ -230,7 +236,7 @@ function agreementFormHtml() {
           ${agreementField({ id: "clientEmail", label: t("email"), type: "email", autocomplete: "email", error: t("enterEmail") })}
           ${agreementField({ id: "clientPhone", label: t("telephone"), type: "tel", autocomplete: "tel", error: t("enterPhone") })}
           ${agreementField({ id: "clientOccupation", label: t("agreementOccupation"), autocomplete: "organization-title", required: false, maxlength: TEXT_FIELD_MAX })}
-          ${agreementField({ id: "clientDob", label: t("agreementDob"), type: "date", autocomplete: "bday", error: t("enterDob"), max: new Date().toISOString().slice(0, 10) })}
+          ${agreementField({ id: "clientDob", label: t("agreementDob"), type: "date", autocomplete: "bday", error: t("enterDob"), hint: t("agreementDobHelp"), max: todayIso() })}
         </div>
         <div class="field">
           <label class="checkbox" for="agreementPrivacy">

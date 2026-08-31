@@ -11,6 +11,7 @@ import {
   verifyBlockChainAddresses,
 } from "./matter-validate.js";
 import { encodeQr } from "./qr-matrix.js";
+import { formatUkLong } from "../lib/dates.js";
 
 const ETH_RE = /0x[a-fA-F0-9]{40}/;
 const FACT_KEYS = [
@@ -187,7 +188,7 @@ export async function claimExhibits(fields = {}, validation) {
     {
       mark: `${prefix}2`,
       kind: "tracing-report",
-      title: `Tracing report of ${fields.provider || "[provider]"} dated ${fields.reportDate || "[date]"}`,
+      title: `Tracing report of ${fields.provider || "[provider]"} dated ${formatUkLong(fields.reportDate) || "[date]"}`,
       status: items.evidence,
       note: "Independent analytics exhibit. Completeness reflects particulars recorded here, not a finding that the trace is correct.",
       parts: [
@@ -239,7 +240,7 @@ export async function claimExhibits(fields = {}, validation) {
     {
       mark: `${prefix}5`,
       kind: "freezing-order",
-      title: `Crypto wallet freezing order under s.303Z37 POCA 2002 dated ${fields.orderDate || "[date]"} (copy of the sealed order)`,
+      title: `Crypto wallet freezing order under s.303Z37 POCA 2002 dated ${formatUkLong(fields.orderDate) || "[date]"} (copy of the sealed order)`,
       status: fields.orderDate && walletOk ? "pending" : "provisional",
       note: "The sealed order is the court's act. This notice only records the date and wallet particulars. Exhibit the sealed copy when it is on the file.",
       parts: [

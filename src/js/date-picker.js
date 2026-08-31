@@ -1,3 +1,12 @@
+import {
+  UK_DATE_PLACEHOLDER,
+  formatUkDate,
+  maskUkDate,
+  parseIsoDate,
+  parseUkDate,
+  toIsoDate,
+} from "../lib/dates.js";
+
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
@@ -9,6 +18,7 @@ const YEAR_CEILING_PAD = 0;
 
 const CARET = `<svg class="edison-cal-caret" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6.2 8 10.8l4.5-4.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const CHEVRON = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.2 3.2 5.4 8l4.8 4.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const CALENDAR = `<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3.5" width="12" height="11" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2 7h12M5.5 2v3M10.5 2v3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 
 let shell;
 let jumpInput;
@@ -17,19 +27,12 @@ let view = "day";
 let cursor = new Date();
 let selected = null;
 
-function pad(n) {
-  return String(n).padStart(2, "0");
-}
-
 function toIso(date) {
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+  return toIsoDate(date);
 }
 
 function parseIso(value) {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || "").trim());
-  if (!match) return null;
-  const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
-  return Number.isNaN(date.getTime()) ? null : date;
+  return parseIsoDate(value);
 }
 
 function startOfDay(date) {
@@ -64,11 +67,6 @@ function yearLimits() {
     minY: min ? min.getFullYear() : YEAR_FLOOR,
     maxY: max ? max.getFullYear() : now + YEAR_CEILING_PAD,
   };
-}
-
-function nativeLockNeeded() {
-  return /iP(hone|ad|od)/.test(navigator.userAgent)
-    || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 }
 
 function ensureShell() {
@@ -150,13 +148,61 @@ function ensureShell() {
   return shell;
 }
 
+function wrapOf(input) {
+  return input?.closest(".edison-date");
+}
+
+function displayOf(input) {
+  return wrapOf(input)?.querySelector(".edison-date-text") || input;
+}
+
+function fieldLabel(input, id) {
+  if (!id || typeof CSS === "undefined" || typeof CSS.escape !== "function") return "Date";
+  const selector = `label[for="${CSS.escape(id)}"]`;
+  const label = input.form?.querySelector(selector) || document.querySelector(selector);
+  const text = String(label?.textContent || "").replace(/\s+/g, " ").trim().replace(/\s*required\s*$/i, "").trim();
+  return text || "Date";
+}
+
+function syncDisplay(input) {
+  const text = displayOf(input);
+  if (!text || text === input) return;
+  text.value = formatUkDate(input.value);
+}
+
+function applyTypedDate(input, text) {
+  const raw = String(text.value || "").trim();
+  if (!raw) {
+    if (input.value) {
+      input.value = "";
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    return;
+  }
+  const date = parseUkDate(raw);
+  const min = limitOf(input, "min");
+  const max = limitOf(input, "max");
+  if (!date || (min && date < min) || (max && date > max)) {
+    syncDisplay(input);
+    return;
+  }
+  const iso = toIsoDate(date);
+  if (input.value !== iso) {
+    input.value = iso;
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+  text.value = formatUkDate(date);
+}
+
 function hostFor(input) {
   return input.closest("dialog[open]") || document.body;
 }
 
 function place() {
   if (!activeInput || !shell) return;
-  const rect = activeInput.getBoundingClientRect();
+  const rect = displayOf(activeInput).getBoundingClientRect();
   const width = Math.min(22 * 16, Math.max(20 * 16, rect.width));
   const gap = 8;
   let left = rect.left;
@@ -362,10 +408,11 @@ function commit(iso) {
   if (!activeInput) return close();
   const input = activeInput;
   input.value = iso;
+  syncDisplay(input);
   input.dispatchEvent(new Event("input", { bubbles: true }));
   input.dispatchEvent(new Event("change", { bubbles: true }));
   close();
-  input.focus({ preventScroll: true });
+  displayOf(input).focus({ preventScroll: true });
 }
 
 function close() {
@@ -415,7 +462,7 @@ function open(input) {
 
 function onDocPointer(event) {
   if (!activeInput || !shell || shell.hidden) return;
-  if (shell.contains(event.target) || activeInput.contains(event.target)) return;
+  if (shell.contains(event.target) || wrapOf(activeInput)?.contains(event.target)) return;
   close();
 }
 
@@ -425,7 +472,7 @@ function onDocKey(event) {
     event.preventDefault();
     const input = activeInput;
     close();
-    input?.focus({ preventScroll: true });
+    displayOf(input)?.focus({ preventScroll: true });
     return;
   }
   if (event.key !== "Tab") return;
@@ -450,7 +497,7 @@ function onDocKey(event) {
 function onScroll(event) {
   if (!activeInput || !shell || shell.hidden) return;
   if (shell.contains(event.target)) return;
-  const rect = activeInput.getBoundingClientRect();
+  const rect = displayOf(activeInput).getBoundingClientRect();
   if (rect.bottom < 8 || rect.top > window.innerHeight - 8) close();
   else place();
 }
@@ -458,29 +505,72 @@ function onScroll(event) {
 function bindInput(input) {
   if (input.dataset.edisonCal === "1") return;
   input.dataset.edisonCal = "1";
-  if (nativeLockNeeded()) {
-    input.dataset.edisonCalLock = "1";
-    input.setAttribute("readonly", "");
-    input.setAttribute("inputmode", "none");
+  input.classList.add("edison-date-iso");
+  input.setAttribute("tabindex", "-1");
+  input.setAttribute("aria-hidden", "true");
+
+  const wrap = document.createElement("div");
+  wrap.className = "edison-date";
+  input.before(wrap);
+  wrap.append(input);
+
+  const originalId = input.id;
+  const text = document.createElement("input");
+  text.type = "text";
+  text.className = "edison-date-text";
+  if (originalId) {
+    text.id = originalId;
+    input.removeAttribute("id");
   }
+  text.setAttribute("inputmode", "numeric");
+  text.setAttribute("autocomplete", "off");
+  text.setAttribute("placeholder", UK_DATE_PLACEHOLDER);
+  text.setAttribute("title", UK_DATE_PLACEHOLDER);
+  text.setAttribute("spellcheck", "false");
+  text.setAttribute("maxlength", "10");
+  text.setAttribute("enterkeyhint", "done");
+  text.setAttribute("aria-label", `${fieldLabel(input, originalId)} (${UK_DATE_PLACEHOLDER})`);
+  const describedBy = input.getAttribute("aria-describedby");
+  if (describedBy) text.setAttribute("aria-describedby", describedBy);
+  if (input.required) text.setAttribute("aria-required", "true");
+  text.disabled = input.disabled;
+  text.value = formatUkDate(input.value);
+
+  const openBtn = document.createElement("button");
+  openBtn.type = "button";
+  openBtn.className = "edison-date-open";
+  openBtn.setAttribute("aria-label", "Choose date");
+  openBtn.innerHTML = CALENDAR;
+  openBtn.disabled = input.disabled;
+  wrap.append(text, openBtn);
+
   const openCal = (event) => {
     if (input.disabled) return;
-    if (event.button != null && event.button !== 0) return;
     event.preventDefault();
     event.stopPropagation();
+    text.focus({ preventScroll: true });
     open(input);
   };
-  input.addEventListener("pointerdown", openCal, true);
-  input.addEventListener("mousedown", openCal, true);
-  input.addEventListener("click", (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-  }, true);
-  input.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === " " || event.key === "ArrowDown") {
+  wrap.addEventListener("pointerdown", (event) => {
+    if (event.button) return;
+    openCal(event);
+  });
+  openBtn.addEventListener("click", openCal);
+  text.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowDown") {
       event.preventDefault();
       open(input);
     }
+  });
+  text.addEventListener("input", () => {
+    text.value = maskUkDate(text.value);
+    if (text.value.length === 10) applyTypedDate(input, text);
+  });
+  text.addEventListener("blur", () => applyTypedDate(input, text));
+  input.addEventListener("input", () => syncDisplay(input));
+  input.addEventListener("invalid", () => text.focus());
+  input.form?.addEventListener("reset", () => {
+    requestAnimationFrame(() => syncDisplay(input));
   });
   try {
     Object.defineProperty(input, "showPicker", {
@@ -497,14 +587,16 @@ function bindInput(input) {
 }
 
 export function bindDatePickers(root = document) {
-  if (!root?.querySelectorAll) return;
+  if (typeof document === "undefined" || !root?.querySelectorAll) return;
   ensureShell();
   root.querySelectorAll('input[type="date"]').forEach(bindInput);
 }
 
-document.addEventListener("pointerdown", onDocPointer, true);
-document.addEventListener("keydown", onDocKey, true);
-window.addEventListener("resize", () => {
-  if (activeInput) place();
-});
-window.addEventListener("scroll", onScroll, true);
+if (typeof document !== "undefined") {
+  document.addEventListener("pointerdown", onDocPointer, true);
+  document.addEventListener("keydown", onDocKey, true);
+  window.addEventListener("resize", () => {
+    if (activeInput) place();
+  });
+  window.addEventListener("scroll", onScroll, true);
+}

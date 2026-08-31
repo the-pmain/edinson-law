@@ -177,27 +177,32 @@
           <div class="field">
     <label for="clientName">Vollständiger gesetzlicher Name <span class="req">erforderlich</span></label>
     <input id="clientName" name="clientName" type="text" required autocomplete="name">
+    
     <p class="error">Geben Sie Ihren Namen ein.</p>
   </div>
           <div class="field">
     <label for="clientEmail">E-Mail <span class="req">erforderlich</span></label>
     <input id="clientEmail" name="clientEmail" type="email" required autocomplete="email">
+    
     <p class="error">Geben Sie eine gültige E-Mail-Adresse ein.</p>
   </div>
           <div class="field">
     <label for="clientPhone">Telefon <span class="req">erforderlich</span></label>
     <input id="clientPhone" name="clientPhone" type="tel" required autocomplete="tel">
+    
     <p class="error">Geben Sie Ihre Telefonnummer ein.</p>
   </div>
           <div class="field">
     <label for="clientOccupation">Tätigkeit</label>
     <input id="clientOccupation" name="clientOccupation" type="text" autocomplete="organization-title" maxlength="80">
     
+    
   </div>
           <div class="field">
     <label for="clientDob">Geburtsdatum <span class="req">erforderlich</span></label>
-    <input id="clientDob" name="clientDob" type="date" required autocomplete="bday" max="2026-08-31">
-    <p class="error">Geben Sie Ihr Geburtsdatum ein.</p>
+    <input id="clientDob" name="clientDob" type="date" required autocomplete="bday" max="2026-08-31" placeholder="DD/MM/YYYY" title="DD/MM/YYYY" aria-describedby="clientDob-hint">
+    <p class="hint" id="clientDob-hint">Wird in die Vollmacht in Anlage 2 eingesetzt. Verwenden Sie DD/MM/YYYY.</p>
+    <p class="error">Geben Sie Ihr Geburtsdatum als DD/MM/YYYY ein.</p>
   </div>
         </div>
         <div class="field">

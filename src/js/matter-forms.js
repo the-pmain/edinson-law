@@ -1,4 +1,5 @@
 import { bindDatePickers } from "./date-picker.js";
+import { formControl } from "./form-control.js";
 import { copyFromForm, openDocumentPreview } from "./document-preview.js";
 import { FIXED_FEE_EARNER_LINE } from "../lib/matter-fields.js";
 import { isRejectedApplicantName } from "./matter-validate.js";
@@ -123,7 +124,7 @@ function bindForm(form) {
       if (eq < 0) return;
       const name = rule.slice(0, eq);
       const want = rule.slice(eq + 1);
-      const field = form.elements.namedItem(name);
+      const field = formControl(form, name);
       const on = String(field?.value || "") === want;
       node.hidden = !on;
     });
@@ -166,14 +167,15 @@ export function applyMatterMock(form, kind, { keepFilled = [] } = {}) {
   const keep = new Set(keepFilled);
   Object.entries(data).forEach(([name, value]) => {
     if (name === "feeEarner" || WALLET_MOCK_KEYS.has(name)) return;
-    const field = form.elements.namedItem(name);
+    const field = formControl(form, name);
     if (!field) return;
     const current = String(field.value || "").trim();
     if (keep.has(name) && current && !isRejectedApplicantName(current)) return;
     field.value = value;
+    field.dispatchEvent(new Event("input", { bubbles: true }));
   });
   WALLET_MOCK_KEYS.forEach((name) => {
-    const field = form.elements.namedItem(name);
+    const field = formControl(form, name);
     if (field) field.value = "";
   });
   lockFeeEarner(form);

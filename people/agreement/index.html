@@ -177,27 +177,32 @@
           <div class="field">
     <label for="clientName">Full legal name <span class="req">required</span></label>
     <input id="clientName" name="clientName" type="text" required autocomplete="name">
+    
     <p class="error">Enter your name.</p>
   </div>
           <div class="field">
     <label for="clientEmail">Email <span class="req">required</span></label>
     <input id="clientEmail" name="clientEmail" type="email" required autocomplete="email">
+    
     <p class="error">Enter a valid email address.</p>
   </div>
           <div class="field">
     <label for="clientPhone">Telephone <span class="req">required</span></label>
     <input id="clientPhone" name="clientPhone" type="tel" required autocomplete="tel">
+    
     <p class="error">Enter your telephone number.</p>
   </div>
           <div class="field">
     <label for="clientOccupation">Occupation</label>
     <input id="clientOccupation" name="clientOccupation" type="text" autocomplete="organization-title" maxlength="80">
     
+    
   </div>
           <div class="field">
     <label for="clientDob">Date of birth <span class="req">required</span></label>
-    <input id="clientDob" name="clientDob" type="date" required autocomplete="bday" max="2026-08-31">
-    <p class="error">Enter your date of birth.</p>
+    <input id="clientDob" name="clientDob" type="date" required autocomplete="bday" max="2026-08-31" placeholder="DD/MM/YYYY" title="DD/MM/YYYY" aria-describedby="clientDob-hint">
+    <p class="hint" id="clientDob-hint">Inserted into the Authority and Mandate at Schedule 2. Use DD/MM/YYYY.</p>
+    <p class="error">Enter your date of birth as DD/MM/YYYY.</p>
   </div>
         </div>
         <div class="field">

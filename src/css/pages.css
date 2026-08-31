@@ -1765,8 +1765,9 @@ body[data-path="/about/"] .footer {
   opacity: 0;
 }
 
-.agreement-page input[type="date"][data-edison-cal]::-webkit-calendar-picker-indicator {
-  pointer-events: none;
+.agreement-page .edison-date-text {
+  cursor: pointer;
+  padding-right: 2.6rem;
 }
 
 .profile-actions {

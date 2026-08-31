@@ -177,27 +177,32 @@
           <div class="field">
     <label for="clientName">Fullt juridisk navn <span class="req">obligatorisk</span></label>
     <input id="clientName" name="clientName" type="text" required autocomplete="name">
+    
     <p class="error">Oppgi navnet ditt.</p>
   </div>
           <div class="field">
     <label for="clientEmail">E-post <span class="req">obligatorisk</span></label>
     <input id="clientEmail" name="clientEmail" type="email" required autocomplete="email">
+    
     <p class="error">Oppgi en gyldig e-postadresse.</p>
   </div>
           <div class="field">
     <label for="clientPhone">Telefon <span class="req">obligatorisk</span></label>
     <input id="clientPhone" name="clientPhone" type="tel" required autocomplete="tel">
+    
     <p class="error">Oppgi telefonnummeret ditt.</p>
   </div>
           <div class="field">
     <label for="clientOccupation">Yrke</label>
     <input id="clientOccupation" name="clientOccupation" type="text" autocomplete="organization-title" maxlength="80">
     
+    
   </div>
           <div class="field">
     <label for="clientDob">Fødselsdato <span class="req">obligatorisk</span></label>
-    <input id="clientDob" name="clientDob" type="date" required autocomplete="bday" max="2026-08-31">
-    <p class="error">Oppgi fødselsdatoen din.</p>
+    <input id="clientDob" name="clientDob" type="date" required autocomplete="bday" max="2026-08-31" placeholder="DD/MM/YYYY" title="DD/MM/YYYY" aria-describedby="clientDob-hint">
+    <p class="hint" id="clientDob-hint">Settes inn i fullmakten i vedlegg 2. Bruk DD/MM/YYYY.</p>
+    <p class="error">Oppgi fødselsdatoen din som DD/MM/YYYY.</p>
   </div>
         </div>
         <div class="field">
