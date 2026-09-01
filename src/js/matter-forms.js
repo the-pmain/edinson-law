@@ -31,9 +31,14 @@ const CLAIM_MOCK = {
   feeEarner: FIXED_FEE_EARNER_LINE,
 };
 
+const CLIENT_WALLET = "0x3ad188b0c41e9f2b07dd5a3f190bb7c26e4a5109";
+
 export const MATTER_MOCK = {
   claim: CLAIM_MOCK,
-  matter: CLAIM_MOCK,
+  matter: {
+    ...CLAIM_MOCK,
+    clientWallet: CLIENT_WALLET,
+  },
   release: {
     court: "City of London Magistrates' Court",
     caseRef: "to be allocated",
@@ -159,7 +164,7 @@ function addDock(form, sync) {
   document.body.append(dock);
 }
 
-const WALLET_MOCK_KEYS = new Set(["wallet", "destinationWallet"]);
+const WALLET_MOCK_KEYS = new Set(["wallet", "destinationWallet", "clientWallet"]);
 
 export function applyMatterMock(form, kind, { keepFilled = [] } = {}) {
   const data = MATTER_MOCK[kind];

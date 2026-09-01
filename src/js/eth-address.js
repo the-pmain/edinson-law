@@ -1,22 +1,25 @@
 const ETH_RE = /^0x[a-fA-F0-9]{40}$/;
+const ETH_EMBED_RE = /0x[a-fA-F0-9]{40}/;
 
-/** Full 0x + 40-hex address, lowercased. Empty string if none found. */
+/** Full 0x + 40-hex address, preserving input casing. Empty string if none found. */
 export function extractEthAddress(value) {
-  const match = String(value || "").match(/0x[a-fA-F0-9]{40}/);
-  return match ? `0x${match[0].slice(2).toLowerCase()}` : "";
+  const match = String(value || "").match(ETH_EMBED_RE);
+  return match ? match[0] : "";
 }
 
 export function isEthAddress(value) {
-  return ETH_RE.test(extractEthAddress(value) || String(value || "").trim());
+  const raw = String(value || "").trim();
+  return ETH_RE.test(raw) || Boolean(extractEthAddress(value));
 }
 
-/** Replace a bare or embedded 40-hex address with a complete 42-character form. */
+/** Trim only; preserve address casing exactly as entered. */
 export function formatEthAddress(value) {
-  const found = extractEthAddress(value);
-  if (!found) return String(value || "").trim();
   const raw = String(value || "").trim();
-  if (ETH_RE.test(raw) || raw === found) return found;
-  return raw.replace(/0x[a-fA-F0-9]{40}/, found);
+  if (!raw) return "";
+  if (ETH_RE.test(raw)) return raw;
+  const found = extractEthAddress(raw);
+  if (!found) return raw;
+  return raw.replace(ETH_EMBED_RE, found);
 }
 
 export function explorerUrl(address) {

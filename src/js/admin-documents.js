@@ -15,6 +15,7 @@ import {
   agreementFieldsHtml,
   claimFieldsHtml,
   FIXED_FEE_EARNER_LINE,
+  matterFieldsHtml,
   releaseFieldsHtml,
 } from "../lib/matter-fields.js";
 import { formControl } from "./form-control.js";
@@ -93,6 +94,7 @@ function lockFeeEarner(form) {
 function fieldsHtml(kind) {
   if (kind === "agreement") return agreementFieldsHtml();
   if (kind === "release") return releaseFieldsHtml();
+  if (kind === "matter") return matterFieldsHtml();
   return claimFieldsHtml();
 }
 

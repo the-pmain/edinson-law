@@ -85,7 +85,20 @@ export function agreementFieldsHtml() {
   `;
 }
 
-export function claimFieldsHtml() {
+export function claimFieldsHtml({ clientWallet = false } = {}) {
+  const frozenWalletField = field({
+    id: "wallet",
+    label: "Frozen wallet address",
+    hint: "Full 0x + 40 hexadecimal characters.",
+    maxlength: 42,
+  });
+  const clientWalletField = field({
+    id: "clientWallet",
+    label: "Client's wallet address",
+    maxlength: 42,
+    hint: "The wallet to which the court should order the Claimed Assets transferred.",
+  });
+
   return `
     ${group(1, "The client and the loss", `
       ${field({ id: "clientName", label: "Client's full name", autocomplete: "name", placeholder: "Margaret Hollis" })}
@@ -120,11 +133,9 @@ export function claimFieldsHtml() {
         field({ id: "orderDate", label: "Date of the freezing order", type: "date" }),
         field({ id: "exchange", label: "Administered by", placeholder: "Bitfinex" }),
       )}
-      ${field({
-        id: "wallet",
-        label: "Frozen wallet address",
-        hint: "Full 0x + 40 hexadecimal characters.",
-      })}
+      ${clientWallet
+        ? pair(frozenWalletField, clientWalletField)
+        : frozenWalletField}
       ${pair(
         field({ id: "walletHolds", label: "Wallet holds", placeholder: "1,412,000 USDT" }),
         field({ id: "claimed", label: "Your client claims", placeholder: "184,500 USDT" }),
@@ -196,6 +207,10 @@ export function claimFieldsHtml() {
       ${field({ id: "copyTo", label: "Copy to", value: "CPS Proceeds of Crime Division" })}
     `)}
   `;
+}
+
+export function matterFieldsHtml() {
+  return claimFieldsHtml({ clientWallet: true });
 }
 
 export function releaseFieldsHtml() {

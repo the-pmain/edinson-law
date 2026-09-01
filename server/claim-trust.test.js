@@ -24,6 +24,7 @@ const people = [
   },
 ];
 
+const CHECKSUMMED_WALLET = "0x5Ca474847c7b6d63624ae76081f5165BE899AbCc";
 const FROZEN_WALLET = "0x9f2b41c8e07dd5a3f190bb7c26e4a5109d3f41ce";
 const ORIGIN_WALLET = "0x3ad188b0c41e9f2b07dd5a3f190bb7c26e4a5109";
 const claimFixture = {
@@ -35,6 +36,11 @@ const releaseFixture = {
   ...MATTER_MOCK.release,
   wallet: FROZEN_WALLET,
   destinationWallet: ORIGIN_WALLET,
+};
+const matterFixture = {
+  ...MATTER_MOCK.matter,
+  wallet: FROZEN_WALLET,
+  clientWallet: ORIGIN_WALLET,
 };
 
 test("verification badges are format checks, not court stamps", () => {
@@ -157,4 +163,37 @@ test("release order is titled as an order, with a full destination address", asy
   assert.equal(/lodging checklist/.test(text), false);
   assert.equal(/APPROVED/.test(text), false);
   assert.equal(/Court Registry API/i.test(text), false);
+});
+
+test("application of release order names the client wallet and exchange", async () => {
+  const out = await matterPdf("matter", matterFixture, { people });
+  assert.ok(out.bytes.byteLength > 1000);
+  const text = await pdfText(out.bytes);
+  assert.match(text, /APPLICATION OF RELEASE ORDER/);
+  assert.match(text, /2\.1/);
+  assert.match(text, /2\.2/);
+  assert.match(text, /Designated Wallet/);
+  assert.match(text, /0x3ad188b0c41e9f2b07dd5a3f190bb7c26e4a5109/i);
+  assert.match(text, /Bitfinex/);
+  assert.match(text, /administered by Bitfinex/);
+});
+
+test("wallet addresses keep exact input casing in every document", async () => {
+  const claim = await matterPdf("claim", { ...claimFixture, wallet: CHECKSUMMED_WALLET }, { people });
+  const matter = await matterPdf("matter", {
+    ...matterFixture,
+    wallet: CHECKSUMMED_WALLET,
+    clientWallet: CHECKSUMMED_WALLET,
+  }, { people });
+  const release = await matterPdf("release", {
+    ...releaseFixture,
+    wallet: CHECKSUMMED_WALLET,
+    destinationWallet: CHECKSUMMED_WALLET,
+  }, { people });
+
+  for (const out of [claim, matter, release]) {
+    const text = await pdfText(out.bytes);
+    assert.match(text, /0x5Ca474847c7b6d63624ae76081f5165BE899AbCc/);
+    assert.equal(text.includes("0x5ca474847c7b6d63624ae76081f5165be899abcc"), false);
+  }
 });

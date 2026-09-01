@@ -425,8 +425,9 @@ const FIELD_HANDLERS = {
   releasedAssets: (value, fields) => validateMonetaryValues({ ...fields, releasedAssets: value }),
   wallet: (value, fields) => verifyExchangeRelationship(value, fields.exchange),
   destinationWallet: (value) => verifyBlockChainAddresses(value),
+  clientWallet: (value, fields) => verifyTransactionHistory(fields.wallet, value, fields.claimed),
   originAddr: (value, fields) => verifyTransactionHistory(value, fields.wallet, fields.claimed),
-  exchange: (value, fields) => verifyExchangeRelationship(fields.wallet || fields.destinationWallet, value),
+  exchange: (value, fields) => verifyExchangeRelationship(fields.wallet || fields.destinationWallet || fields.clientWallet, value),
   orderDate: (_value, fields) => validateFreezingOrder(fields),
   freezeDate: (_value, fields) => validateFreezingOrder(fields),
   provider: (_value, fields) => validateEllipticReport(fields),
@@ -468,7 +469,7 @@ export function validateMatterFields(fields = {}, ctx = {}) {
   const keys = [
     "feeEarner", "clientName", "applicant", "claimed", "lossValue", "walletHolds",
     "wallet", "originAddr", "exchange", "orderDate", "freezeDate", "provider",
-    "reportDate", "crimeRef", "policeUrn", "wsName", "caseRef", "ourRef", "destinationWallet",
+    "reportDate", "crimeRef", "policeUrn", "wsName", "caseRef", "ourRef", "destinationWallet", "clientWallet",
   ];
   const seen = new Set();
   const issues = [];
@@ -479,7 +480,7 @@ export function validateMatterFields(fields = {}, ctx = {}) {
     if (seen.has(key)) continue;
     // Skip empty optional release-only fields when absent.
     if (fields[key] == null || fields[key] === "") {
-      if (!["feeEarner", "clientName", "applicant", "claimed", "lossValue", "wallet", "crimeRef"].includes(key)) continue;
+      if (!["feeEarner", "clientName", "applicant", "claimed", "lossValue", "wallet", "crimeRef", "clientWallet"].includes(key)) continue;
     }
     const out = validateDynamicField(key, fields[key], fields, ctx);
     fieldResults[key] = out;

@@ -11,9 +11,9 @@ import {
   verifyBlockChainAddresses,
 } from "./matter-validate.js";
 import { encodeQr } from "./qr-matrix.js";
+import { explorerUrl, extractEthAddress } from "./eth-address.js";
 import { formatUkLong } from "../lib/dates.js";
 
-const ETH_RE = /0x[a-fA-F0-9]{40}/;
 const FACT_KEYS = [
   "agency", "claimed", "claimants", "claimantsN", "clientAddr", "clientName",
   "copyTo", "court", "crimeRef", "exchange", "feeEarner", "fraudDates",
@@ -49,17 +49,9 @@ export function verificationCitation(kind) {
   return "Format checked against this firm's document rules. Unverified facts are marked Provisional.";
 }
 
-export function extractEthAddress(value) {
-  const match = String(value || "").match(ETH_RE);
-  return match ? match[0] : "";
-}
+export { extractEthAddress, explorerUrl } from "./eth-address.js";
 
-export function explorerUrl(address) {
-  const hex = extractEthAddress(address);
-  return hex ? `https://etherscan.io/address/${hex}` : "";
-}
-
-export function exhibitMark(name) {
+function exhibitMark(name) {
   const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
   if (!parts.length) return "A1";
   const initials = (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase();

@@ -7,6 +7,8 @@ import {
   isEthAddress,
 } from "../src/js/eth-address.js";
 
+const CHECKSUMMED = "0x5Ca474847c7b6d63624ae76081f5165BE899AbCc";
+
 test("extracts a complete 0x + 40-hex address", () => {
   const hex = "0x3ad188b0c41e9f2b07dd5a3f190bb7c26e4a5109";
   assert.equal(extractEthAddress(hex), hex);
@@ -16,10 +18,14 @@ test("extracts a complete 0x + 40-hex address", () => {
   assert.equal(explorerUrl(hex), `https://etherscan.io/address/${hex}`);
 });
 
-test("normalises mixed-case addresses without truncating", () => {
-  const mixed = "0x3AD188B0C41E9F2B07DD5A3F190BB7C26E4A5109";
-  assert.equal(formatEthAddress(mixed), "0x3ad188b0c41e9f2b07dd5a3f190bb7c26e4a5109");
-  assert.equal(formatEthAddress(mixed).length, 42);
+test("preserves mixed-case and checksummed addresses", () => {
+  assert.equal(extractEthAddress(CHECKSUMMED), CHECKSUMMED);
+  assert.equal(formatEthAddress(CHECKSUMMED), CHECKSUMMED);
+  assert.equal(formatEthAddress(CHECKSUMMED).length, 42);
+  assert.equal(
+    formatEthAddress(`custody wallet ${CHECKSUMMED} on file`),
+    `custody wallet ${CHECKSUMMED} on file`,
+  );
 });
 
 test("rejects truncated hex as an eth address", () => {

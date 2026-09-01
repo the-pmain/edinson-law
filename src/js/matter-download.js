@@ -206,7 +206,7 @@ function sanitizeMatterValues(values, people = []) {
     if (next[key]) next[key] = normalizeMoneyField(next[key], "USDT");
   }
   if (next.lossValue) next.lossValue = normalizeMoneyField(next.lossValue, "GBP");
-  for (const key of ["wallet", "destinationWallet"]) {
+  for (const key of ["wallet", "destinationWallet", "clientWallet"]) {
     if (next[key]) next[key] = formatEthAddress(next[key]);
   }
   return next;
@@ -923,6 +923,10 @@ function matterBlocks(f) {
   const claimantsLine = f.claimants === "some"
     ? `The Applicant is aware of ${slot(f.claimantsN, "other")} other persons who claim to be victims of the same or related conduct and whose claims may attach to the Frozen Wallet. The Applicant's position on distribution is set out in the witness statement.`
     : "The Applicant is not aware of any competing claim to the cryptoassets held in the Frozen Wallet.";
+  const clientWallet = walletDisplay(f.clientWallet, "[client wallet address]");
+  const releaseMechanics = exchange
+    ? `by transfer from the Frozen Wallet, administered by ${exchange}, to the wallet address ${clientWallet} controlled by the Applicant (the Designated Wallet)`
+    : `to the wallet address ${clientWallet} controlled by the Applicant (the Designated Wallet)`;
 
   return [
     { type: "title", text: "APPLICATION OF RELEASE ORDER", align: "center", size: 16 },
@@ -938,7 +942,8 @@ function matterBlocks(f) {
     { type: "p", n: "1.1", text: `On ${orderDateL} this court made a crypto wallet freezing order under section 303Z37 of the Proceeds of Crime Act 2002 in respect of the crypto wallet ${wallet}, administered by ${exchange} (the Frozen Wallet). The Applicant does not seek to disturb that order.` },
     { type: "p", n: "1.2", text: `The Frozen Wallet holds ${holds}. The Applicant demonstrates ownership of ${claimed} of those cryptoassets (the Claimed Assets).` },
     { type: "h", text: "2. THE ORDER SOUGHT" },
-    { type: "p", n: "2.1", text: "The Applicant applies under section 303Z51 for an order that the Claimed Assets be released to the Applicant within seven days, together with such further or other order as the court thinks fit." },
+    { type: "p", n: "2.1", text: `The Applicant applies under section 303Z51 for an order that the Claimed Assets be released to the Applicant within seven days ${releaseMechanics}, together with such further or other order as the court thinks fit.` },
+    { type: "p", n: "2.2", text: `The Applicant designates ${clientWallet} as the wallet to which the Claimed Assets should be allocated. ${exchange ? `${exchange} administers the Frozen Wallet and will need this address to effect the transfer. ` : ""}The Applicant asks the court to name the Designated Wallet in any release order so that the transfer can be completed within the statutory period.` },
     { type: "h", text: "3. THE GROUNDS" },
     { type: "p", n: "3.1", text: `The Applicant was deprived of the Claimed Assets, or of property which they represent, by unlawful conduct. On ${slot(f.fraudDates, "the dates of the fraud")} the Applicant was induced by ${slot(f.scamDesc, "the fraudulent conduct")} to transfer ${claimed}, then worth approximately ${slot(f.lossValue, "the value lost")}, from ${slot(f.originAddr, "the origin address")}. That conduct amounted to fraud by false representation contrary to section 2 of the Fraud Act 2006. It was reported to Action Fraud under reference ${crimeRef}.` },
     { type: "p", n: "3.2", text: `The cryptoassets of which the Applicant was deprived were not recoverable property immediately before the Applicant was deprived of them. The Applicant acquired them by ${slot(f.funds, "lawful means")}. The Applicant has no relevant convictions and the funds had no connection with criminal conduct.` },
@@ -957,9 +962,9 @@ function matterBlocks(f) {
 }
 
 function walletDisplay(value, placeholder) {
-  const formatted = formatEthAddress(value);
-  const hex = extractEthAddress(formatted);
-  return hex || slot(formatted, placeholder);
+  const raw = clean(value);
+  const hex = extractEthAddress(raw);
+  return hex || slot(raw, placeholder);
 }
 
 function releaseBlocks(f) {
