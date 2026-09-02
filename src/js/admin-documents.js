@@ -98,25 +98,6 @@ function fieldsHtml(kind) {
   return claimFieldsHtml();
 }
 
-function firstAgreementInvalid(form) {
-  const checks = [
-    ["clientName", (value) => !value],
-    ["clientEmail", (value) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)],
-    ["clientPhone", (value) => value.replace(/\D/g, "").length < 8],
-    ["clientDob", (value) => !value || value > todayIso()],
-  ];
-  for (const [name, invalid] of checks) {
-    const input = formControl(form, name);
-    const value = String(input?.value || "").trim();
-    const on = invalid(value);
-    const visible = input?.closest(".edison-date")?.querySelector(".edison-date-text") || input;
-    input?.closest(".field")?.classList.toggle("is-invalid", on);
-    visible?.setAttribute("aria-invalid", on ? "true" : "false");
-    if (on) return visible;
-  }
-  return null;
-}
-
 function formFields(form) {
   const values = {};
   new FormData(form).forEach((value, name) => {
@@ -338,14 +319,6 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
   };
 
   const previewFromForm = async () => {
-    if (activeKind === "agreement") {
-      const invalid = firstAgreementInvalid(form);
-      if (invalid) {
-        showComposeStatus("Check the highlighted fields and try again.");
-        invalid.focus?.();
-        return;
-      }
-    }
     showComposeStatus("");
     if (activeKind === "agreement") {
       const values = formFields(form);
@@ -457,14 +430,6 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
   const saveDocument = async () => {
     if (!activeItem?.id || !activeKind) return;
     if (!COMPOSE_KINDS.includes(activeKind)) return;
-    if (activeKind === "agreement") {
-      const invalid = firstAgreementInvalid(form);
-      if (invalid) {
-        showComposeStatus("Check the highlighted fields and try again.");
-        invalid.focus?.();
-        return;
-      }
-    }
     const updating = kindSaved(activeItem.documents, activeKind);
     saving = true;
     showComposeStatus("");
@@ -473,15 +438,6 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
       const rawFields = formFields(form);
       rawFields.feeEarner = FIXED_FEE_EARNER_LINE;
       lockFeeEarner(form);
-      const { validateMatterFields } = await import("./matter-validate.js");
-      const validation = validateMatterFields(rawFields, { people: payload.people });
-      if (!validation.ok) {
-        const top = validation.critical.slice(0, 2).map((item) => item.message).join(" ");
-        showComposeStatus(top || "Fix the highlighted document issues before saving.");
-        setBarBusy(false);
-        saving = false;
-        return;
-      }
       const response = await fetch("/api/admin/clients-documents", {
         method: "PUT",
         headers: { Accept: "application/json", "Content-Type": "application/json" },

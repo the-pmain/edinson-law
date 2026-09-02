@@ -30,12 +30,16 @@ function currentPage() {
   return Number.isFinite(page) && page > 0 ? page : 1;
 }
 
+function europeanDate(formatted) {
+  return formatted ? formatted.replaceAll("/", ".") : "—";
+}
+
 function formatDateTime(value) {
-  return formatUkDateTime(value) || "—";
+  return europeanDate(formatUkDateTime(value));
 }
 
 function formatDate(value) {
-  return formatUkDate(value) || "—";
+  return europeanDate(formatUkDate(value));
 }
 
 function cell(text) {

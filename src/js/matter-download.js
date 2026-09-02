@@ -1,7 +1,7 @@
 import { PDFDocument, StandardFonts, degrees, rgb } from "pdf-lib";
 import { downloadBytes } from "./agreement-data.js";
 import { embedDocumentFonts } from "./document-fonts.js";
-import { buildClaimTrust, verificationBadge } from "./claim-trust.js";
+import { buildClaimTrust } from "./claim-trust.js";
 import { extractEthAddress, formatEthAddress } from "./eth-address.js";
 import { formatUkLong } from "../lib/dates.js";
 import {
@@ -597,7 +597,7 @@ async function writePdf(title, blocks, {
     if (block.type === "exhibit") {
       const padX = 12;
       const leading = 11;
-      const titleLines = wrap(sansBold, `Exhibit ${block.mark}  ${block.badge || ""}`, 9, width - padX * 2);
+      const titleLines = wrap(sansBold, `Exhibit ${block.mark}`, 9, width - padX * 2);
       const bodyLines = wrap(regular, block.title || "", 9, width - padX * 2);
       const digestLines = wrap(sans, `SHA-256  ${block.digest || ""}`, 7, width - padX * 2);
       const scoreLines = wrap(sans, `Evidence completeness  ${block.score}/100  ·  ${block.scoreLabel || ""}`, 8, width - padX * 2);
@@ -792,11 +792,6 @@ function letterheadRefs(f) {
   ];
 }
 
-function badgeFor(trust, key) {
-  const status = trust?.items?.[key];
-  return status ? `  ${verificationBadge(status)}` : "";
-}
-
 function claimBlocks(f, trust = null) {
   const today = todayIso();
   const letterDate = fmt(today);
@@ -845,11 +840,11 @@ function claimBlocks(f, trust = null) {
     { type: "p", text: `IN THE MATTER OF a crypto wallet freezing order made under section 303Z37 of the Proceeds of Crime Act 2002 on ${orderDateL}` },
     { type: "p", text: "AND IN THE MATTER OF a victim claim under section 303Z51 of that Act for the release of cryptoassets", after: 4 },
     { type: "p", text: trust?.citations?.statute || "Cited to ss.303Z37 and 303Z51 POCA 2002 and rule 12 of the Magistrates' Courts (Detention, Freezing and Forfeiture of Cryptoassets, and Miscellaneous Amendments) Rules 2024.", size: 8, after: 8 },
-    { type: "p", text: `Applicant: ${client}, of ${address}${badgeFor(trust, "identity")}` },
+    { type: "p", text: `Applicant: ${client}, of ${address}` },
     { type: "p", text: `To: ${officer}, ${agency}` },
     { type: "p", text: `Copy: ${copyTo}`, after: 8 },
-    { type: "p", text: `UPON notice that the Applicant was induced to transfer ${claimed}, then worth approximately ${slot(f.lossValue, "[value lost]")}, on ${slot(f.fraudDates, "[dates of the fraud]")}, and that the fraud was reported to Action Fraud under reference ${slot(f.crimeRef, "[Action Fraud reference]")}${f.policeUrn ? ` (police URN ${clean(f.policeUrn)})` : ""}${badgeFor(trust, "nfrc")}` },
-    { type: "p", text: `AND UPON the Applicant claiming ${claimed} of the cryptoassets held in the wallet ${slot(f.wallet, "[wallet address]")}, administered by ${slot(f.exchange, "[exchange]")} and frozen by the above order (the Frozen Wallet), which holds ${holds}${badgeFor(trust, "wallet")}` },
+    { type: "p", text: `UPON notice that the Applicant was induced to transfer ${claimed}, then worth approximately ${slot(f.lossValue, "[value lost]")}, on ${slot(f.fraudDates, "[dates of the fraud]")}, and that the fraud was reported to Action Fraud under reference ${slot(f.crimeRef, "[Action Fraud reference]")}${f.policeUrn ? ` (police URN ${clean(f.policeUrn)})` : ""}` },
+    { type: "p", text: `AND UPON the Applicant claiming ${claimed} of the cryptoassets held in the wallet ${slot(f.wallet, "[wallet address]")}, administered by ${slot(f.exchange, "[exchange]")} and frozen by the above order (the Frozen Wallet), which holds ${holds}` },
     ...(share ? [{ type: "p", text: share, size: 9 }] : []),
     ...(trust?.qr
       ? [{
@@ -863,9 +858,9 @@ function claimBlocks(f, trust = null) {
       : []),
     { type: "p", text: "AND UPON the Applicant intending to apply to the court for release of those assets under section 303Z51, without seeking to disturb the freezing order itself", after: 8 },
     { type: "p", text: "THE APPLICANT'S CASE ON THE THREE STATUTORY LIMBS is that:", bold: true },
-    { type: "p", n: "(a)", text: `the Applicant was deprived of the cryptoassets, or of property which they represent, by unlawful conduct, namely ${slot(f.scamDesc, "[how the scam worked]")};${badgeFor(trust, "limbA")}` },
-    { type: "p", n: "(b)", text: `the cryptoassets of which the Applicant was deprived were not recoverable property immediately before the Applicant was deprived of them, having been acquired by ${slot(f.funds, "[how the client came by the money]")}; and${badgeFor(trust, "limbB")}` },
-    { type: "p", n: "(c)", text: `those cryptoassets belong to the Applicant. The tracing analysis of ${slot(f.provider, "[analytics provider]")} dated ${reportDateL} follows the Applicant's transfers from ${slot(f.originAddr, "[origin address]")} through ${slot(f.route, "[tracing route]")}, and attributes ${claimed} to the Applicant.${badgeFor(trust, "limbC")}` },
+    { type: "p", n: "(a)", text: `the Applicant was deprived of the cryptoassets, or of property which they represent, by unlawful conduct, namely ${slot(f.scamDesc, "[how the scam worked]")};` },
+    { type: "p", n: "(b)", text: `the cryptoassets of which the Applicant was deprived were not recoverable property immediately before the Applicant was deprived of them, having been acquired by ${slot(f.funds, "[how the client came by the money]")}; and` },
+    { type: "p", n: "(c)", text: `those cryptoassets belong to the Applicant. The tracing analysis of ${slot(f.provider, "[analytics provider]")} dated ${reportDateL} follows the Applicant's transfers from ${slot(f.originAddr, "[origin address]")} through ${slot(f.route, "[tracing route]")}, and attributes ${claimed} to the Applicant.` },
     { type: "space", h: 6 },
     { type: "p", text: otherVictims, after: 8 },
     { type: "p", text: "Schedule of exhibits", bold: true, after: 6 },
