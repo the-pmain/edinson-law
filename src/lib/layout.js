@@ -19,6 +19,14 @@ import { filterPublicFaqs, regulatoryFooterHtml } from "./trust-html.js";
 
 const MARK = `<img class="brand-lockup" src="/brand/edison-law-logo.png" alt="Edison Law">`;
 
+const TRM_HREF = "https://www.trmlabs.com/glossary/crypto-tracing#notable-cases-1";
+
+function trmCredit() {
+  return `<a class="trm-credit" href="${TRM_HREF}" target="_blank" rel="noopener noreferrer">
+    <img src="/brand/trm-labs.png" alt="TRM Labs" width="160" height="48">
+  </a>`;
+}
+
 const ICONS = {
   menu: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>`,
   close: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>`,
@@ -180,6 +188,7 @@ function brand(href = "/") {
 
 export function trustBadges() {
   return `<div class="trust-badges" role="group" aria-label="${esc(t("regulationMemberships"))}">
+    ${trmCredit()}
     <a class="trust-badge" href="${esc(site.sraUrl)}" target="_blank" rel="noopener noreferrer">
       <img src="/brand/sra-badge.svg" width="275" height="88" alt="${esc(t("sraBadgeAlt"))}">
     </a>
@@ -600,8 +609,6 @@ export function documentPage(page, body) {
     </div>
     <div class="rail-utility">
       ${languageChrome("rail")}
-      ${site.search.enabled ? `<button type="button" data-search-open>${esc(t("search"))}</button>` : ""}
-      <a href="/accessibility/">${esc(t("accessibility"))}</a>
       <a href="/contact/">${esc(t("contact"))}</a>
     </div>
   </aside>
@@ -612,8 +619,10 @@ export function documentPage(page, body) {
         ${brand("/")}
         <button class="icon-btn" type="button" data-menu-close aria-label="${esc(t("closeMenu"))}">${ICONS.close}</button>
       </div>
-      ${navLinks([...site.rail, ...site.footerLinks], page.path, "drawer-nav")}
-      ${languageChrome("drawer")}
+      <div class="drawer-body">
+        ${navLinks([...site.rail, ...site.footerLinks], page.path, "drawer-nav")}
+        ${languageChrome("drawer")}
+      </div>
     </div>
   </div>
 

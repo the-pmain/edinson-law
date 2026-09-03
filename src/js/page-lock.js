@@ -53,8 +53,9 @@ function applyLock() {
   if (!document.querySelector("dialog[open]")) rememberScroll();
   active = true;
   listen();
+  const scrollbarGap = gap();
+  root().style.setProperty("--page-lock-gap", `${scrollbarGap}px`);
   root().dataset.pageLock = "true";
-  root().style.setProperty("--page-lock-gap", `${gap()}px`);
   document.body.style.top = `-${y}px`;
 }
 

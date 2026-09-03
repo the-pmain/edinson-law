@@ -21,7 +21,8 @@ function menu() {
   const openers = document.querySelectorAll("[data-menu-open]");
   const closer = drawer.querySelector("[data-menu-close]");
   const panel = drawer.querySelector(".drawer-panel");
-  panel?.setAttribute("data-page-lock-scroll", "");
+  const scroller = drawer.querySelector(".drawer-body") || panel;
+  scroller?.setAttribute("data-page-lock-scroll", "");
   let last = null;
 
   const set = (open) => {
