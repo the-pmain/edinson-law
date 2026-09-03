@@ -4,7 +4,7 @@ import { TEXT_FIELD_MAX } from "../js/prepare-clients-model.js";
 import { crumbs, documentPage, fieldMark, insightIcon, practiceIcon, whyIcon } from "./layout.js";
 import { claimFormHtml, releaseFormHtml } from "./matter-forms.js";
 import { previewDataAttrs } from "./preview-copy.js";
-import { todayIso, UK_DATE_PLACEHOLDER } from "./dates.js";
+import { todayIso } from "./dates.js";
 import { esc } from "./html.js";
 import {
   complaintsHtml,
@@ -172,7 +172,7 @@ function agreementField({
   const reqAttr = required ? " required" : "";
   const hintId = hint ? `${id}-hint` : "";
   const described = hintId ? ` aria-describedby="${esc(hintId)}"` : "";
-  const dateAttrs = type === "date" ? ` placeholder="${esc(UK_DATE_PLACEHOLDER)}" title="${esc(UK_DATE_PLACEHOLDER)}"` : "";
+  const dateAttrs = type === "date" ? ` data-date-format="eu"` : "";
   const control =
     type === "textarea"
       ? `<textarea id="${id}" name="${id}" rows="4"${reqAttr}${auto}${maxLengthAttr}${described}></textarea>`
@@ -236,7 +236,7 @@ function agreementFormHtml() {
           ${agreementField({ id: "clientEmail", label: t("email"), type: "email", autocomplete: "email", error: t("enterEmail") })}
           ${agreementField({ id: "clientPhone", label: t("telephone"), type: "tel", autocomplete: "tel", error: t("enterPhone") })}
           ${agreementField({ id: "clientOccupation", label: t("agreementOccupation"), autocomplete: "organization-title", required: false, maxlength: TEXT_FIELD_MAX })}
-          ${agreementField({ id: "clientDob", label: t("agreementDob"), type: "date", autocomplete: "bday", error: t("enterDob"), hint: t("agreementDobHelp"), max: todayIso() })}
+          ${agreementField({ id: "clientDob", label: t("agreementDob"), type: "date", autocomplete: "bday", error: t("enterDob"), max: todayIso() })}
         </div>
         <div class="field">
           <label class="checkbox" for="agreementPrivacy">

@@ -1,6 +1,7 @@
 import {
-  UK_DATE_PLACEHOLDER,
+  formatEuDate,
   formatUkDate,
+  maskEuDate,
   maskUkDate,
   parseIsoDate,
   parseUkDate,
@@ -148,6 +149,22 @@ function ensureShell() {
   return shell;
 }
 
+function usesEuDate(input) {
+  return input?.dataset.dateFormat === "eu";
+}
+
+function displayPlaceholder(input) {
+  return input?.getAttribute("placeholder") || "";
+}
+
+function formatDisplayDate(input, value) {
+  return usesEuDate(input) ? formatEuDate(value) : formatUkDate(value);
+}
+
+function maskDisplayDate(input, raw) {
+  return usesEuDate(input) ? maskEuDate(raw) : maskUkDate(raw);
+}
+
 function wrapOf(input) {
   return input?.closest(".edison-date");
 }
@@ -167,7 +184,7 @@ function fieldLabel(input, id) {
 function syncDisplay(input) {
   const text = displayOf(input);
   if (!text || text === input) return;
-  text.value = formatUkDate(input.value);
+  text.value = formatDisplayDate(input, input.value);
 }
 
 function applyTypedDate(input, text) {
@@ -193,7 +210,7 @@ function applyTypedDate(input, text) {
     input.dispatchEvent(new Event("input", { bubbles: true }));
     input.dispatchEvent(new Event("change", { bubbles: true }));
   }
-  text.value = formatUkDate(date);
+  text.value = formatDisplayDate(input, date);
 }
 
 function overlayHost(input) {
@@ -577,17 +594,22 @@ function bindInput(input) {
   }
   text.setAttribute("inputmode", "numeric");
   text.setAttribute("autocomplete", "off");
-  text.setAttribute("placeholder", UK_DATE_PLACEHOLDER);
-  text.setAttribute("title", UK_DATE_PLACEHOLDER);
+  const placeholder = displayPlaceholder(input);
+  if (placeholder) {
+    text.setAttribute("placeholder", placeholder);
+    text.setAttribute("title", input.getAttribute("title") || placeholder);
+  }
   text.setAttribute("spellcheck", "false");
   text.setAttribute("maxlength", "10");
   text.setAttribute("enterkeyhint", "done");
-  text.setAttribute("aria-label", `${fieldLabel(input, originalId)} (${UK_DATE_PLACEHOLDER})`);
+  text.setAttribute("aria-label", placeholder
+    ? `${fieldLabel(input, originalId)} (${placeholder})`
+    : fieldLabel(input, originalId));
   const describedBy = input.getAttribute("aria-describedby");
   if (describedBy) text.setAttribute("aria-describedby", describedBy);
   if (input.required) text.setAttribute("aria-required", "true");
   text.disabled = input.disabled;
-  text.value = formatUkDate(input.value);
+  text.value = formatDisplayDate(input, input.value);
 
   const openBtn = document.createElement("button");
   openBtn.type = "button";
@@ -616,7 +638,7 @@ function bindInput(input) {
     }
   });
   text.addEventListener("input", () => {
-    text.value = maskUkDate(text.value);
+    text.value = maskDisplayDate(input, text.value);
     if (text.value.length === 10) applyTypedDate(input, text);
   });
   text.addEventListener("blur", () => applyTypedDate(input, text));

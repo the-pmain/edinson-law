@@ -1,7 +1,7 @@
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import { privacyNoticeUrl } from "./agreement-data.js";
-import { formatUkDate, formatUkLong } from "../lib/dates.js";
+import { formatEuDate, formatUkLong } from "../lib/dates.js";
 
 const TEMPLATE = "/documents/client-authority-consent.pdf";
 const SCRIPT_FONT = "/fonts/GreatVibes-Regular.ttf";
@@ -27,7 +27,7 @@ export function formatAgreementDate(value) {
 }
 
 function formatDob(value) {
-  return formatUkDate(value);
+  return formatEuDate(value);
 }
 
 function fitText(font, text, size, maxWidth) {

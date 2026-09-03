@@ -6,6 +6,7 @@ const MONTHS = [
 ];
 
 export const UK_DATE_PLACEHOLDER = "DD/MM/YYYY";
+export const EU_DATE_PLACEHOLDER = "DD.MM.YYYY";
 
 export function pad2(n) {
   return String(n).padStart(2, "0");
@@ -52,10 +53,18 @@ function asDate(value) {
   return parseUserDate(value);
 }
 
-export function formatUkDate(value) {
+function formatDayMonthYear(value, sep) {
   const date = asDate(value);
   if (!date) return "";
-  return `${pad2(date.getDate())}/${pad2(date.getMonth() + 1)}/${date.getFullYear()}`;
+  return `${pad2(date.getDate())}${sep}${pad2(date.getMonth() + 1)}${sep}${date.getFullYear()}`;
+}
+
+export function formatUkDate(value) {
+  return formatDayMonthYear(value, "/");
+}
+
+export function formatEuDate(value) {
+  return formatDayMonthYear(value, ".");
 }
 
 export function formatUkLong(value) {
@@ -71,11 +80,19 @@ export function formatUkDateTime(value) {
   return `${formatUkDate(date)} ${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
 }
 
-export function maskUkDate(raw) {
+function maskDayMonthYear(raw, sep) {
   const digits = String(raw || "").replace(/\D/g, "").slice(0, 8);
   if (digits.length <= 2) return digits;
-  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
-  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}${sep}${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}${sep}${digits.slice(2, 4)}${sep}${digits.slice(4)}`;
+}
+
+export function maskUkDate(raw) {
+  return maskDayMonthYear(raw, "/");
+}
+
+export function maskEuDate(raw) {
+  return maskDayMonthYear(raw, ".");
 }
 
 export function todayIso(now = new Date()) {

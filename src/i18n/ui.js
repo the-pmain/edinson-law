@@ -109,7 +109,7 @@ export const UI = table([
   ["formMatter", ["Matter", "Ärende", "Sak", "Sag", "Sache"]],
   ["enterName", ["Enter your name.", "Ange ditt namn.", "Oppgi navnet ditt.", "Angiv dit navn.", "Geben Sie Ihren Namen ein."]],
   ["enterAddress", ["Enter your address.", "Ange din adress.", "Oppgi adressen din.", "Angiv din adresse.", "Geben Sie Ihre Anschrift ein."]],
-  ["enterDob", ["Enter your date of birth as DD/MM/YYYY.", "Ange ditt födelsedatum som DD/MM/YYYY.", "Oppgi fødselsdatoen din som DD/MM/YYYY.", "Angiv din fødselsdato som DD/MM/YYYY.", "Geben Sie Ihr Geburtsdatum als DD/MM/YYYY ein."]],
+  ["enterDob", ["Enter your date of birth as DD.MM.YYYY.", "Ange ditt födelsedatum som DD.MM.YYYY.", "Oppgi fødselsdatoen din som DD.MM.YYYY.", "Angiv din fødselsdato som DD.MM.YYYY.", "Geben Sie Ihr Geburtsdatum als DD.MM.YYYY ein."]],
   ["enterEmail", ["Enter a valid email address.", "Ange en giltig e-postadress.", "Oppgi en gyldig e-postadresse.", "Angiv en gyldig e-mailadresse.", "Geben Sie eine gültige E-Mail-Adresse ein."]],
   ["enterPhone", ["Enter your telephone number.", "Ange ditt telefonnummer.", "Oppgi telefonnummeret ditt.", "Angiv dit telefonnummer.", "Geben Sie Ihre Telefonnummer ein."]],
   ["enterOccupation", ["Enter your occupation.", "Ange din sysselsättning.", "Oppgi yrket ditt.", "Angiv din beskæftigelse.", "Geben Sie Ihre Tätigkeit ein."]],
@@ -247,13 +247,6 @@ export const UI = table([
   ["agreementAddress", ["Address", "Adress", "Adresse", "Adresse", "Anschrift"]],
   ["agreementOccupation", ["Occupation", "Sysselsättning", "Yrke", "Beskæftigelse", "Tätigkeit"]],
   ["agreementDob", ["Date of birth", "Födelsedatum", "Fødselsdato", "Fødselsdato", "Geburtsdatum"]],
-  ["agreementDobHelp", [
-    "Inserted into the Authority and Mandate at Schedule 2. Use DD/MM/YYYY.",
-    "Infogas i fullmakten i schema 2. Använd DD/MM/YYYY.",
-    "Settes inn i fullmakten i vedlegg 2. Bruk DD/MM/YYYY.",
-    "Indsættes i fuldmagten i bilag 2. Brug DD/MM/YYYY.",
-    "Wird in die Vollmacht in Anlage 2 eingesetzt. Verwenden Sie DD/MM/YYYY.",
-  ]],
   ["agreementEvidenceHeading", ["Accounts and evidence", "Konton och bevisning", "Kontoer og bevis", "Konti og bevis", "Konten und Beweis"]],
   ["agreementEvidenceLead", [
     "Schedule 1 of the agreement. At least the first provider and account name are required. Sort codes and account numbers stay on this device.",
