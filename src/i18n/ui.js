@@ -188,6 +188,21 @@ export const UI = table([
     "Section 303Z51 des Proceeds of Crime Act 2002. Geben Sie die Angaben ein, die im Schreiben an den Beamten und im schriftlichen Antrag verwendet werden.",
   ]],
   ["claimProfileCta", ["Prepare a victim claim", "Förbered ett offeranspråk", "Klargjør et offerkrav", "Forbered et offerkrav", "Opferanspruch vorbereiten"]],
+  ["p2pLabel", ["P2P agreement", "P2P-avtal", "P2P-avtale", "P2P-aftale", "P2P-Vereinbarung"]],
+  ["p2pHeading", [
+    "P2P Agreement.",
+    "P2P-avtal.",
+    "P2P-avtale.",
+    "P2P-aftale.",
+    "P2P-Vereinbarung.",
+  ]],
+  ["p2pLead", [
+    "Between two clients of the firm, with Edison Law as intermediary and guarantor. Enter the parties, the deal and the capped guarantee.",
+    "Mellan två av byråns klienter, med Edison Law som mellanhand och garant. Ange parterna, affären och den maximerade garantin.",
+    "Mellom to av firmaets klienter, med Edison Law som mellommann og garantist. Oppgi partene, avtalen og den begrensede garantien.",
+    "Mellem to af firmaets klienter, med Edison Law som mellemmand og garant. Angiv parterne, handlen og den begrænsede garanti.",
+    "Zwischen zwei Mandanten der Kanzlei, mit Edison Law als Vermittler und Garant. Geben Sie die Parteien, das Geschäft und die begrenzte Garantie ein.",
+  ]],
   ["releaseLabel", ["Release order", "Frigörandeorder", "Frigjøringskjennelse", "Frigivelsesordre", "Freigabeanordnung"]],
   ["releaseHeading", ["Release order under s.303Z51.", "Frigörandeorder enligt s.303Z51.", "Frigjøringskjennelse etter s.303Z51.", "Frigivelsesordre efter s.303Z51.", "Freigabeanordnung nach s.303Z51."]],
   ["releaseLead", [

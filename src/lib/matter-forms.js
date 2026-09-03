@@ -1,7 +1,7 @@
 import { personEmail, personPhone } from "../content/people.js";
 import { site, t } from "../i18n/catalog.js";
 import { esc } from "./html.js";
-import { claimFieldsHtml, releaseFieldsHtml } from "./matter-fields.js";
+import { claimFieldsHtml, p2pFieldsHtml, releaseFieldsHtml } from "./matter-fields.js";
 import { previewDataAttrs } from "./preview-copy.js";
 
 function jsonScript(id, value) {
@@ -29,6 +29,40 @@ export function claimFormHtml() {
       <form class="form matter-form" id="claim-form" data-matter-form="claim" novalidate ${previewDataAttrs()}>
         <p class="matter-kicker">Victim claim to frozen cryptoassets &nbsp;·&nbsp; <b>s.303Z51 POCA 2002</b></p>
         ${claimFieldsHtml()}
+        <button class="btn btn-signal form-submit" type="submit" data-matter-download>${esc(t("matterDownload"))}</button>
+        <p class="matter-foot">${esc(t("matterFieldsNote"))}</p>
+      </form>
+    </div>
+  `;
+}
+
+export function p2pFormHtml() {
+  const sra = site.sraNumber;
+  return `
+    <div class="wrap">
+      ${jsonScript("edison-matter-defaults", peoplePayload())}
+      <form class="form matter-form" id="p2p-form" data-matter-form="p2p" novalidate ${previewDataAttrs()}>
+        <p class="matter-kicker">P2P Agreement &nbsp;·&nbsp; <b>Two clients, one intermediary</b></p>
+
+        <section class="matter-note">
+          <h2>What this agreement does</h2>
+          <h3>A sale between two clients, on terms the firm can stand behind</h3>
+          <p>Both parties are already on the books, so identity, address, source of funds and wallet control have been verified through onboarding and are not repeated here. The agreement fixes the asset, the amount, the price, the two wallets and the one bank account, then sets out the six steps that move the deal from clearance to settlement confirmation. Time is of the essence at every step.</p>
+        </section>
+
+        <section class="matter-note">
+          <h3>The guarantee is the point of the document</h3>
+          <p>If one party performs and the other does not, the firm pays the party that performed for its direct loss, up to the capped amount you set below. The claimant must have completed its own steps on time, must give the defaulting party two working days to put it right, and must claim in writing with the payment confirmations and transaction hashes within 30 days of the settlement deadline. Price movements, lost profit, wrong addresses, lost keys and anything settled outside the six steps are excluded.</p>
+        </section>
+
+        <section class="matter-flag">
+          <h3>The firm holds neither the money nor the cryptoasset</h3>
+          <p>Edison Law does not act as solicitor for either party on the transaction and gives no view on whether the deal is a good one. Both parties are advised to take independent advice and both must consent to the firm acting in this limited role for the two of them. Set the guarantee cap deliberately: it is the firm's total exposure under the agreement, whoever claims and however many claims are made.</p>
+        </section>
+
+        ${p2pFieldsHtml()}
+
+        <p class="matter-foot">Edison Law is authorised and regulated by the Solicitors Regulation Authority, SRA number ${esc(sra)}.</p>
         <button class="btn btn-signal form-submit" type="submit" data-matter-download>${esc(t("matterDownload"))}</button>
         <p class="matter-foot">${esc(t("matterFieldsNote"))}</p>
       </form>

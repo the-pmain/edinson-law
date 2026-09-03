@@ -2,7 +2,7 @@ import { personEmail, personPhone } from "../content/people.js";
 import { site, home, pages, insightBodies, serviceMatter, trust, t, loc } from "../i18n/catalog.js";
 import { TEXT_FIELD_MAX } from "../js/prepare-clients-model.js";
 import { crumbs, documentPage, fieldMark, insightIcon, practiceIcon, whyIcon } from "./layout.js";
-import { claimFormHtml, releaseFormHtml } from "./matter-forms.js";
+import { claimFormHtml, p2pFormHtml, releaseFormHtml } from "./matter-forms.js";
 import { previewDataAttrs } from "./preview-copy.js";
 import { todayIso } from "./dates.js";
 import { esc } from "./html.js";
@@ -297,6 +297,31 @@ function claimPage() {
         <p class="lead muted">${esc(t("claimLead"))}</p>
       </div>
       ${claimFormHtml()}
+    </main>
+  `;
+  return documentPage(page, body);
+}
+
+function p2pPage() {
+  const page = {
+    path: "/people/p2p-agreement/",
+    title: `${t("p2pHeading").replace(/\.$/, "")} | Edison Law`,
+    description: t("p2pLead"),
+    heading: t("p2pHeading"),
+    crumb: t("p2pLabel"),
+    breadcrumbs: [{ label: t("nav.people"), href: "/people/" }],
+  };
+  const body = `
+    <main id="content" class="matter-page p2p-page">
+      <div class="wrap page-head page-head-tight">
+        ${crumbs([
+          { label: t("nav.people"), href: "/people/" },
+          { label: t("p2pLabel") },
+        ])}
+        <h1>${esc(t("p2pHeading"))}</h1>
+        <p class="lead muted">${esc(t("p2pLead"))}</p>
+      </div>
+      ${p2pFormHtml()}
     </main>
   `;
   return documentPage(page, body);
@@ -1613,6 +1638,7 @@ export function allPages() {
     { file: "people/index.html", html: peoplePage() },
     { file: "people/agreement/index.html", html: agreementPage() },
     { file: "people/victim-claim/index.html", html: claimPage() },
+    { file: "people/p2p-agreement/index.html", html: p2pPage() },
     { file: "people/release-order/index.html", html: releasePage() },
     { file: "admin/index.html", html: adminPage(), unlisted: true, englishOnly: true },
     ...site.people.map((person) => ({

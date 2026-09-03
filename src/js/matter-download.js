@@ -1037,6 +1037,10 @@ function releaseBlocks(f) {
 
 export async function matterPdf(kind, values, options = {}) {
   if (kind === "tracing") return generateTracingPdf(values);
+  if (kind === "p2p") {
+    const { generateP2pPdf } = await import("./p2p-pdf.js");
+    return generateP2pPdf(values);
+  }
   const people = Array.isArray(options.people) ? options.people : [];
   const sanitized = sanitizeMatterValues(values, people);
   const name = sanitized.clientName || sanitized.applicant || "";

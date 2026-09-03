@@ -3,6 +3,7 @@ import { formControl } from "./form-control.js";
 import { copyFromForm, openDocumentPreview } from "./document-preview.js";
 import { FIXED_FEE_EARNER_LINE } from "../lib/matter-fields.js";
 import { isRejectedApplicantName } from "./matter-validate.js";
+import { P2P_MOCK } from "./p2p-agreement.js";
 
 const CLAIM_MOCK = {
   clientName: "Margaret Hollis",
@@ -35,6 +36,7 @@ const CLIENT_WALLET = "0x3ad188b0c41e9f2b07dd5a3f190bb7c26e4a5109";
 
 export const MATTER_MOCK = {
   claim: CLAIM_MOCK,
+  p2p: P2P_MOCK,
   matter: {
     ...CLAIM_MOCK,
     clientWallet: CLIENT_WALLET,

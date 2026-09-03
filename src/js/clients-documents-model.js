@@ -1,11 +1,15 @@
-export const DOCUMENT_KINDS = ["agreement", "claim", "matter", "release", "tracing"];
+export const DOCUMENT_KINDS = ["agreement", "claim", "p2p", "matter", "release", "tracing"];
+
+/** Nested on claim when written to live clients_documents (top-level keys stay agreement, claim, release). */
+export const NESTED_ON_CLAIM = ["p2p", "matter", "tracing"];
 
 /** Kinds the admin menu can create or edit. Authority is preview-only from the client record. */
-export const COMPOSE_KINDS = ["claim", "matter", "release", "tracing"];
+export const COMPOSE_KINDS = ["claim", "p2p", "matter", "release", "tracing"];
 
 export const DOCUMENT_LABELS = {
   agreement: "Client authority form",
   claim: "Victim claim",
+  p2p: "P2P agreement",
   matter: "Application of release order",
   release: "Release order",
   tracing: "Tracing report",
@@ -14,6 +18,7 @@ export const DOCUMENT_LABELS = {
 export const DOCUMENT_SHORT_LABELS = {
   agreement: "Authority",
   claim: "Victim claim",
+  p2p: "P2P agreement",
   matter: "Application of release order",
   release: "Release order",
   tracing: "Tracing report",
@@ -22,6 +27,7 @@ export const DOCUMENT_SHORT_LABELS = {
 export const EMPTY_DOCUMENTS = {
   agreement: null,
   claim: null,
+  p2p: null,
   matter: null,
   release: null,
   tracing: null,
@@ -66,24 +72,28 @@ export function normalizeDocuments(value) {
   return {
     agreement: savedEntry(raw.agreement) || asObject(raw.agreement),
     claim: savedEntry(raw.claim),
+    p2p: nestedOnClaim(raw, "p2p"),
     matter: nestedOnClaim(raw, "matter"),
     tracing: nestedOnClaim(raw, "tracing"),
     release: savedEntry(raw.release) || asObject(raw.release),
   };
 }
 
-/** Live clients_documents only allows top-level agreement, claim, release. Matter and tracing sit on claim. */
+/** Live clients_documents only allows top-level agreement, claim, release. P2P, matter and tracing sit on claim. */
 export function persistDocuments(value) {
-  const { agreement, claim, matter, release, tracing } = normalizeDocuments(value);
+  const normalized = normalizeDocuments(value);
+  const { agreement, claim, release } = normalized;
+  const nested = NESTED_ON_CLAIM.filter((key) => normalized[key]);
   let claimOut = null;
-  if (claim || matter || tracing) {
+  if (claim || nested.length) {
     claimOut = {};
     if (claim) {
       claimOut.fields = claim.fields;
       if (claim.saved_at) claimOut.saved_at = claim.saved_at;
     }
-    if (matter) claimOut.matter = matter;
-    if (tracing) claimOut.tracing = tracing;
+    nested.forEach((key) => {
+      claimOut[key] = normalized[key];
+    });
   }
   return {
     agreement: agreement || null,
@@ -108,7 +118,7 @@ export function fieldsForKind(documents, kind) {
   const fields = asObject(entry.fields) || entry;
   const out = {};
   Object.entries(fields).forEach(([key, value]) => {
-    if (key === "saved_at" || key === "fields" || key === "matter") return;
+    if (key === "saved_at" || key === "fields" || NESTED_ON_CLAIM.includes(key)) return;
     out[key] = value == null ? "" : String(value);
   });
   return out;

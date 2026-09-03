@@ -121,6 +121,29 @@ test("nested tracing does not mark Victim claim as saved", () => {
   assert.equal(kindSaved(documents, "tracing"), true);
 });
 
+test("persistDocuments nests P2P agreement on claim", () => {
+  const first = mergeKind(
+    { agreement: null, claim: { fields: { crimeRef: "NFRC1" }, saved_at: "2026-01-02T00:00:00.000Z" } },
+    "p2p",
+    { sellerName: "Alasdair Finn", buyerName: "Priya Raghunathan", matterRef: "EL/2026/0518" },
+    "2026-01-05T00:00:00.000Z",
+  );
+  const persisted = persistDocuments(first);
+  assert.deepEqual(Object.keys(persisted).sort(), ["agreement", "claim", "release"]);
+  assert.equal("p2p" in persisted, false);
+  assert.equal(persisted.claim.fields.crimeRef, "NFRC1");
+  assert.equal(persisted.claim.p2p.fields.sellerName, "Alasdair Finn");
+  assert.equal(kindSaved(persisted, "p2p"), true);
+  assert.equal(kindSaved(persisted, "claim"), true);
+  assert.equal(fieldsForKind(persisted, "p2p").matterRef, "EL/2026/0518");
+});
+
+test("nested P2P agreement does not mark Victim claim as saved", () => {
+  const documents = persistDocuments(mergeKind(null, "p2p", { sellerName: "Alasdair Finn" }, "2026-01-05T00:00:00.000Z"));
+  assert.equal(kindSaved(documents, "claim"), false);
+  assert.equal(kindSaved(documents, "p2p"), true);
+});
+
 test("sanitizeFields caps and trims", () => {
   assert.equal(sanitizeFields({ clientName: "  Ada  " }).clientName, "Ada");
   assert.equal(sanitizeFields({ note: "x".repeat(9000) }).note.length, 8000);

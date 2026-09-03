@@ -40,7 +40,7 @@ function supabaseError(message, response, detail) {
   } else if (code === "23503") {
     error.hint = "That client record was not found.";
   } else if (code === "23514") {
-    error.hint = "documents must stay an object of agreement, claim and release. Application of release order and tracing report are stored on claim.";
+    error.hint = "documents must stay an object of agreement, claim and release. P2P agreement, application of release order and tracing report are stored on claim.";
   } else if (code === "42501" || text.includes("row-level security")) {
     error.hint = "Row-level security blocked this write.";
   }

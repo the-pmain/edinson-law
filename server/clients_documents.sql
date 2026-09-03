@@ -14,6 +14,7 @@
 -- App keys inside documents:
 --   agreement          = Client authority form
 --   claim              = Victim claim (letter)
+--   claim.p2p          = P2P agreement
 --   claim.matter       = Application of release order (court application)
 --   claim.tracing      = Tracing report
 --   release            = Release order

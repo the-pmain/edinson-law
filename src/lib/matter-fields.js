@@ -420,6 +420,125 @@ export function tracingFieldsHtml() {
   `;
 }
 
+/**
+ * Peer-to-peer cryptoasset sale. The groups follow the order the agreement
+ * prints in, so the form and the document read the same way.
+ */
+export function p2pFieldsHtml() {
+  const partyGroup = (n, title, prefix, mock) => group(n, title, `
+    ${pair(
+      field({ id: `${prefix}Name`, label: "Full legal name", autocomplete: "name", placeholder: mock.name }),
+      field({ id: `${prefix}Ref`, label: "Client reference", placeholder: mock.ref }),
+    )}
+    ${pair(
+      field({ id: `${prefix}Email`, label: "Email", type: "email", placeholder: mock.email }),
+      field({ id: `${prefix}Phone`, label: "Telephone", type: "tel", placeholder: mock.phone }),
+    )}
+  `);
+
+  return `
+    ${partyGroup(1, "The seller", "seller", {
+      name: "Alasdair Finn",
+      ref: "EL/C/2026/0311",
+      email: "a.finn@northgate-capital.co.uk",
+      phone: "07700 900412",
+    })}
+    ${partyGroup(2, "The buyer", "buyer", {
+      name: "Priya Raghunathan",
+      ref: "EL/C/2026/0418",
+      email: "p.raghunathan@merricklane.com",
+      phone: "07700 900873",
+    })}
+    ${group(3, "Edison Law as intermediary", `
+      <p class="hint">The registered office and SRA number are printed from the firm record.</p>
+      ${pair(
+        field({
+          id: "firmEntity",
+          label: "Named on the agreement as",
+          value: "Edison Law",
+          options: ["Edison Law", "Edison Law Limited", "Edison Law LLP"],
+        }),
+        field({ id: "matterRef", label: "Matter reference", placeholder: "EL/2026/0518" }),
+      )}
+      ${field({ id: "agreementDate", label: "Agreement dated", type: "date", hint: "Leave blank to date the agreement today." })}
+      ${field({
+        id: "feeEarner",
+        label: "Fee earner and contact",
+        value: FIXED_FEE_EARNER_LINE,
+        required: true,
+        disabled: true,
+        hint: "Fixed to the SRA-regulated solicitor named on the firm register. This name signs for the firm.",
+      })}
+    `)}
+    ${group(4, "The cryptoasset and the price", `
+      ${pair(
+        field({ id: "asset", label: "Cryptoasset", placeholder: "Bitcoin (BTC)" }),
+        field({ id: "network", label: "Network", placeholder: "Bitcoin mainnet" }),
+      )}
+      ${pair(
+        field({ id: "amount", label: "Amount sold", placeholder: "4.250 BTC" }),
+        field({ id: "price", label: "Price (£)", placeholder: "268,400" }),
+      )}
+      ${field({
+        id: "priceWords",
+        label: "Price in words",
+        placeholder: "two hundred and sixty-eight thousand four hundred pounds",
+        hint: "Printed in brackets after the figure. Leave blank to print the figure alone.",
+        maxlength: 160,
+      })}
+      ${pair(
+        field({
+          id: "sellerWallet",
+          label: "Seller's wallet address",
+          placeholder: "bc1q…",
+          hint: "The only address the cryptoasset may be sent from.",
+        }),
+        field({
+          id: "buyerWallet",
+          label: "Buyer's wallet address",
+          placeholder: "bc1q…",
+          hint: "The only address the cryptoasset may be sent to.",
+        }),
+      )}
+    `)}
+    ${group(5, "The seller's bank account", `
+      <p class="hint">The only account the price may be paid into. Anything sent elsewhere falls outside the guarantee.</p>
+      ${pair(
+        field({ id: "bankName", label: "Account name", placeholder: "A Finn" }),
+        field({ id: "bankSort", label: "Sort code", placeholder: "20-45-11", maxlength: 8 }),
+      )}
+      ${pair(
+        field({ id: "bankAccount", label: "Account number", placeholder: "61180422", maxlength: 8 }),
+        field({ id: "bankRef", label: "Payment reference", placeholder: "EL-2026-0518" }),
+      )}
+    `)}
+    ${group(6, "Settlement", `
+      ${pair(
+        field({ id: "settlementTime", label: "Deadline time", type: "time" }),
+        field({ id: "settlementDate", label: "Deadline date", type: "date" }),
+      )}
+      ${field({
+        id: "confirmations",
+        label: "Network confirmations required",
+        value: "3",
+        options: ["1", "2", "3", "6", "12"],
+      })}
+    `)}
+    ${group(7, "The guarantee and the fee", `
+      ${field({
+        id: "guaranteeCap",
+        label: "Guarantee cap (£)",
+        placeholder: "268,400",
+        hint: "The most the firm will pay in aggregate, however many claims are made.",
+      })}
+      ${pair(
+        field({ id: "fee", label: "Firm's fee (£, plus VAT)", placeholder: "4,500" }),
+        field({ id: "feePayable", label: "Fee payable", placeholder: "on completion, by the Buyer" }),
+      )}
+    `)}
+  `;
+}
+
 export function releaseFieldsHtml() {
   return `
     ${group(1, "The court and the parties", `

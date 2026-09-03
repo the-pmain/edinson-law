@@ -16,6 +16,7 @@ import {
   claimFieldsHtml,
   FIXED_FEE_EARNER_LINE,
   matterFieldsHtml,
+  p2pFieldsHtml,
   releaseFieldsHtml,
   tracingFieldsHtml,
 } from "../lib/matter-fields.js";
@@ -73,6 +74,15 @@ function prefill(kind, item, payload) {
   if (kind === "tracing") {
     return { clientName: name };
   }
+  if (kind === "p2p") {
+    return {
+      sellerName: name,
+      sellerEmail: item.email || "",
+      sellerPhone: item.phone || "",
+      firmEntity: "Edison Law",
+      feeEarner,
+    };
+  }
   if (kind === "claim" || kind === "matter") {
     return {
       clientName: name,
@@ -98,6 +108,7 @@ function lockFeeEarner(form) {
 
 function fieldsHtml(kind) {
   if (kind === "agreement") return agreementFieldsHtml();
+  if (kind === "p2p") return p2pFieldsHtml();
   if (kind === "release") return releaseFieldsHtml();
   if (kind === "matter") return matterFieldsHtml();
   if (kind === "tracing") return tracingFieldsHtml();
@@ -497,7 +508,7 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
   mockBtn.addEventListener("click", () => {
     if (saving || previewing) return;
     if (!applyMatterMock(form, activeKind, {
-      keepFilled: ["clientName", "applicant", "wsName"],
+      keepFilled: ["clientName", "applicant", "wsName", "sellerName"],
     })) return;
     if (activeKind !== "tracing") lockFeeEarner(form);
     syncShowWhen(form);
