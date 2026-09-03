@@ -17,9 +17,11 @@ import {
   FIXED_FEE_EARNER_LINE,
   matterFieldsHtml,
   releaseFieldsHtml,
+  tracingFieldsHtml,
 } from "../lib/matter-fields.js";
 import { formControl } from "./form-control.js";
 import { applyMatterMock, bindFullFieldPickers, MATTER_MOCK } from "./matter-forms.js";
+import { tracingFollowedFromLoss, tracingFrozenFromLoss } from "./tracing-report.js";
 
 const ADMIN_COPY = {
   title: "Preview",
@@ -68,6 +70,9 @@ function prefill(kind, item, payload) {
       clientDob: String(item.date_of_birth || "").slice(0, 10),
     };
   }
+  if (kind === "tracing") {
+    return { clientName: name };
+  }
   if (kind === "claim" || kind === "matter") {
     return {
       clientName: name,
@@ -95,7 +100,23 @@ function fieldsHtml(kind) {
   if (kind === "agreement") return agreementFieldsHtml();
   if (kind === "release") return releaseFieldsHtml();
   if (kind === "matter") return matterFieldsHtml();
+  if (kind === "tracing") return tracingFieldsHtml();
   return claimFieldsHtml();
+}
+
+function bindTracingAmounts(form) {
+  const loss = formControl(form, "loss");
+  const followed = formControl(form, "followed");
+  const frozen = formControl(form, "frozen");
+  if (!loss || !followed || !frozen) return;
+  loss.addEventListener("change", () => {
+    const n = Math.max(1000, parseFloat(loss.value) || 0);
+    if (!n) return;
+    followed.value = String(tracingFollowedFromLoss(n));
+    frozen.value = String(tracingFrozenFromLoss(n));
+    followed.dispatchEvent(new Event("input", { bubbles: true }));
+    frozen.dispatchEvent(new Event("input", { bubbles: true }));
+  });
 }
 
 function formFields(form) {
@@ -381,12 +402,13 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
       ...prefill(kind, item, payload),
       ...(kind === "matter" && !saved ? fieldsForKind(item.documents, "claim") : {}),
       ...fieldsForKind(item.documents, kind),
-      feeEarner: FIXED_FEE_EARNER_LINE,
+      ...(kind === "tracing" ? {} : { feeEarner: FIXED_FEE_EARNER_LINE }),
     });
-    lockFeeEarner(form);
+    if (kind !== "tracing") lockFeeEarner(form);
     const dob = formControl(form, "clientDob");
     if (dob) dob.max = todayIso();
     bindFullFieldPickers(form);
+    if (kind === "tracing") bindTracingAmounts(form);
     syncShowWhen(form);
     if (!compose.open) compose.showModal();
     title.focus();
@@ -436,8 +458,10 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
     setBarBusy(true, { save: updating ? "Updating…" : "Saving…" });
     try {
       const rawFields = formFields(form);
-      rawFields.feeEarner = FIXED_FEE_EARNER_LINE;
-      lockFeeEarner(form);
+      if (activeKind !== "tracing") {
+        rawFields.feeEarner = FIXED_FEE_EARNER_LINE;
+        lockFeeEarner(form);
+      }
       const response = await fetch("/api/admin/clients-documents", {
         method: "PUT",
         headers: { Accept: "application/json", "Content-Type": "application/json" },
@@ -475,7 +499,7 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
     if (!applyMatterMock(form, activeKind, {
       keepFilled: ["clientName", "applicant", "wsName"],
     })) return;
-    lockFeeEarner(form);
+    if (activeKind !== "tracing") lockFeeEarner(form);
     syncShowWhen(form);
   });
   previewBtn.addEventListener("click", async () => {

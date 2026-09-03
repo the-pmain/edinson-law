@@ -1,13 +1,14 @@
-export const DOCUMENT_KINDS = ["agreement", "claim", "matter", "release"];
+export const DOCUMENT_KINDS = ["agreement", "claim", "matter", "release", "tracing"];
 
 /** Kinds the admin menu can create or edit. Authority is preview-only from the client record. */
-export const COMPOSE_KINDS = ["claim", "matter", "release"];
+export const COMPOSE_KINDS = ["claim", "matter", "release", "tracing"];
 
 export const DOCUMENT_LABELS = {
   agreement: "Client authority form",
   claim: "Victim claim",
   matter: "Application of release order",
   release: "Release order",
+  tracing: "Tracing report",
 };
 
 export const DOCUMENT_SHORT_LABELS = {
@@ -15,6 +16,7 @@ export const DOCUMENT_SHORT_LABELS = {
   claim: "Victim claim",
   matter: "Application of release order",
   release: "Release order",
+  tracing: "Tracing report",
 };
 
 export const EMPTY_DOCUMENTS = {
@@ -22,6 +24,7 @@ export const EMPTY_DOCUMENTS = {
   claim: null,
   matter: null,
   release: null,
+  tracing: null,
 };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -54,8 +57,8 @@ function savedEntry(value) {
   };
 }
 
-function nestedMatter(raw) {
-  return savedEntry(raw.matter) || savedEntry(asObject(raw.claim)?.matter);
+function nestedOnClaim(raw, key) {
+  return savedEntry(raw[key]) || savedEntry(asObject(raw.claim)?.[key]);
 }
 
 export function normalizeDocuments(value) {
@@ -63,22 +66,24 @@ export function normalizeDocuments(value) {
   return {
     agreement: savedEntry(raw.agreement) || asObject(raw.agreement),
     claim: savedEntry(raw.claim),
-    matter: nestedMatter(raw),
+    matter: nestedOnClaim(raw, "matter"),
+    tracing: nestedOnClaim(raw, "tracing"),
     release: savedEntry(raw.release) || asObject(raw.release),
   };
 }
 
-/** Live clients_documents only allows top-level agreement, claim, release. Matter sits on claim. */
+/** Live clients_documents only allows top-level agreement, claim, release. Matter and tracing sit on claim. */
 export function persistDocuments(value) {
-  const { agreement, claim, matter, release } = normalizeDocuments(value);
+  const { agreement, claim, matter, release, tracing } = normalizeDocuments(value);
   let claimOut = null;
-  if (claim || matter) {
+  if (claim || matter || tracing) {
     claimOut = {};
     if (claim) {
       claimOut.fields = claim.fields;
       if (claim.saved_at) claimOut.saved_at = claim.saved_at;
     }
     if (matter) claimOut.matter = matter;
+    if (tracing) claimOut.tracing = tracing;
   }
   return {
     agreement: agreement || null,

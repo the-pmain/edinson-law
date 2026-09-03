@@ -7,6 +7,7 @@
 --   object with exactly the keys agreement, claim, release
 --   each value is null or { fields: object, saved_at: timestamptz }
 --   Application of release order is stored at documents.claim.matter
+--   Tracing report is stored at documents.claim.tracing
 -- created_at timestamptz not null
 -- updated_at timestamptz not null
 
@@ -14,4 +15,5 @@
 --   agreement          = Client authority form
 --   claim              = Victim claim (letter)
 --   claim.matter       = Application of release order (court application)
+--   claim.tracing      = Tracing report
 --   release            = Release order

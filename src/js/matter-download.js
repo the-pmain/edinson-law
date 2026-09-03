@@ -10,6 +10,7 @@ import {
   parseMoneyAmount,
   validateMatterFields,
 } from "./matter-validate.js";
+import { generateTracingPdf } from "./tracing-pdf.js";
 
 const ink = rgb(10 / 255, 32 / 255, 40 / 255);
 const slate = rgb(83 / 255, 103 / 255, 109 / 255);
@@ -1035,6 +1036,7 @@ function releaseBlocks(f) {
 }
 
 export async function matterPdf(kind, values, options = {}) {
+  if (kind === "tracing") return generateTracingPdf(values);
   const people = Array.isArray(options.people) ? options.people : [];
   const sanitized = sanitizeMatterValues(values, people);
   const name = sanitized.clientName || sanitized.applicant || "";

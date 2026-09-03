@@ -213,6 +213,213 @@ export function matterFieldsHtml() {
   return claimFieldsHtml({ clientWallet: true });
 }
 
+export function tracingFieldsHtml() {
+  const sectionChoice = (id, label, hint = "") => field({
+    id,
+    label,
+    value: "include",
+    options: [
+      { value: "include", label: "Include" },
+      { value: "omit", label: "Omit" },
+    ],
+    hint,
+  });
+
+  return `
+    ${group(1, "Report details", `
+      ${pair(
+        field({ id: "clientName", label: "Client name", autocomplete: "name", placeholder: "Ms E. Harrow" }),
+        field({ id: "platform", label: "Fraud / platform name", placeholder: "Meridian FX Pro" }),
+      )}
+      ${field({
+        id: "matterRef",
+        label: "Matter reference",
+        placeholder: "EL/2026/4417",
+        hint: "Optional. Leave blank to remove it from the report.",
+      })}
+      ${pair(
+        field({
+          id: "reportDate",
+          label: "Report date",
+          type: "date",
+          hint: "Optional. Leave blank to remove the report-date entry.",
+        }),
+        field({
+          id: "asAtDate",
+          label: "Figures accurate as at",
+          type: "date",
+          hint: "Optional. Leave blank to remove the as-at date from the summary heading.",
+        }),
+      )}
+      ${pair(
+        field({
+          id: "analyst",
+          label: "Prepared by",
+          placeholder: "Nadia Ellis",
+          hint: "Optional. The role is added automatically.",
+        }),
+        field({
+          id: "reviewer",
+          label: "Reviewed by",
+          placeholder: "John Adams, Partner",
+          hint: "Optional. Leave blank if the report has not been reviewed.",
+        }),
+      )}
+      ${field({
+        id: "reportPurpose",
+        label: "Report subtitle / scope",
+        placeholder: "Funds followed from the victim's wallets to a single frozen endpoint",
+        hint: "Optional. A concise sentence beneath the title; leave blank to remove it.",
+        maxlength: 220,
+      })}
+    `)}
+    ${group(2, "The loss and the trace", `
+      ${field({
+        id: "loss",
+        label: "Total loss (£)",
+        type: "number",
+        placeholder: "542100",
+        hint: "Changing this figure recalculates followed and frozen unless you have already saved other amounts.",
+      })}
+      ${pair(
+        field({
+          id: "followed",
+          label: "Followed (£)",
+          type: "number",
+          placeholder: "535600",
+          hint: "Amount followed to the endpoint. Caps at the total loss.",
+        }),
+        field({
+          id: "frozen",
+          label: "Frozen (£)",
+          type: "number",
+          placeholder: "534000",
+          hint: "Amount frozen at the endpoint. Caps at the amount followed.",
+        }),
+      )}
+      ${pair(
+        field({
+          id: "hops",
+          label: "Peel hops",
+          value: "4",
+          options: [
+            { value: "3", label: "3" },
+            { value: "4", label: "4" },
+            { value: "5", label: "5" },
+            { value: "6", label: "6" },
+          ],
+        }),
+        field({
+          id: "seed",
+          label: "Seed",
+          type: "number",
+          value: "4417",
+          hint: "Same seed and inputs always rebuild the same hop chain and addresses.",
+        }),
+      )}
+    `)}
+    ${group(3, "Sections to include", `
+      <p class="hint">Choose the evidence the reader needs. Omitted sections are removed cleanly, including their page breaks.</p>
+      ${pair(
+        sectionChoice("showSummary", "Summary and key figures"),
+        sectionChoice("showDiagram", "Funds-flow diagram"),
+      )}
+      ${pair(
+        sectionChoice("showHopTable", "Hop-by-hop transaction table"),
+        sectionChoice("showAttribution", "Attribution and endpoint analysis"),
+      )}
+      ${pair(
+        sectionChoice("showMethodology", "Method and limitations", "This section also requires method or limitation text below."),
+        sectionChoice("showRecommendations", "Recommended next steps", "This section also requires recommendation text below."),
+      )}
+      ${pair(
+        sectionChoice("showAppendix", "Address appendix"),
+        sectionChoice("showStatement", "Statement and signature", "This section also requires statement text below."),
+      )}
+    `)}
+    ${group(4, "Narrative", `
+      <p class="hint">Use one paragraph per blank line. Blank optional content is not printed; there are no empty headings or placeholder sections.</p>
+      ${field({
+        id: "findingsText",
+        label: "Key findings",
+        type: "textarea",
+        rows: 6,
+        showWhen: "showSummary=include",
+        placeholder: "Set out each material finding as a separate paragraph.",
+        hint: "Optional. Leave blank to show key figures without a numbered findings list.",
+      })}
+      ${field({
+        id: "methodSources",
+        label: "Method and sources",
+        type: "textarea",
+        rows: 6,
+        showWhen: "showMethodology=include",
+        placeholder: "Public ledger data reviewed and independently verified…",
+        hint: "Optional. Each paragraph becomes one item.",
+      })}
+      ${field({
+        id: "limitations",
+        label: "Limitations",
+        type: "textarea",
+        rows: 6,
+        showWhen: "showMethodology=include",
+        placeholder: "Address attribution identifies a service, not the account holder…",
+        hint: "Optional. If both methodology fields are blank, the entire section is omitted.",
+      })}
+      ${field({
+        id: "recommendations",
+        label: "Recommended next steps",
+        type: "textarea",
+        rows: 6,
+        showWhen: "showRecommendations=include",
+        placeholder: "Preserve the endpoint and maintain continuous wallet monitoring…",
+        hint: "Optional. Each paragraph becomes a numbered recommendation.",
+      })}
+      ${field({
+        id: "statement",
+        label: "Statement",
+        type: "textarea",
+        rows: 4,
+        showWhen: "showStatement=include",
+        placeholder: "The findings are based on the ledger data and materials identified in this report…",
+        hint: "Optional. Leave blank to omit both the statement and signature block.",
+      })}
+    `)}
+    ${group(5, "Attribution labels", `
+      <p class="hint">Only rows with a venue or service name are printed. Jurisdiction and confidence may be left blank.</p>
+      ${pair(
+        field({ id: "endpointVenue", label: "Endpoint venue / service", placeholder: "Endpoint wallet", showWhen: "showAttribution=include" }),
+        field({ id: "endpointJurisdiction", label: "Endpoint jurisdiction", placeholder: "Lithuania", showWhen: "showAttribution=include" }),
+      )}
+      ${field({
+        id: "endpointConfidence",
+        label: "Endpoint confidence",
+        value: "",
+        options: [
+          { value: "", label: "Not stated" },
+          { value: "High", label: "High" },
+          { value: "Medium", label: "Medium" },
+          { value: "Low", label: "Low" },
+          { value: "Traced, not frozen", label: "Traced, not frozen" },
+        ],
+        showWhen: "showAttribution=include",
+      })}
+      ${pair(
+        field({ id: "exchangeVenue", label: "Exchange / pass-through service", placeholder: "Exchange B", showWhen: "showAttribution=include" }),
+        field({ id: "exchangeJurisdiction", label: "Exchange jurisdiction", placeholder: "Singapore", showWhen: "showAttribution=include" }),
+      )}
+      ${pair(
+        field({ id: "bridgeVenue", label: "Bridge operator", placeholder: "Cross-chain bridge operator", showWhen: "showAttribution=include" }),
+        field({ id: "bridgeJurisdiction", label: "Bridge jurisdiction", placeholder: "British Virgin Islands", showWhen: "showAttribution=include" }),
+      )}
+      ${pair(
+        field({ id: "swapVenue", label: "Swap service", placeholder: "Non-custodial swap service", showWhen: "showAttribution=include" }),
+        field({ id: "swapJurisdiction", label: "Swap jurisdiction", placeholder: "Not identified", showWhen: "showAttribution=include" }),
+      )}
+    `)}
+  `;
+}
+
 export function releaseFieldsHtml() {
   return `
     ${group(1, "The court and the parties", `
