@@ -8,6 +8,12 @@ export function personPhone(person) {
   return String(person?.phone || "").trim();
 }
 
+export function personTelegramHref(person) {
+  const phone = personPhone(person);
+  if (!phone) return "";
+  return `https://t.me/${phone.replace(/[^\d+]/g, "")}`;
+}
+
 export const people = [
   {
     slug: "richard-edison",
@@ -311,7 +317,7 @@ export const people = [
     role: "Senior Asset Recovery Specialist",
     firm: "Edison Law",
     featured: true,
-    phone: "+44 74 5397 8769",
+    phone: "+44 77 0681 8965",
     photo: "/images/people/robert-hale.png",
     photoWidth: 273,
     photoHeight: 273,

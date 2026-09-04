@@ -1,4 +1,4 @@
-import { personEmail, personPhone } from "../content/people.js";
+import { personEmail, personPhone, personTelegramHref } from "../content/people.js";
 import { site, home, pages, insightBodies, serviceMatter, trust, t, loc } from "../i18n/catalog.js";
 import { TEXT_FIELD_MAX } from "../js/prepare-clients-model.js";
 import { crumbs, documentPage, fieldMark, insightIcon, practiceIcon, whyIcon } from "./layout.js";
@@ -109,11 +109,13 @@ function personMailto(person) {
   return `<a class="person-email" href="mailto:${esc(email)}" title="${esc(email)}">${esc(email)}</a>`;
 }
 
+const PHONE_ICON = `<svg class="person-call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
+
 function personTel(person) {
   const phone = personPhone(person);
-  if (!phone) return "";
-  const href = phone.replace(/[^\d+]/g, "");
-  return `<a class="person-email" href="tel:${esc(href)}" title="${esc(phone)}">${esc(phone)}</a>`;
+  const telegram = personTelegramHref(person);
+  if (!phone || !telegram) return "";
+  return `<span class="person-phone"><span class="person-phone-number">${esc(phone)}</span><span class="person-phone-sep" aria-hidden="true">|</span><a class="person-call" href="${esc(telegram)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(t("callTelegram"))}">${PHONE_ICON}<span>${esc(t("call"))}</span></a></span>`;
 }
 
 function personContact(person) {
@@ -139,7 +141,7 @@ function peopleCards(list = site.people, variant = "") {
               <p class="muted">${esc(person.summary || person.role)}</p>
             </span>
           </a>
-          ${personContact(person)}
+          ${personMailto(person)}
         </article>`,
       )
       .join("")}

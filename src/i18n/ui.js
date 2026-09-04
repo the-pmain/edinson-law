@@ -31,6 +31,8 @@ export const UI = table([
   ["menuDialog", ["Menu", "Meny", "Meny", "Menu", "Menü"]],
   ["minRead", ["{n} min read", "{n} min läsning", "{n} min lesing", "{n} min. læsning", "{n} Min. Lesezeit"]],
   ["telephone", ["Telephone", "Telefon", "Telefon", "Telefon", "Telefon"]],
+  ["call", ["Call", "Ring", "Ring", "Ring", "Anrufen"]],
+  ["callTelegram", ["Call via Telegram", "Ring via Telegram", "Ring via Telegram", "Ring via Telegram", "Anrufen über Telegram"]],
   ["onThisPage", ["On this page", "På den här sidan", "På denne siden", "På denne side", "Auf dieser Seite"]],
   ["practiceAreas", ["Practice areas", "Verksamhetsområden", "Fagområder", "Fagområder", "Rechtsgebiete"]],
   ["questionsAsked", ["Questions we are asked", "Frågor vi får", "Spørsmål vi får", "Spørgsmål vi får", "Fragen, die uns gestellt werden"]],
