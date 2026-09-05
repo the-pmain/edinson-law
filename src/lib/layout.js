@@ -413,7 +413,7 @@ function searchIndex() {
     { title: t("nav.about"), href: "/about/", type: t("search.page"), text: site.shortLine },
     {
       title: site.tools.cobraAi.name,
-      href: "/investigations/#cobra-ai",
+      href: "/expertise/#cobra-ai",
       type: t("search.page"),
       text: t("search.cobraText", { vendor: site.tools.cobraAi.vendor }),
     },

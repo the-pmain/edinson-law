@@ -128,10 +128,23 @@ export default {
         label: "Teknologi brukt i egnede saker",
         heading: "Cobra AI",
         lead: "I noen etterforskninger, der omfanget av materiale gjør manuell gjennomgang upraktisk, bruker vi Cobra AI, en etterretningsplattform utgitt av IYE Global. Resultatet gjennomgås av personene på saken. Det er et verktøy, ikke evidens, og det brukes ikke i alle saker.",
-        text: "Leverandørens beskrivelse:",
-        items: [],
-        sourceNote: "",
-        sourceLabel: "Cobra AI, IYE Global",
+        text: "",
+        items: [
+          {
+            title: "Utvidet KYC og due diligence",
+            text: "Første- og tredjepartsrisikoanalyse ment å avdekke skjulte koblinger, stråmenn og lagdelte identiteter utover en vanlig KYC-kontroll.",
+          },
+          {
+            title: "Kryptovalutaetterforskning",
+            text: "Sporing fra lommebøker på kjeden mot fiatkontoer, i stedet for å stoppe ved en børs.",
+          },
+          {
+            title: "Lokalisering av motparter",
+            text: "En lommebokadresse, en meldingsidentifikator, en IP-adresse eller en sosialmedieprofil kan brukes til å identifisere motparter og kjente medhjelpere.",
+          },
+        ],
+        sourceNote: "Utgiverens produktside:",
+        sourceLabel: "cobraintel.com",
         cta: "",
       },
       why: {

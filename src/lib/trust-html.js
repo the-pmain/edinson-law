@@ -24,7 +24,7 @@ export function reviewedNote(topic) {
 export function reviewFoot(page) {
   const note = reviewedNote(page?.reviewTopic);
   if (!note) return "";
-  return `<div class="wrap" style="padding-bottom:4rem">${note}</div>`;
+  return `<div class="wrap review-foot">${note}</div>`;
 }
 
 export function sraRegisterAnchor(label = "sra.org.uk") {

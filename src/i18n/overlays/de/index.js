@@ -132,8 +132,23 @@ export default {
         label: "Technologie in geeigneten Sachen",
         heading: "Cobra AI",
         lead: "Bei manchen Ermittlungen, bei denen der Umfang der Unterlagen eine manuelle Durchsicht unpraktikabel macht, setzen wir Cobra AI ein, eine von IYE Global veröffentlichte Intelligence-Plattform. Die Ausgabe wird von den Personen auf der Sache geprüft. Es ist ein Werkzeug, kein Beweis, und es wird nicht in jeder Akte verwendet.",
-        text: "Beschreibung des Anbieters:",
-        sourceLabel: "Cobra AI, IYE Global",
+        text: "",
+        items: [
+          {
+            title: "Erweiterte KYC- und Due-Diligence-Prüfung",
+            text: "Risikoanalyse zu Erst- und Drittparteien, die verdeckte Verbindungen, vorgeschobene Nutzer und geschichtete Identitäten über eine übliche KYC-Prüfung hinaus sichtbar machen soll.",
+          },
+          {
+            title: "Kryptowährungsermittlungen",
+            text: "Nachverfolgung von On-Chain-Wallets zu Fiat-Konten, statt an einer Börse zu enden.",
+          },
+          {
+            title: "Lokalisierung von Gegenparteien",
+            text: "Eine Wallet-Adresse, ein Nachrichtenidentifikator, eine IP-Adresse oder ein Social-Media-Profil können zur Identifizierung von Gegenparteien und bekannten Helfern verwendet werden.",
+          },
+        ],
+        sourceNote: "Produktseite des Herausgebers:",
+        sourceLabel: "cobraintel.com",
       },
       why: {
         label: "Wie die Arbeit geführt wird",

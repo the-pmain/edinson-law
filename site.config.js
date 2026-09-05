@@ -28,7 +28,7 @@ export const site = {
     cobraAi: {
       name: "Cobra AI",
       vendor: "IYE Global",
-      href: "https://iyeglobal.com/cobra-ai/",
+      href: "https://www.cobraintel.com/",
     },
   },
 

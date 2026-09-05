@@ -721,12 +721,25 @@ function matterFaqs(page, key) {
 function cobraSection(band = "") {
   const cobra = home.sections.cobra;
   const href = site.tools.cobraAi.href;
+  const sourcePrefix = cobra.sourceNote ? `${esc(cobra.sourceNote)} ` : "";
+  const items = (cobra.items || [])
+    .map(
+      (item, index) => `<article>
+            <p class="label">${String(index + 1).padStart(2, "0")}</p>
+            <h3>${esc(item.title)}</h3>
+            <p class="muted">${esc(item.text)}</p>
+          </article>`,
+    )
+    .join("");
   return `<section class="section${band ? ` ${band}` : ""}" id="cobra-ai">
         <div class="wrap tool-block">
-          <p class="label">${esc(cobra.label)}</p>
-          <h2>${esc(cobra.heading)}</h2>
-          <p class="lead muted">${esc(cobra.lead)}</p>
-          <p class="tool-source muted">${esc(cobra.text)} <a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(cobra.sourceLabel)}</a>.</p>
+          <div class="tool-block-copy">
+            <p class="label">${esc(cobra.label)}</p>
+            <h2>${esc(cobra.heading)}</h2>
+            <p class="lead muted">${esc(cobra.lead)}</p>
+            <p class="tool-source muted">${sourcePrefix}<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(cobra.sourceLabel)}</a>.</p>
+          </div>
+          ${items ? `<div class="tool-facts">${items}</div>` : ""}
         </div>
       </section>`;
 }
@@ -879,6 +892,7 @@ function expertiseIndex() {
           )
           .join("")}
       </div>
+      ${cobraSection("band-paper")}
       ${reviewFoot(page)}
     </main>
   `;

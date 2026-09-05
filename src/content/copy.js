@@ -28,10 +28,23 @@ export const home = {
       label: "Technology used in suitable matters",
       heading: "Cobra AI",
       lead: "On some investigations, where the volume of records makes manual review impractical, we use Cobra AI, an intelligence platform published by IYE Global. Output is reviewed by the people on the matter. It is a tool, not evidence, and it is not used on every file.",
-      text: "Vendor description:",
-      items: [],
-      sourceNote: "",
-      sourceLabel: "Cobra AI, IYE Global",
+      text: "",
+      items: [
+        {
+          title: "Enhanced KYC due diligence",
+          text: "First- and third-party risk analysis intended to surface hidden links, proxy users and layered identities beyond a standard KYC check.",
+        },
+        {
+          title: "Cryptocurrency investigations",
+          text: "Tracing from on-chain wallets toward fiat bank accounts, rather than stopping at an exchange.",
+        },
+        {
+          title: "Counterparty location",
+          text: "A wallet address, messaging identifier, IP address or social-media profile may be used to identify counterparties and known associates.",
+        },
+      ],
+      sourceNote: "Publisher's product page:",
+      sourceLabel: "cobraintel.com",
       cta: "",
     },
     why: {
