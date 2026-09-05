@@ -391,6 +391,8 @@ export const people = [
     initials: "HC",
     role: "Internal Investigations Specialist",
     firm: "Edison Law",
+    email: "hannah.croft@edisonlawlegal.com",
+    phone: "+44 75 9279 0327",
     photo: "/images/people/hannah-croft.png",
     photoWidth: 273,
     photoHeight: 273,
