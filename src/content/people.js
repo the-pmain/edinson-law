@@ -95,6 +95,8 @@ export const people = [
     role: "Financial Crime Investigator",
     firm: "Edison Law",
     featured: true,
+    email: "liam.brennan@edisonlawlegal.com",
+    phone: "+44 7462 167743",
     photo: "/images/people/liam-brennan.png",
     photoWidth: 273,
     photoHeight: 273,
