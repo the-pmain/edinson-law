@@ -39,6 +39,7 @@ export function validatePrepareClient(input = {}) {
       phone,
       occupation,
       instructed_person_slug: slug || null,
+      is_test: false,
     },
   };
 }

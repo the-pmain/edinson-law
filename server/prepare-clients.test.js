@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { normalizeOccupation, TEXT_FIELD_MAX } from "../src/js/prepare-clients-model.js";
+import { normalizeIsTest, normalizeOccupation, TEXT_FIELD_MAX } from "../src/js/prepare-clients-model.js";
 import { validatePrepareClient } from "./prepare-clients.js";
 
 const valid = {
@@ -53,4 +53,22 @@ test("validatePrepareClient accepts occupation null", () => {
   const result = validatePrepareClient({ ...valid, occupation: null });
   assert.equal(result.error, undefined);
   assert.equal(result.row.occupation, null);
+});
+
+test("validatePrepareClient always stores is_test as false", () => {
+  const omitted = validatePrepareClient(valid);
+  assert.equal(omitted.error, undefined);
+  assert.equal(omitted.row.is_test, false);
+
+  const forced = validatePrepareClient({ ...valid, is_test: true });
+  assert.equal(forced.error, undefined);
+  assert.equal(forced.row.is_test, false);
+});
+
+test("normalizeIsTest only treats explicit true as a test record", () => {
+  assert.equal(normalizeIsTest(true), true);
+  assert.equal(normalizeIsTest(false), false);
+  assert.equal(normalizeIsTest("true"), false);
+  assert.equal(normalizeIsTest(1), false);
+  assert.equal(normalizeIsTest(null), false);
 });

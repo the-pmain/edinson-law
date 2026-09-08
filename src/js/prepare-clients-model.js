@@ -2,7 +2,7 @@
 export const TEXT_FIELD_MAX = 80;
 
 export const PREPARE_CLIENTS_SELECT =
-  "id,created_at,full_name,email,phone,occupation,date_of_birth,instructed_person_slug";
+  "id,created_at,full_name,email,phone,occupation,date_of_birth,instructed_person_slug,is_test";
 
 /**
  * @typedef {object} PrepareClient
@@ -14,6 +14,7 @@ export const PREPARE_CLIENTS_SELECT =
  * @property {string | null} [phone]
  * @property {string | null} [occupation]
  * @property {string | null} [instructed_person_slug]
+ * @property {boolean} [is_test]
  */
 
 /**
@@ -24,6 +25,7 @@ export const PREPARE_CLIENTS_SELECT =
  * @property {string | null} [phone]
  * @property {string | null} [occupation]
  * @property {string | null} [instructed_person_slug]
+ * @property {boolean} [is_test]
  */
 
 /**
@@ -35,4 +37,14 @@ export function normalizeOccupation(value) {
   if (value == null) return null;
   const occupation = String(value).trim().slice(0, TEXT_FIELD_MAX);
   return occupation || null;
+}
+
+/**
+ * Coerce a DB/JSON value to the prepare_clients is_test boolean.
+ * Only an explicit true is treated as a test record.
+ * @param {unknown} value
+ * @returns {boolean}
+ */
+export function normalizeIsTest(value) {
+  return value === true;
 }

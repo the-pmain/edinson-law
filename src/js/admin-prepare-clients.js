@@ -10,6 +10,43 @@ const ADMIN_PIN = "1100";
 const SESSION_KEY = "edison-admin-ok";
 const PER_PAGE = 20;
 const PIN_LENGTH = 4;
+const TEST_TIP = "This client is a test record.";
+
+function isTestClient(item) {
+  return item?.is_test === true;
+}
+
+function testTipNode() {
+  let tip = document.getElementById("admin-test-tip");
+  if (tip) return tip;
+  tip = document.createElement("div");
+  tip.id = "admin-test-tip";
+  tip.className = "admin-test-tip";
+  tip.setAttribute("role", "tooltip");
+  tip.hidden = true;
+  tip.textContent = TEST_TIP;
+  document.body.append(tip);
+  return tip;
+}
+
+function hideTestTip() {
+  const tip = document.getElementById("admin-test-tip");
+  if (tip) tip.hidden = true;
+}
+
+function showTestTip(anchor) {
+  const tip = testTipNode();
+  const box = anchor.getBoundingClientRect();
+  tip.hidden = false;
+  const width = tip.offsetWidth || 220;
+  const height = tip.offsetHeight || 36;
+  const below = box.bottom + 8;
+  const above = box.top - height - 8;
+  const top = below + height > window.innerHeight - 8 && above > 8 ? above : below;
+  const left = Math.min(Math.max(12, box.left), window.innerWidth - width - 12);
+  tip.style.top = `${top}px`;
+  tip.style.left = `${left}px`;
+}
 
 function sessionOn() {
   return localStorage.getItem(SESSION_KEY) === "1";
@@ -80,6 +117,7 @@ async function fetchPage(page) {
 export function adminPrepareClients() {
   const root = document.querySelector("[data-admin-prepare-clients]");
   if (!root) return;
+  testTipNode();
 
   const page = root;
   const gate = root.querySelector("[data-admin-gate]");
@@ -101,6 +139,7 @@ export function adminPrepareClients() {
   const payload = readJson("edison-agreement-defaults");
   const records = new Map();
   let listItems = [];
+  const pendingTest = new Set();
   const docs = bindAdminDocuments({
     payload,
     statusNode: actionStatus,
@@ -162,9 +201,111 @@ export function adminPrepareClients() {
     setHidden(pager, true);
     if (actionStatus) actionStatus.textContent = "";
     if (rows) rows.replaceChildren();
+    hideTestTip();
   };
 
   const recordKey = (item, index) => String(item.id ?? `${item.created_at || ""}-${item.full_name || ""}-${index}`);
+
+  const mergeItem = (current, next) => ({
+    ...current,
+    ...next,
+    documents: next.documents || current.documents,
+    document_id: next.document_id ?? current.document_id,
+  });
+
+  const replaceItem = (item) => {
+    listItems = listItems.map((row) => (row.id === item.id ? item : row));
+    records.forEach((row, key) => {
+      if (row.id === item.id) records.set(key, item);
+    });
+  };
+
+  const paintTestState = (tr, button, item) => {
+    const on = isTestClient(item);
+    const name = item.full_name || "client";
+    tr.classList.toggle("is-test", on);
+    button.setAttribute("aria-checked", on ? "true" : "false");
+    button.setAttribute(
+      "aria-label",
+      on ? `Stop treating ${name} as a test client` : `Mark ${name} as a test client`,
+    );
+    if (on) {
+      button.setAttribute("aria-describedby", "admin-test-tip");
+      button.removeAttribute("title");
+    } else {
+      button.removeAttribute("aria-describedby");
+      button.title = "Mark as a test client";
+      hideTestTip();
+    }
+  };
+
+  const testSwitch = (item, key) => {
+    const on = isTestClient(item);
+    const name = item.full_name || "client";
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "admin-test-switch";
+    button.dataset.adminTest = key;
+    button.setAttribute("role", "switch");
+    button.setAttribute("aria-checked", on ? "true" : "false");
+    button.setAttribute(
+      "aria-label",
+      on ? `Stop treating ${name} as a test client` : `Mark ${name} as a test client`,
+    );
+    if (on) button.setAttribute("aria-describedby", "admin-test-tip");
+    if (!on) button.title = "Mark as a test client";
+    if (item.id && pendingTest.has(item.id)) {
+      button.disabled = true;
+      button.setAttribute("aria-busy", "true");
+    }
+    button.innerHTML = `<span class="admin-test-switch-track" aria-hidden="true"><span class="admin-test-switch-thumb"></span></span><span class="admin-test-switch-label">Test</span>`;
+    return button;
+  };
+
+  const toggleTest = async (button, item, tr) => {
+    const id = String(item.id || "").trim();
+    if (!id) {
+      if (actionStatus) actionStatus.textContent = "That record could not be found.";
+      return;
+    }
+    if (pendingTest.has(id) || button.disabled) return;
+
+    const next = !isTestClient(item);
+    const previous = item;
+    const optimistic = { ...item, is_test: next };
+    pendingTest.add(id);
+    button.disabled = true;
+    button.setAttribute("aria-busy", "true");
+    replaceItem(optimistic);
+    paintTestState(tr, button, optimistic);
+    if (next) showTestTip(tr);
+    if (actionStatus) actionStatus.textContent = "";
+
+    try {
+      const response = await fetch("/api/admin/prepare-clients", {
+        method: "PATCH",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({ id, is_test: next }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload.error || "Could not update the client record.");
+      }
+      replaceItem(mergeItem(optimistic, payload.item || optimistic));
+    } catch (error) {
+      replaceItem(previous);
+      paintTestState(tr, button, previous);
+      if (actionStatus) {
+        actionStatus.textContent = error instanceof Error && error.message
+          ? error.message
+          : "Could not update the client record.";
+      }
+    } finally {
+      pendingTest.delete(id);
+      button.disabled = false;
+      button.removeAttribute("aria-busy");
+    }
+  };
 
   const actionCell = (item, key) => {
     const td = document.createElement("td");
@@ -209,7 +350,7 @@ export function adminPrepareClients() {
     menu.setAttribute("aria-controls", "admin-doc-menu");
     menu.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="6" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="18" r="1.7"/></svg>`;
 
-    wrap.append(docsBtn, preview, menu);
+    wrap.append(testSwitch(item, key), docsBtn, preview, menu);
     td.append(wrap);
     return td;
   };
@@ -218,11 +359,13 @@ export function adminPrepareClients() {
     if (!rows) return;
     records.clear();
     docs.closeMenu();
+    hideTestTip();
     rows.replaceChildren();
     items.forEach((item, index) => {
       const key = recordKey(item, index);
       records.set(key, item);
       const tr = document.createElement("tr");
+      if (isTestClient(item)) tr.classList.add("is-test");
       tr.append(
         cell(formatDateTime(item.created_at)),
         cell(item.full_name),
@@ -373,6 +516,8 @@ export function adminPrepareClients() {
     setSession(false);
     records.clear();
     listItems = [];
+    pendingTest.clear();
+    hideTestTip();
     docs.reset();
     if (rows) rows.replaceChildren();
     if (actionStatus) actionStatus.textContent = "";
@@ -383,7 +528,47 @@ export function adminPrepareClients() {
     load();
   });
 
+  table?.addEventListener("pointerover", (event) => {
+    const row = event.target.closest("tr.is-test");
+    if (!row || !table.contains(row)) return;
+    const from = event.relatedTarget instanceof Node ? event.relatedTarget : null;
+    if (from && row.contains(from)) return;
+    showTestTip(row);
+  });
+
+  table?.addEventListener("pointerout", (event) => {
+    const row = event.target.closest("tr.is-test");
+    if (!row || (event.relatedTarget instanceof Node && row.contains(event.relatedTarget))) return;
+    hideTestTip();
+  });
+
+  table?.addEventListener("focusin", (event) => {
+    const row = event.target.closest("tr.is-test");
+    if (row && table.contains(row)) showTestTip(row);
+  });
+
+  table?.addEventListener("focusout", (event) => {
+    const row = event.target.closest("tr.is-test");
+    if (!row || (event.relatedTarget instanceof Node && row.contains(event.relatedTarget))) return;
+    hideTestTip();
+  });
+
+  table?.closest(".admin-table-wrap")?.addEventListener("scroll", hideTestTip, { passive: true });
+  window.addEventListener("scroll", hideTestTip, { passive: true });
+
   table?.addEventListener("click", (event) => {
+    const testBtn = event.target.closest("[data-admin-test]");
+    if (testBtn && table.contains(testBtn)) {
+      const key = testBtn.dataset.adminTest;
+      const item = records.get(key);
+      const tr = testBtn.closest("tr");
+      if (!item || !tr) {
+        if (actionStatus) actionStatus.textContent = "That record could not be found.";
+        return;
+      }
+      toggleTest(testBtn, item, tr);
+      return;
+    }
     const preview = event.target.closest("[data-admin-preview]");
     const menu = event.target.closest("[data-admin-menu]");
     const docsBtn = event.target.closest("[data-admin-docs]");

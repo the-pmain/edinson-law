@@ -319,6 +319,7 @@ export const people = [
     role: "Senior Asset Recovery Specialist",
     firm: "Edison Law",
     featured: true,
+    email: "robert.hale@edisonlawlegal.com",
     phone: "+44 77 0681 8965",
     photo: "/images/people/robert-hale.png",
     photoWidth: 273,

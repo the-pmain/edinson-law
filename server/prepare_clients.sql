@@ -1,6 +1,8 @@
 -- Canonical prepare_clients table for the agreement form.
--- Columns used by the app: full_name, email, date_of_birth, phone, occupation, instructed_person_slug.
--- occupation is optional (nullable). Blank values are stored as NULL.
+-- Columns: id, created_at, full_name, email, date_of_birth, instructed_person_slug,
+-- phone, occupation, is_test.
+-- occupation and phone are optional (nullable). Blank values are stored as NULL.
+-- is_test marks admin/test records (boolean, not null, default false).
 -- Run this once in the Supabase SQL editor.
 
 create or replace function public.prepare_clients_normalize_email_and_trim()
@@ -32,6 +34,7 @@ alter table public.prepare_clients add column if not exists phone text;
 alter table public.prepare_clients add column if not exists occupation text;
 alter table public.prepare_clients add column if not exists date_of_birth date;
 alter table public.prepare_clients add column if not exists instructed_person_slug text;
+alter table public.prepare_clients add column if not exists is_test boolean not null default false;
 
 update public.prepare_clients
 set email = lower(btrim(email))
