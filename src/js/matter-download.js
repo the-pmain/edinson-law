@@ -3,7 +3,7 @@ import { downloadBytes } from "./agreement-data.js";
 import { embedDocumentFonts } from "./document-fonts.js";
 import { buildClaimTrust } from "./claim-trust.js";
 import { extractEthAddress, formatEthAddress } from "./eth-address.js";
-import { formatUkLong } from "../lib/dates.js";
+import { formatEuDate, formatUkLong } from "../lib/dates.js";
 import {
   coerceSraFeeEarner,
   formatAssetAmount,
@@ -96,8 +96,25 @@ function caseReferenceLine(fields = {}) {
 }
 
 function courtOfficerSignLine(fields = {}, dated) {
-  const court = slot(fields.court, "City of London Magistrates' Court");
+  const court = slot(fields.court, DEFAULT_COURT);
   return `Signed: Court Officer, ${court} · Dated ${dated}`;
+}
+
+function courtHeading(fields = {}) {
+  return slot(fields.court, DEFAULT_COURT);
+}
+
+function courtAddressLines(fields = {}) {
+  const name = courtHeading(fields);
+  const address = COURT_ADDRESSES[name.toLowerCase()]
+    || COURT_ADDRESSES["city of london magistrates' court"];
+  return [name, ...address];
+}
+
+function letterheadDateLine(fields = {}, kind) {
+  const iso = kind === "release" ? fields.orderDated : todayIso();
+  const shown = formatEuDate(iso);
+  return shown ? `Date: ${shown}` : "";
 }
 
 function slot(value, fallback) {
@@ -128,6 +145,14 @@ const LOGO_PATH = "public/brand/matter-crest.jpg";
 const LOGO_HREF = "/brand/matter-crest.jpg";
 const LOGO_MAX_H = 84;
 const LETTERHEAD_TITLE = "Magistrates' Court Victoria";
+const DEFAULT_COURT = "City of London Magistrates' Court";
+const COURT_ADDRESSES = {
+  "city of london magistrates' court": [
+    "1 Queen Victoria Street",
+    "London",
+    "EC4N 4XY",
+  ],
+};
 const CLAIM_BRAND = "Edison Law";
 const DRAMA_PHONE = /(?:\+44\s*20|0\s*20)\s*7946\s*0\d{3}/;
 
@@ -221,7 +246,15 @@ function sanitizeMatterValues(values, people = []) {
   return next;
 }
 
-function drawLetterhead(page, regular, bold, color, { edge, refs = [], logo, phone = "" } = {}) {
+function drawLetterhead(page, regular, bold, color, {
+  edge,
+  refs = [],
+  logo,
+  phone = "",
+  heading = "",
+  address = [],
+  date = "",
+} = {}) {
   const cx = A4[0] / 2;
   const logoH = logo ? LOGO_MAX_H : 37;
   const logoW = logo ? logoH * (logo.width / logo.height) : 64;
@@ -236,10 +269,14 @@ function drawLetterhead(page, regular, bold, color, { edge, refs = [], logo, pho
   } else {
     drawCrest(page, cx, logoY + logoH / 2, color, 1.15);
   }
-  const nameSize = 15;
+  const title = heading || LETTERHEAD_TITLE;
+  let nameSize = 15;
+  while (nameSize > 11 && bold.widthOfTextAtSize(title, nameSize) > A4[0] - edge * 2) {
+    nameSize -= 0.5;
+  }
   const nameY = logoY - 18;
-  page.drawText(LETTERHEAD_TITLE, {
-    x: cx - bold.widthOfTextAtSize(LETTERHEAD_TITLE, nameSize) / 2,
+  page.drawText(title, {
+    x: cx - bold.widthOfTextAtSize(title, nameSize) / 2,
     y: nameY,
     size: nameSize,
     font: bold,
@@ -257,10 +294,14 @@ function drawLetterhead(page, regular, bold, color, { edge, refs = [], logo, pho
     leftY -= leading;
   });
   let rightY = infoTop;
-  const right = [...FIRM.address];
+  const right = [...(address.length ? address : FIRM.address)];
   if (refs.length) {
     right.push("");
     right.push(...refs);
+  }
+  if (date) {
+    right.push("");
+    right.push(date);
   }
   right.forEach((text) => {
     if (!text) {
@@ -461,6 +502,9 @@ async function writePdf(title, blocks, {
           refs: letterheadInfo.refs || [],
           logo,
           phone: letterheadInfo.phone || "",
+          heading: letterheadInfo.heading || "",
+          address: letterheadInfo.address || [],
+          date: letterheadInfo.date || "",
         })
         : A4[1] - 72;
       return;
@@ -934,7 +978,7 @@ function matterBlocks(f) {
 
   return [
     { type: "title", text: "APPLICATION OF RELEASE ORDER", align: "center", size: 16 },
-    { type: "p", text: `IN THE ${slot(f.court, "City of London Magistrates' Court")}`, bold: true, align: "center" },
+    { type: "p", text: `IN THE ${slot(f.court, DEFAULT_COURT)}`, bold: true, align: "center" },
     { type: "p", text: caseRef, align: "center", size: 10, after: 6 },
     { type: "rule" },
     { type: "p", text: `IN THE MATTER OF a crypto wallet freezing order made under section 303Z37 of the Proceeds of Crime Act 2002 on ${orderDateL}`, align: "center", size: 10 },
@@ -1012,7 +1056,7 @@ function releaseBlocks(f) {
 
   return [
     { type: "title", text: "RELEASE ORDER", align: "center", size: 16 },
-    { type: "p", text: `IN THE ${slot(f.court, "City of London Magistrates' Court")}`, bold: true, align: "center" },
+    { type: "p", text: `IN THE ${slot(f.court, DEFAULT_COURT)}`, bold: true, align: "center" },
     { type: "p", text: caseReferenceLine(f), align: "center", size: 10 },
     { type: "p", text: `Before ${slot(f.before, "[District Judge ____ / the bench]")}`, align: "center", size: 10 },
     { type: "p", text: `Dated ${dated}`, align: "center", size: 10, after: 6 },
@@ -1058,22 +1102,29 @@ export async function matterPdf(kind, values, options = {}) {
     : kind === "matter"
       ? matterBlocks(sanitized)
       : claimBlocks(sanitized, trust);
+  const court = courtHeading(sanitized);
   const title = kind === "release"
-    ? `Magistrates' Court Victoria release order - ${name || "s.303Z51"}`
+    ? `${court} release order - ${name || "s.303Z51"}`
     : kind === "matter"
-      ? `Magistrates' Court Victoria application of release order - ${name || "s.303Z51"}`
+      ? `${court} application of release order - ${name || "s.303Z51"}`
       : `${CLAIM_BRAND} victim claim - ${name || "s.303Z51"}`;
   const footer = kind === "release"
-    ? "Magistrates' Court Victoria · Release order"
+    ? `${court} · Release order`
     : kind === "matter"
-      ? "Magistrates' Court Victoria · Application of release order"
+      ? `${court} · Application of release order`
       : `${CLAIM_BRAND} · Victim claim to frozen cryptoassets`;
   const letterhead = kind === "matter" || kind === "release";
   const bytes = await writePdf(title, blocks, {
     footer,
     style: letterhead ? "letterhead" : "brand",
     letterheadInfo: letterhead
-      ? { refs: letterheadRefs(sanitized), ...letterheadContacts(sanitized, people) }
+      ? {
+        heading: court,
+        address: courtAddressLines(sanitized),
+        date: letterheadDateLine(sanitized, kind),
+        refs: letterheadRefs(sanitized),
+        ...letterheadContacts(sanitized, people),
+      }
       : {},
   });
   return {

@@ -148,7 +148,9 @@ test("release order is titled as an order, with a full destination address", asy
   const out = await matterPdf("release", releaseFixture, { people });
   assert.ok(out.bytes.byteLength > 1000);
   const text = await pdfText(out.bytes);
-  assert.match(text, /RELEASE ORDER/);
+  assert.match(text, /1 Queen Victoria Street/);
+  assert.match(text, /EC4N 4XY/);
+  assert.match(text, /Date:\s*14\.07\.2026/);
   assert.match(text, /Signed:\s*Court Officer, City of London Magistrates' Court · Dated 14 July 2026/);
   assert.match(text, /IT IS ORDERED THAT/);
   assert.match(text, /3\.1/);
@@ -172,6 +174,9 @@ test("application of release order names the client wallet and exchange", async 
   assert.ok(out.bytes.byteLength > 1000);
   const text = await pdfText(out.bytes);
   assert.match(text, /APPLICATION OF RELEASE ORDER/);
+  assert.match(text, /1 Queen Victoria Street/);
+  assert.match(text, /EC4N 4XY/);
+  assert.match(text, /Date:\s*\d{2}\.\d{2}\.\d{4}/);
   assert.match(text, /Signed:\s*Court Officer, City of London Magistrates' Court · Dated /);
   assert.equal(/solicitors for the Applicant/.test(text), false);
   assert.match(text, /Case reference:\s*EL\/2026\/0431/);
