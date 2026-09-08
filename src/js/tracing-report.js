@@ -56,17 +56,13 @@ function pct(a, b) {
 }
 
 function dLong(d) {
+  if (!d) return "";
   return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 function dShort(d) {
+  if (!d) return "";
   return `${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)}`;
-}
-
-function addDays(d, n) {
-  const x = new Date(d.getTime());
-  x.setDate(x.getDate() + n);
-  return x;
 }
 
 function shorten(a) {
@@ -112,14 +108,34 @@ function configuredParagraphs(fields, key, fallback) {
     .filter(Boolean);
 }
 
+function parseIsoDay(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || "").trim());
+  if (!match) return null;
+  return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+}
+
 function configuredDate(fields, key, fallback) {
   if (!hasOwn(fields, key)) return fallback;
   const value = String(fields[key] || "").trim();
   if (!value) return "";
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
-  if (!match) return value;
-  const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
-  return dLong(date);
+  const date = parseIsoDay(value);
+  return date ? dLong(date) : value;
+}
+
+function configuredDay(fields, key) {
+  return parseIsoDay(configuredText(fields, key));
+}
+
+function hopDateLabel(start, end) {
+  const from = start ? dShort(start) : "";
+  const to = end ? dShort(end) : "";
+  if (from && to && from !== to) return `${from} – ${to}`;
+  return from || to;
+}
+
+function daysBetween(start, end) {
+  if (!start || !end) return 0;
+  return Math.max(0, Math.round((end - start) / 864e5));
 }
 
 function includesSection(fields, key) {
@@ -199,20 +215,21 @@ export function buildTracingReport(fields = {}) {
   const unfollowed = loss - followed;
   const totalHops = dissipated ? 12 : 11;
 
-  const today = new Date();
-  const lossStart = addDays(today, -Math.round(range(150, 230)));
-  const lossEnd = addDays(lossStart, Math.round(range(35, 60)));
-  const h2 = addDays(lossEnd, 2);
-  const h3 = addDays(h2, 1);
-  const h4 = addDays(h3, 2);
-  const h5 = addDays(h4, 1);
-  const h6 = addDays(h2, 1);
-  const h7 = addDays(h6, 1);
-  const h8 = addDays(h7, 4);
-  const h9 = addDays(h5, 1);
-  const h10 = addDays(h9, 2);
-  const freezeDate = addDays(h10, Math.round(range(3, 14)));
-  const asAt = addDays(today, -1);
+  const lossStart = configuredDay(fields, "lossStartDate");
+  const lossEnd = configuredDay(fields, "lossEndDate");
+  const h2 = configuredDay(fields, "hop2Date");
+  const h3 = configuredDay(fields, "hop3StartDate");
+  const h4 = configuredDay(fields, "hop3EndDate") || configuredDay(fields, "hop4Date");
+  const hop4 = configuredDay(fields, "hop4Date") || h4;
+  const h5 = configuredDay(fields, "hop5Date");
+  const h6 = configuredDay(fields, "hop6Date");
+  const h7 = configuredDay(fields, "hop7Date");
+  const h8 = configuredDay(fields, "hop8Date");
+  const h9swap = configuredDay(fields, "hop9Date") || h8;
+  const h9 = configuredDay(fields, "hop10Date");
+  const h10 = configuredDay(fields, "hopEndpointDate");
+  const freezeDate = configuredDay(fields, "freezeDate");
+  const asAt = configuredDay(fields, "asAtDate");
 
   const A = {
     victim: configuredText(fields, "victimWalletBtc"),
@@ -258,70 +275,70 @@ export function buildTracingReport(fields = {}) {
   const hopRows = [
     {
       hop: "1",
-      date: `${dShort(lossStart)} – ${dShort(lossEnd)}`,
+      date: hopDateLabel(lossStart, lossEnd),
       fromTo: `${shorten(A.victim)} → ${shorten(A.collection)}`,
       amount: btc(btcAmt),
       observation: `${payments} deposits consolidated into one collection wallet within 48 hours of each payment.`,
     },
     {
       hop: "2",
-      date: dShort(h2),
+      date: hopDateLabel(h2),
       fromTo: `${shorten(A.collection)} → ${shorten(A.peel1)}`,
       amount: btc(peelAmt),
       observation: "First peel. Change output retained at a co-spent address in the same cluster.",
     },
     {
       hop: "3",
-      date: `${dShort(h3)} – ${dShort(h4)}`,
+      date: hopDateLabel(h3, h4),
       fromTo: `${shorten(A.peel1)} → (${peelHops - 1} further addresses)`,
       amount: btc(peelOut),
       observation: "Peel chain: a small output shed at each hop, the bulk carried forward. Every peeled output followed and accounted for.",
     },
     {
       hop: "4",
-      date: dShort(h4),
+      date: hopDateLabel(hop4),
       fromTo: `${shorten(A.peelLast)} → bridge contract`,
       amount: btc(bridgeOut),
       observation: "Deposit to a cross-chain bridge. Bridge fee deducted on entry.",
     },
     {
       hop: "5",
-      date: dShort(h5),
+      date: hopDateLabel(h5),
       fromTo: `bridge → ${shorten(A.bridgeOut)}`,
       amount: eth(bridgeETH),
       observation: "Ether received on the far side. Matched by amount, timing and one-to-one bridge accounting — an inference, not a single on-chain link.",
     },
     {
       hop: "6",
-      date: dShort(h6),
+      date: hopDateLabel(h6),
       fromTo: `${shorten(A.collection)} → ${shorten(A.direct)}`,
       amount: btc(directOut),
       observation: "Second branch, moved directly with no attempt at obfuscation.",
     },
     {
       hop: "7",
-      date: dShort(h7),
+      date: hopDateLabel(h7),
       fromTo: `${shorten(A.direct)} → ${shorten(A.exchB)}`,
       amount: btc(exchBOut),
       observation: "Deposit address attributed to Exchange B. Held four days, then withdrawn in a single transaction.",
     },
     {
       hop: "8",
-      date: dShort(h8),
+      date: hopDateLabel(h8),
       fromTo: `${shorten(A.exchB)} → ${shorten(A.exchBOut)}`,
       amount: eth(exchBETH),
       observation: "Withdrawn from Exchange B as Ether. Same-value conversion confirmed against the venue's published rate at the timestamp.",
     },
     {
       hop: "9",
-      date: dShort(h8),
+      date: hopDateLabel(h9swap),
       fromTo: `${shorten(A.victimT)} → ${shorten(A.swapOut)}`,
       amount: eth(swapETH),
       observation: `Tether leg: ${num(usdt)} USDT swapped to Ether at a non-custodial service. Matched by amount and timing — the second inferred step.`,
     },
     {
       hop: "10",
-      date: dShort(h9),
+      date: hopDateLabel(h9),
       fromTo: `three inputs → ${shorten(A.cons)}`,
       amount: eth(consETH),
       observation: "All three branches arrive at one address with no prior balance and no other funding source.",
@@ -330,7 +347,7 @@ export function buildTracingReport(fields = {}) {
   if (dissipated) {
     hopRows.push({
       hop: "11",
-      date: dShort(h10),
+      date: hopDateLabel(h10),
       fromTo: `${shorten(A.cons)} → ${shorten(A.onward)}`,
       amount: money(gap),
       observation: "Onward payment made before the freeze. Followed to a single address, dormant since.",
@@ -338,10 +355,12 @@ export function buildTracingReport(fields = {}) {
   }
   hopRows.push({
     hop: dissipated ? "12" : "11",
-    date: dShort(h10),
+    date: hopDateLabel(h10),
     fromTo: `${shorten(A.cons)} → ${shorten(A.frozenW)}`,
     amount: money(frozen),
-    observation: `Endpoint. Balance left untouched. Wallet frozen ${dLong(freezeDate)} and unmoved since.`,
+    observation: freezeDate
+      ? `Endpoint. Balance left untouched. Wallet frozen ${dLong(freezeDate)} and unmoved since.`
+      : "Endpoint. Balance left untouched.",
     final: true,
   });
 
@@ -351,7 +370,7 @@ export function buildTracingReport(fields = {}) {
       jurisdiction: jA,
       value: money(frozen),
       confidence: "High",
-      basis: `Self-hosted Ethereum address, frozen at the venue holding its counterparty exposure. Balance confirmed against two block explorers on ${dShort(asAt)}.`,
+      basis: `Self-hosted Ethereum address, frozen at the venue holding its counterparty exposure.${asAt ? ` Balance confirmed against two block explorers on ${dShort(asAt)}.` : ""}`,
     },
     {
       venue: "Exchange B",
@@ -453,7 +472,8 @@ export function buildTracingReport(fields = {}) {
   if (dissipated && A.onward) appendix.push({ role: "Onward address — traced", network: "Ethereum", address: A.onward });
   if (A.frozenW) appendix.push({ role: "Endpoint wallet — frozen", network: "Ethereum", address: A.frozenW });
 
-  const hopDays = Math.round((h10 - lossEnd) / 864e5);
+  const hopDays = daysBetween(lossEnd, h10);
+  const peelDays = daysBetween(h3, h4) || daysBetween(h2, hop4);
   const method = configuredParagraphs(fields, "methodSources", [
     "Public ledger data for Bitcoin, Ethereum and Tron, read from full-node block explorers and verified against a second explorer for every transaction relied on.",
     "Commercial blockchain analytics — attribution clusters and service labels — from two providers, each used under the firm's own subscription.",
@@ -466,7 +486,7 @@ export function buildTracingReport(fields = {}) {
     "The common-input-ownership heuristic can be defeated deliberately, by collaborative spending. Nothing in this trace suggests it was, but the possibility is not excluded.",
     "The cross-chain steps are matched by amount and timing rather than by a single on-chain link. They are the weakest inferences in the chain and are identified as such in the hop table.",
     `The difference between the loss and the amount followed, ${money(unfollowed)}, is network, bridge and swap fees shed at the hops shown. No part of it left the traced chain to an unidentified destination.`,
-    `The balance is as at ${dLong(asAt)}. The freeze is a matter for the venue holding it and can be lifted; nothing here should be read as an assurance that the sum remains available.`,
+    `The balance is as at ${dLong(asAt) || "the date of this report"}. The freeze is a matter for the venue holding it and can be lifted; nothing here should be read as an assurance that the sum remains available.`,
     "This report is prepared for the client's use in these proceedings. It is not a CPR Part 35 expert report and carries no expert's declaration.",
   ]);
   const statement = configuredText(
@@ -515,22 +535,22 @@ export function buildTracingReport(fields = {}) {
         ? `; ${money(unfollowed)} shed as fees and dust en route`
         : "; every output followed"}`,
       frozen: money(frozen),
-      frozenSub: `${pct(frozen, loss)} of the loss, frozen ${dShort(freezeDate)}${dissipated ? `; ${money(gap)} moved on first` : ""}`,
+      frozenSub: `${pct(frozen, loss)} of the loss${freezeDate ? `, frozen ${dShort(freezeDate)}` : ""}${dissipated ? `; ${money(gap)} moved on first` : ""}`,
       hops: String(totalHops),
-      hopsSub: `Across 3 networks, over ${hopDays} days`,
+      hopsSub: hopDays ? `Across 3 networks, over ${hopDays} days` : "Across 3 networks",
     },
     findings,
     diagram: {
       victimBtc: shorten(A.victim),
       victimUsdt: shorten(A.victimT),
       collection: shorten(A.collection),
-      peel: `${peelHops} hops · ${Math.round(range(3, 6))} days`,
-      direct: `2 hops · ${dShort(h6)}`,
+      peel: peelDays ? `${peelHops} hops · ${peelDays} days` : `${peelHops} hops`,
+      direct: h6 ? `2 hops · ${dShort(h6)}` : "2 hops",
       swap: dShort(h8),
       bridge: dShort(h5),
       cons: shorten(A.cons),
       frozen: shorten(A.frozenW),
-      frozenSub: `${money(frozen)} · ${dShort(freezeDate)}`,
+      frozenSub: freezeDate ? `${money(frozen)} · ${dShort(freezeDate)}` : money(frozen),
       e1: btcAmt.toFixed(2),
       e2: peelAmt.toFixed(2),
       e3: directAmt.toFixed(2),
@@ -548,7 +568,7 @@ export function buildTracingReport(fields = {}) {
       address: shorten(A.frozenW),
       body: dissipated
         ? `${money(followed)} of the ${money(loss)} loss was followed across three networks and ${totalHops} hops. ${money(frozen)} is frozen at the endpoint wallet; the ${money(gap)} paid onward beforehand is identified and monitored but sits outside the freeze.`
-        : `${money(followed)} of the ${money(loss)} loss was followed across three networks and ${totalHops} hops. The whole of it reached this one wallet, frozen on ${dLong(freezeDate)} and unmoved since.`,
+        : `${money(followed)} of the ${money(loss)} loss was followed across three networks and ${totalHops} hops. The whole of it reached this one wallet${freezeDate ? `, frozen on ${dLong(freezeDate)} and unmoved since` : ""}.`,
     },
     method,
     limitations,

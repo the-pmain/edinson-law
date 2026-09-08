@@ -1,4 +1,4 @@
-/** Project-wide UK dates. Storage is ISO (YYYY-MM-DD); users see DD/MM/YYYY. */
+/** Project-wide dates. Storage is ISO (YYYY-MM-DD); form inputs show DD.MM.YYYY. */
 
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",

@@ -1,4 +1,4 @@
-import { UK_DATE_PLACEHOLDER } from "./dates.js";
+import { EU_DATE_PLACEHOLDER } from "./dates.js";
 import { esc } from "./html.js";
 
 /** Locked fee earner — matches FIRM_SRA_REGISTER.namedSolicitor in matter-validate.js. */
@@ -21,12 +21,13 @@ export function field({
   disabled = false,
   className = "",
 }) {
-  const datePlaceholder = type === "date" ? placeholder || UK_DATE_PLACEHOLDER : placeholder;
+  const datePlaceholder = type === "date" ? placeholder || EU_DATE_PLACEHOLDER : placeholder;
   const auto = autocomplete ? ` autocomplete="${esc(autocomplete)}"` : "";
   const maxLengthAttr = maxlength ? ` maxlength="${esc(String(maxlength))}"` : "";
   const val = value ? ` value="${esc(value)}"` : "";
   const ph = datePlaceholder ? ` placeholder="${esc(datePlaceholder)}"` : "";
-  const titleAttr = type === "date" ? ` title="${esc(UK_DATE_PLACEHOLDER)}"` : "";
+  const titleAttr = type === "date" ? ` title="${esc(EU_DATE_PLACEHOLDER)}"` : "";
+  const dateFormatAttr = type === "date" ? ` data-date-format="eu"` : "";
   const when = showWhen ? ` data-show-when="${esc(showWhen)}" hidden` : "";
   const reqAttr = required ? " required" : "";
   const readAttr = readonly ? " readonly" : "";
@@ -48,9 +49,9 @@ export function field({
     control = `<textarea id="${id}" name="${id}" rows="${rows}"${cls}${auto}${maxLengthAttr}${ph}${reqAttr}${readAttr}${disAttr}>${esc(value)}</textarea>`;
   } else if (disabled) {
     // Disabled controls are omitted from FormData — keep a hidden twin for submit.
-    control = `<input type="hidden" name="${id}" value="${esc(value)}"><input id="${id}" type="${esc(type)}" value="${esc(value)}" disabled${required ? " aria-required=\"true\"" : ""}${auto}${maxLengthAttr}${ph}${titleAttr}${cls}>`;
+    control = `<input type="hidden" name="${id}" value="${esc(value)}"><input id="${id}" type="${esc(type)}" value="${esc(value)}" disabled${required ? " aria-required=\"true\"" : ""}${auto}${maxLengthAttr}${ph}${titleAttr}${dateFormatAttr}${cls}>`;
   } else {
-    control = `<input id="${id}" name="${id}" type="${esc(type)}"${cls}${auto}${maxLengthAttr}${val}${ph}${titleAttr}${reqAttr}${readAttr}>`;
+    control = `<input id="${id}" name="${id}" type="${esc(type)}"${cls}${auto}${maxLengthAttr}${val}${ph}${titleAttr}${dateFormatAttr}${reqAttr}${readAttr}>`;
   }
   return `<div class="field"${when}>
     <label for="${id}">${esc(label)}${reqLabel}</label>
@@ -81,7 +82,7 @@ export function agreementFieldsHtml() {
       autocomplete: "organization-title",
       maxlength: 80,
     })}
-    ${field({ id: "clientDob", label: "Date of birth", type: "date", autocomplete: "bday", hint: UK_DATE_PLACEHOLDER })}
+    ${field({ id: "clientDob", label: "Date of birth", type: "date", autocomplete: "bday", hint: EU_DATE_PLACEHOLDER })}
   `;
 }
 
@@ -352,7 +353,41 @@ export function tracingFieldsHtml() {
       )}
       ${walletField("onwardWallet", "Onward traced address — Ethereum", "0x…")}
     `)}
-    ${group(4, "Sections to include", `
+    ${group(4, "Hop dates", `
+      <p class="hint">These dates print in the hop table and related figures. Blank dates stay blank; Insert mock fills a coherent example chain.</p>
+      ${pair(
+        field({ id: "lossStartDate", label: "Hop 1 — deposits from", type: "date", showWhen: "showHopTable=include" }),
+        field({ id: "lossEndDate", label: "Hop 1 — deposits to", type: "date", showWhen: "showHopTable=include" }),
+      )}
+      ${field({ id: "hop2Date", label: "Hop 2 — first peel", type: "date", showWhen: "showHopTable=include" })}
+      ${pair(
+        field({ id: "hop3StartDate", label: "Hop 3 — peel chain from", type: "date", showWhen: "showHopTable=include" }),
+        field({ id: "hop3EndDate", label: "Hop 3 — peel chain to", type: "date", showWhen: "showHopTable=include" }),
+      )}
+      ${pair(
+        field({ id: "hop4Date", label: "Hop 4 — bridge deposit", type: "date", showWhen: "showHopTable=include" }),
+        field({ id: "hop5Date", label: "Hop 5 — bridge output", type: "date", showWhen: "showHopTable=include" }),
+      )}
+      ${pair(
+        field({ id: "hop6Date", label: "Hop 6 — direct branch", type: "date", showWhen: "showHopTable=include" }),
+        field({ id: "hop7Date", label: "Hop 7 — exchange deposit", type: "date", showWhen: "showHopTable=include" }),
+      )}
+      ${pair(
+        field({ id: "hop8Date", label: "Hop 8 — exchange withdrawal", type: "date", showWhen: "showHopTable=include" }),
+        field({ id: "hop9Date", label: "Hop 9 — swap", type: "date", showWhen: "showHopTable=include" }),
+      )}
+      ${pair(
+        field({ id: "hop10Date", label: "Hop 10 — consolidation", type: "date", showWhen: "showHopTable=include" }),
+        field({ id: "hopEndpointDate", label: "Hop 11 — endpoint / onward", type: "date", showWhen: "showHopTable=include" }),
+      )}
+      ${field({
+        id: "freezeDate",
+        label: "Endpoint frozen on",
+        type: "date",
+        hint: "Also used in the summary figures and endpoint note.",
+      })}
+    `)}
+    ${group(5, "Sections to include", `
       <p class="hint">Choose the evidence the reader needs. Omitted sections are removed cleanly, including their page breaks.</p>
       ${pair(
         sectionChoice("showSummary", "Summary and key figures"),
@@ -371,7 +406,7 @@ export function tracingFieldsHtml() {
         sectionChoice("showStatement", "Statement and signature", "This section also requires statement text below."),
       )}
     `)}
-    ${group(5, "Narrative", `
+    ${group(6, "Narrative", `
       <p class="hint">Use one paragraph per blank line. Blank optional content is not printed; there are no empty headings or placeholder sections.</p>
       ${field({
         id: "findingsText",
@@ -419,7 +454,7 @@ export function tracingFieldsHtml() {
         hint: "Optional. Leave blank to omit both the statement and signature block.",
       })}
     `)}
-    ${group(6, "Attribution labels", `
+    ${group(7, "Attribution labels", `
       <p class="hint">Only rows with a venue or service name are printed. Jurisdiction and confidence may be left blank.</p>
       ${pair(
         field({ id: "endpointVenue", label: "Endpoint venue / service", placeholder: "Endpoint wallet", showWhen: "showAttribution=include" }),

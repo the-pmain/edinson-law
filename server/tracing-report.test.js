@@ -42,6 +42,23 @@ test("wallets come from report fields and never from the seed", () => {
   assert.equal(report.addresses.frozenW, customEndpoint);
 });
 
+test("an unfilled report does not generate hop dates", () => {
+  const report = buildTracingReport({ loss: "100000" });
+  assert.ok(report.hops.length > 0);
+  assert.ok(report.hops.every((row) => row.date === ""));
+});
+
+test("hop dates come from report fields and never from the seed", () => {
+  const report = buildTracingReport({
+    ...mock,
+    seed: "4418",
+    hop2Date: "2026-01-15",
+  });
+  assert.equal(report.hops[0].date, "3 Apr – 20 May");
+  assert.equal(report.hops[1].date, "15 Jan");
+  assert.equal(report.hops.at(-1).date, "31 May");
+});
+
 test("an unfilled report does not generate wallet addresses", () => {
   const report = buildTracingReport({});
   assert.equal(report.loss, 0);

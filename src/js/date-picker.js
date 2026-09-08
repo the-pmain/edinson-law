@@ -150,7 +150,7 @@ function ensureShell() {
 }
 
 function usesEuDate(input) {
-  return input?.dataset.dateFormat === "eu";
+  return input?.dataset.dateFormat !== "uk";
 }
 
 function displayPlaceholder(input) {
