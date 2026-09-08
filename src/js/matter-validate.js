@@ -336,7 +336,7 @@ export function validateCaseReference(fields = {}) {
       "medium",
       "case.unallocated",
       "Case reference is not yet allocated.",
-      "Draft wording: Case reference: [CONFIDENTIAL CLIENT INFORMATION]. Replace with the court-issued number when allocated.",
+      "The documents print Our reference in that slot until a court-issued number is allocated.",
     ));
     return result(true, issues, { allocated: false });
   }

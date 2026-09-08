@@ -84,12 +84,20 @@ function applicantDisplayName(value) {
   return titleCasePersonName(value) || "the Applicant";
 }
 
-function caseReferenceLine(value) {
+function unallocatedCaseRef(value) {
   const text = clean(value);
-  if (!text || /to be allocated|tbc|tba|confidential|\[/i.test(text)) {
-    return "Case reference: [CONFIDENTIAL CLIENT INFORMATION]";
-  }
-  return `Case reference: ${text}`;
+  return !text || /to be allocated|tbc|tba|confidential|\[/i.test(text);
+}
+
+function caseReferenceLine(fields = {}) {
+  const courtRef = clean(fields.caseRef);
+  if (!unallocatedCaseRef(courtRef)) return `Case reference: ${courtRef}`;
+  return `Case reference: ${slot(fields.ourRef, "[our reference]")}`;
+}
+
+function courtOfficerSignLine(fields = {}, dated) {
+  const court = slot(fields.court, "City of London Magistrates' Court");
+  return `Signed: Court Officer, ${court} · Dated ${dated}`;
 }
 
 function slot(value, fallback) {
@@ -906,7 +914,7 @@ function matterBlocks(f) {
   const wsDate = letterDate;
   const exhibit = exhibitOf(titleCasePersonName(f.clientName)) || "A1";
   const orderExpiry = shift(f.orderDate, 0, 2) || "the expiry of the freezing order";
-  const caseRef = caseReferenceLine(f.caseRef);
+  const caseRef = caseReferenceLine(f);
   const provider = slot(f.provider, "the analytics provider");
   const exchange = slot(f.exchange, "the wallet administrator");
   const wallet = slot(f.wallet, "the frozen wallet");
@@ -953,7 +961,7 @@ function matterBlocks(f) {
     { type: "h", text: "6. NOTICE AND LISTING" },
     { type: "p", n: "6.1", text: `This application is made pursuant to section 303Z51 of the Proceeds of Crime Act 2002. It is made in writing and specifies the grounds on which it is made, in accordance with rule 12(1) of the Magistrates' Courts (Detention, Freezing and Forfeiture of Cryptoassets, and Miscellaneous Amendments) Rules 2024. Copies have been sent to the Respondent and to ${exchange}. The Applicant asks the court to fix a hearing date under rule 12(5), and invites the court to expedite the listing having regard to the expiry of the freezing order on ${orderExpiry} and to the volatility of the assets.` },
     { type: "space", h: 20 },
-    { type: "p", text: `Signed                    Magistrates' Court Victoria, solicitors for the Applicant    ·    Dated  ${letterDate}` },
+    { type: "p", text: courtOfficerSignLine(f, letterDate) },
   ];
 }
 
@@ -1005,7 +1013,7 @@ function releaseBlocks(f) {
   return [
     { type: "title", text: "RELEASE ORDER", align: "center", size: 16 },
     { type: "p", text: `IN THE ${slot(f.court, "City of London Magistrates' Court")}`, bold: true, align: "center" },
-    { type: "p", text: caseReferenceLine(f.caseRef), align: "center", size: 10 },
+    { type: "p", text: caseReferenceLine(f), align: "center", size: 10 },
     { type: "p", text: `Before ${slot(f.before, "[District Judge ____ / the bench]")}`, align: "center", size: 10 },
     { type: "p", text: `Dated ${dated}`, align: "center", size: 10, after: 6 },
     { type: "rule" },
@@ -1031,7 +1039,7 @@ function releaseBlocks(f) {
     { type: "p", n: "3.4", text: costs },
     { type: "p", n: "3.5", text: "Liberty to apply in respect of the implementation of paragraph 3.2." },
     { type: "space", h: 20 },
-    { type: "p", text: `Signed                    Magistrates' Court Victoria, solicitors for the Applicant    ·    Dated  ${letterDate}` },
+    { type: "p", text: courtOfficerSignLine(f, letterDate) },
   ];
 }
 

@@ -149,10 +149,12 @@ test("release order is titled as an order, with a full destination address", asy
   assert.ok(out.bytes.byteLength > 1000);
   const text = await pdfText(out.bytes);
   assert.match(text, /RELEASE ORDER/);
+  assert.match(text, /Signed:\s*Court Officer, City of London Magistrates' Court · Dated 14 July 2026/);
   assert.match(text, /IT IS ORDERED THAT/);
   assert.match(text, /3\.1/);
   assert.match(text, /3\.5/);
-  assert.match(text, /EL\/2026\/0431/);
+  assert.match(text, /Case reference:\s*EL\/2026\/0431/);
+  assert.equal(/CONFIDENTIAL CLIENT INFORMATION/.test(text), false);
   assert.match(text, /14 July 2026/);
   assert.match(text, /Chief Officer of Police for West Yorkshire/);
   assert.match(text, /0x3ad188b0c41e9f2b07dd5a3f190bb7c26e4a5109/i);
@@ -170,6 +172,10 @@ test("application of release order names the client wallet and exchange", async 
   assert.ok(out.bytes.byteLength > 1000);
   const text = await pdfText(out.bytes);
   assert.match(text, /APPLICATION OF RELEASE ORDER/);
+  assert.match(text, /Signed:\s*Court Officer, City of London Magistrates' Court · Dated /);
+  assert.equal(/solicitors for the Applicant/.test(text), false);
+  assert.match(text, /Case reference:\s*EL\/2026\/0431/);
+  assert.equal(/CONFIDENTIAL CLIENT INFORMATION/.test(text), false);
   assert.match(text, /2\.1/);
   assert.match(text, /2\.2/);
   assert.match(text, /Designated Wallet/);
