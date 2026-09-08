@@ -1,12 +1,9 @@
 /**
- * Seeded cryptoasset tracing model used by the admin Tracing report.
- * Ported from the mock tracing report generator: operator fields in, hop
- * chain and addresses out. Same seed and inputs always rebuild the same report.
+ * Cryptoasset tracing model used by the admin Tracing report.
+ * Operator fields, including every wallet address, are authoritative. The seed
+ * only keeps calculated scenario figures stable between previews.
  */
 
-const BECH = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
-const B58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-const HEX = "0123456789abcdef";
 const JURIS = [
   "Lithuania",
   "Seychelles",
@@ -27,8 +24,6 @@ const GBP = new Intl.NumberFormat("en-GB", {
   maximumFractionDigits: 0,
 });
 
-export const TRACING_REVIEWER = "John Adams, Partner";
-
 function mulberry32(a) {
   return function random() {
     a |= 0;
@@ -37,12 +32,6 @@ function mulberry32(a) {
     t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
     return ((t ^ t >>> 14) >>> 0) / 4294967296;
   };
-}
-
-function chars(set, n, rnd) {
-  let s = "";
-  for (let i = 0; i < n; i += 1) s += set[Math.floor(rnd() * set.length)];
-  return s;
 }
 
 export function money(n) {
@@ -62,6 +51,7 @@ function num(n) {
 }
 
 function pct(a, b) {
+  if (!b) return "";
   return `${(a / b * 100).toFixed(1)}%`;
 }
 
@@ -80,6 +70,7 @@ function addDays(d, n) {
 }
 
 function shorten(a) {
+  if (!a) return "";
   return `${a.slice(0, 6)}…${a.slice(-4)}`;
 }
 
@@ -137,14 +128,15 @@ function includesSection(fields, key) {
 
 export function buildTracingReport(fields = {}) {
   const seed = Math.max(1, parseInt(String(fields.seed || ""), 10) || 1);
-  const loss = Math.max(1000, asNumber(fields.loss, 100000));
+  const loss = Math.max(0, asNumber(fields.loss, 0));
+  const hasTraceData = loss > 0;
   const peelHops = parseInt(String(fields.hops || ""), 10) || 4;
   const client = String(fields.clientName || "").trim();
   const platform = String(fields.platform || "").trim();
-  const analyst = configuredText(fields, "analyst", "Mock");
+  const analyst = configuredText(fields, "analyst");
 
-  let followed = asNumber(fields.followed, loss * 0.988);
-  let frozen = asNumber(fields.frozen, followed * 0.997);
+  let followed = hasTraceData ? asNumber(fields.followed, loss * 0.988) : 0;
+  let frozen = hasTraceData ? asNumber(fields.frozen, followed * 0.997) : 0;
   const notes = [];
   if (followed > loss) {
     followed = loss;
@@ -222,31 +214,24 @@ export function buildTracingReport(fields = {}) {
   const freezeDate = addDays(h10, Math.round(range(3, 14)));
   const asAt = addDays(today, -1);
 
-  const btcBech = () => `bc1q${chars(BECH, 38, rnd)}`;
-  const btcP2SH = () => `3${chars(B58, 33, rnd)}`;
-  const btcLegacy = () => `1${chars(B58, 33, rnd)}`;
-  const ethAddr = () => `0x${chars(HEX, 40, rnd)}`;
-  const tronAddr = () => `T${chars(B58, 33, rnd)}`;
-
   const A = {
-    victim: btcBech(),
-    victimT: tronAddr(),
-    collection: btcBech(),
-    peel1: btcP2SH(),
-    peelLast: btcBech(),
-    direct: btcBech(),
-    exchB: btcLegacy(),
-    exchBOut: ethAddr(),
-    bridgeOut: ethAddr(),
-    swapOut: ethAddr(),
-    cons: ethAddr(),
-    frozenW: ethAddr(),
-    onward: ethAddr(),
+    victim: configuredText(fields, "victimWalletBtc"),
+    victimT: configuredText(fields, "victimWalletTron"),
+    collection: configuredText(fields, "collectionWallet"),
+    peel1: configuredText(fields, "peelFirstWallet"),
+    peelLast: configuredText(fields, "peelFinalWallet"),
+    direct: configuredText(fields, "directWallet"),
+    exchB: configuredText(fields, "exchangeDepositWallet"),
+    exchBOut: configuredText(fields, "exchangeWithdrawalWallet"),
+    bridgeOut: configuredText(fields, "bridgeOutputWallet"),
+    swapOut: configuredText(fields, "swapOutputWallet"),
+    cons: configuredText(fields, "consolidationWallet"),
+    frozenW: configuredText(fields, "endpointWallet"),
+    onward: configuredText(fields, "onwardWallet"),
   };
 
   const payments = Math.round(range(8, 14));
   const sources = Math.round(range(22, 41));
-  const generatedRef = `EL/${today.getFullYear()}/${String(Math.round(range(100, 9899))).padStart(4, "0")}`;
   const jA = pick(JURIS);
   const jB = pick(JURIS.filter((x) => x !== jA));
   const jC = pick(JURIS.filter((x) => x !== jA && x !== jB));
@@ -464,9 +449,9 @@ export function buildTracingReport(fields = {}) {
     { role: "Bridge output", network: "Ethereum", address: A.bridgeOut },
     { role: "Swap output", network: "Ethereum", address: A.swapOut },
     { role: "Consolidation wallet", network: "Ethereum", address: A.cons },
-  ];
-  if (dissipated) appendix.push({ role: "Onward address — traced", network: "Ethereum", address: A.onward });
-  appendix.push({ role: "Endpoint wallet — frozen", network: "Ethereum", address: A.frozenW });
+  ].filter((row) => row.address);
+  if (dissipated && A.onward) appendix.push({ role: "Onward address — traced", network: "Ethereum", address: A.onward });
+  if (A.frozenW) appendix.push({ role: "Endpoint wallet — frozen", network: "Ethereum", address: A.frozenW });
 
   const hopDays = Math.round((h10 - lossEnd) / 864e5);
   const method = configuredParagraphs(fields, "methodSources", [
@@ -489,23 +474,20 @@ export function buildTracingReport(fields = {}) {
     "statement",
     "The findings in this report are based on the ledger data and materials described above and are true to the best of my knowledge and belief. Where an inference has been drawn rather than a transaction directly observed, that is stated in the relevant paragraph.",
   );
-  const ref = configuredText(fields, "matterRef", generatedRef);
-  const reportDate = configuredDate(fields, "reportDate", dLong(today));
-  const asAtDate = configuredDate(fields, "asAtDate", dLong(asAt));
-  const reviewer = configuredText(fields, "reviewer", TRACING_REVIEWER);
-  const defaultSubtitle = dissipated
-    ? "Funds followed from the victim's wallets to a frozen endpoint, with the onward payment identified"
-    : "Funds followed from the victim's wallets to a single frozen endpoint";
-  const subtitle = configuredText(fields, "reportPurpose", defaultSubtitle);
+  const ref = configuredText(fields, "matterRef");
+  const reportDate = configuredDate(fields, "reportDate", "");
+  const asAtDate = configuredDate(fields, "asAtDate", "");
+  const reviewer = configuredText(fields, "reviewer");
+  const subtitle = configuredText(fields, "reportPurpose");
   const sections = {
-    summary: includesSection(fields, "showSummary"),
-    diagram: includesSection(fields, "showDiagram"),
-    hops: includesSection(fields, "showHopTable") && hopRows.length > 0,
-    attribution: includesSection(fields, "showAttribution") && attribution.length > 0,
-    methodology: includesSection(fields, "showMethodology") && (method.length > 0 || limitations.length > 0),
-    recommendations: includesSection(fields, "showRecommendations") && nextSteps.length > 0,
-    appendix: includesSection(fields, "showAppendix") && appendix.length > 0,
-    statement: includesSection(fields, "showStatement") && Boolean(statement),
+    summary: hasTraceData && includesSection(fields, "showSummary"),
+    diagram: hasTraceData && includesSection(fields, "showDiagram"),
+    hops: hasTraceData && includesSection(fields, "showHopTable") && hopRows.length > 0,
+    attribution: hasTraceData && includesSection(fields, "showAttribution") && attribution.length > 0,
+    methodology: hasTraceData && includesSection(fields, "showMethodology") && (method.length > 0 || limitations.length > 0),
+    recommendations: hasTraceData && includesSection(fields, "showRecommendations") && nextSteps.length > 0,
+    appendix: hasTraceData && includesSection(fields, "showAppendix") && appendix.length > 0,
+    statement: hasTraceData && includesSection(fields, "showStatement") && Boolean(statement),
   };
 
   return {
@@ -572,7 +554,9 @@ export function buildTracingReport(fields = {}) {
     limitations,
     nextSteps,
     appendix,
-    signature: analyst ? `${analyst} · Forensic Analyst · Edison Law · ${reportDate || dLong(today)}` : "",
+    signature: analyst
+      ? [analyst, "Forensic Analyst", "Edison Law", reportDate].filter(Boolean).join(" · ")
+      : "",
     statement,
     addresses: A,
   };

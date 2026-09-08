@@ -224,6 +224,12 @@ export function tracingFieldsHtml() {
     ],
     hint,
   });
+  const walletField = (id, label, placeholder) => field({
+    id,
+    label,
+    placeholder,
+    hint: "Printed only when supplied. Insert mock fills a complete example trace.",
+  });
 
   return `
     ${group(1, "Report details", `
@@ -301,8 +307,9 @@ export function tracingFieldsHtml() {
         field({
           id: "hops",
           label: "Peel hops",
-          value: "4",
+          value: "",
           options: [
+            { value: "", label: "Select" },
             { value: "3", label: "3" },
             { value: "4", label: "4" },
             { value: "5", label: "5" },
@@ -313,12 +320,39 @@ export function tracingFieldsHtml() {
           id: "seed",
           label: "Seed",
           type: "number",
-          value: "4417",
-          hint: "Same seed and inputs always rebuild the same hop chain and addresses.",
+          hint: "Optional scenario control. Insert mock supplies one; wallet fields below are never generated from it.",
         }),
       )}
     `)}
-    ${group(3, "Sections to include", `
+    ${group(3, "Wallets and addresses", `
+      <p class="hint">Every address is matter data. Blank fields stay blank and are not replaced with generated wallets.</p>
+      ${pair(
+        walletField("victimWalletBtc", "Victim wallet — Bitcoin", "bc1q…"),
+        walletField("victimWalletTron", "Victim wallet — Tron", "T…"),
+      )}
+      ${pair(
+        walletField("collectionWallet", "Collection wallet — Bitcoin", "bc1q…"),
+        walletField("peelFirstWallet", "Peel chain first hop — Bitcoin", "3…"),
+      )}
+      ${pair(
+        walletField("peelFinalWallet", "Peel chain final hop — Bitcoin", "bc1q…"),
+        walletField("directWallet", "Direct branch — Bitcoin", "bc1q…"),
+      )}
+      ${pair(
+        walletField("exchangeDepositWallet", "Exchange deposit — Bitcoin", "1…"),
+        walletField("exchangeWithdrawalWallet", "Exchange withdrawal — Ethereum", "0x…"),
+      )}
+      ${pair(
+        walletField("bridgeOutputWallet", "Bridge output — Ethereum", "0x…"),
+        walletField("swapOutputWallet", "Swap output — Ethereum", "0x…"),
+      )}
+      ${pair(
+        walletField("consolidationWallet", "Consolidation wallet — Ethereum", "0x…"),
+        walletField("endpointWallet", "Frozen endpoint — Ethereum", "0x…"),
+      )}
+      ${walletField("onwardWallet", "Onward traced address — Ethereum", "0x…")}
+    `)}
+    ${group(4, "Sections to include", `
       <p class="hint">Choose the evidence the reader needs. Omitted sections are removed cleanly, including their page breaks.</p>
       ${pair(
         sectionChoice("showSummary", "Summary and key figures"),
@@ -337,7 +371,7 @@ export function tracingFieldsHtml() {
         sectionChoice("showStatement", "Statement and signature", "This section also requires statement text below."),
       )}
     `)}
-    ${group(4, "Narrative", `
+    ${group(5, "Narrative", `
       <p class="hint">Use one paragraph per blank line. Blank optional content is not printed; there are no empty headings or placeholder sections.</p>
       ${field({
         id: "findingsText",
@@ -385,7 +419,7 @@ export function tracingFieldsHtml() {
         hint: "Optional. Leave blank to omit both the statement and signature block.",
       })}
     `)}
-    ${group(5, "Attribution labels", `
+    ${group(6, "Attribution labels", `
       <p class="hint">Only rows with a venue or service name are printed. Jurisdiction and confidence may be left blank.</p>
       ${pair(
         field({ id: "endpointVenue", label: "Endpoint venue / service", placeholder: "Endpoint wallet", showWhen: "showAttribution=include" }),

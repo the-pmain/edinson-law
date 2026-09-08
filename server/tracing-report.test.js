@@ -32,10 +32,53 @@ test("same seed and inputs rebuild the same endpoint", () => {
   assert.equal(a.stats.loss, "£542,100");
 });
 
-test("changing the seed changes reconstructed addresses", () => {
-  const a = buildTracingReport(mock);
-  const b = buildTracingReport({ ...mock, seed: "4418" });
-  assert.notEqual(a.addresses.frozenW, b.addresses.frozenW);
+test("wallets come from report fields and never from the seed", () => {
+  const customEndpoint = "0x1111111111111111111111111111111111111111";
+  const report = buildTracingReport({
+    ...mock,
+    seed: "4418",
+    endpointWallet: customEndpoint,
+  });
+  assert.equal(report.addresses.frozenW, customEndpoint);
+});
+
+test("an unfilled report does not generate wallet addresses", () => {
+  const report = buildTracingReport({});
+  assert.equal(report.loss, 0);
+  assert.equal(report.followed, 0);
+  assert.equal(report.frozen, 0);
+  assert.equal(report.analyst, "");
+  assert.equal(report.reviewer, "");
+  assert.equal(report.ref, "");
+  assert.equal(report.date, "");
+  assert.equal(report.asAt, "");
+  assert.equal(report.subtitle, "");
+  assert.deepEqual(report.addresses, {
+    victim: "",
+    victimT: "",
+    collection: "",
+    peel1: "",
+    peelLast: "",
+    direct: "",
+    exchB: "",
+    exchBOut: "",
+    bridgeOut: "",
+    swapOut: "",
+    cons: "",
+    frozenW: "",
+    onward: "",
+  });
+  assert.deepEqual(report.appendix, []);
+  assert.deepEqual(report.sections, {
+    summary: false,
+    diagram: false,
+    hops: false,
+    attribution: false,
+    methodology: false,
+    recommendations: false,
+    appendix: false,
+    statement: false,
+  });
 });
 
 test("followed and frozen derive from the loss", () => {
