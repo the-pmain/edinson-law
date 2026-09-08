@@ -213,10 +213,10 @@ export function openDocumentPreview({
           settleReady();
           return;
         }
-        setStatus(
-          error instanceof Error && error.message ? error.message : labels.fail,
-          "error",
-        );
+        // Keep implementation details and browser compatibility errors out of
+        // the client-facing dialog. The original error still rejects admin
+        // callers that need to react to a failed preparation.
+        setStatus(labels.fail, "error");
         agree.disabled = true;
         sign.disabled = true;
         settleReady(error instanceof Error ? error : new Error(labels.fail));

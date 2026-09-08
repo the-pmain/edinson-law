@@ -1,5 +1,8 @@
-import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
-import workerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+// The standard PDF.js build assumes brand-new JavaScript APIs such as
+// Map#getOrInsertComputed. The legacy build includes the required polyfills for
+// Firefox ESR, older mobile browsers, and embedded WebViews.
+import { getDocument, GlobalWorkerOptions } from "pdfjs-dist/legacy/build/pdf.mjs";
+import workerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
 GlobalWorkerOptions.workerSrc = workerUrl;
 
@@ -8,17 +11,45 @@ function copyBytes(bytes) {
 }
 
 function pageWidth(container) {
-  const styles = getComputedStyle(container);
-  const pad = Number.parseFloat(styles.paddingLeft) + Number.parseFloat(styles.paddingRight);
-  return Math.max(280, Math.floor(container.clientWidth - pad));
+  const styles = window.getComputedStyle?.(container);
+  const left = Number.parseFloat(styles?.paddingLeft) || 0;
+  const right = Number.parseFloat(styles?.paddingRight) || 0;
+  return Math.max(280, Math.floor(container.clientWidth - left - right));
+}
+
+function replaceContent(container, content) {
+  if (typeof container.replaceChildren === "function") {
+    container.replaceChildren(...(content ? [content] : []));
+    return;
+  }
+  while (container.firstChild) container.removeChild(container.firstChild);
+  if (content) container.appendChild(content);
 }
 
 export function createPdfPreview(container) {
   let source = null;
+  let fallbackUrl = "";
   let lastWidth = 0;
   let token = 0;
   let timer = 0;
   let watching = false;
+
+  const revokeFallback = () => {
+    if (!fallbackUrl) return;
+    URL.revokeObjectURL(fallbackUrl);
+    fallbackUrl = "";
+  };
+
+  const showNativeFallback = (bytes, id) => {
+    if (id !== token) return;
+    revokeFallback();
+    fallbackUrl = URL.createObjectURL(new Blob([copyBytes(bytes)], { type: "application/pdf" }));
+    const frame = document.createElement("iframe");
+    frame.className = "preview-native";
+    frame.title = "PDF document preview";
+    frame.src = fallbackUrl;
+    replaceContent(container, frame);
+  };
 
   async function draw() {
     if (!source) return;
@@ -53,6 +84,7 @@ export function createPdfPreview(container) {
 
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d", { alpha: false });
+      if (!context) throw new Error("Canvas rendering is unavailable.");
       canvas.width = Math.floor(viewport.width * ratio);
       canvas.height = Math.floor(viewport.height * ratio);
       canvas.style.width = "100%";
@@ -72,23 +104,34 @@ export function createPdfPreview(container) {
     }
 
     if (id !== token) return;
-    container.replaceChildren(fragment);
+    revokeFallback();
+    replaceContent(container, fragment);
   }
 
-  const observer = new ResizeObserver(() => {
+  const onResize = () => {
     window.clearTimeout(timer);
     timer = window.setTimeout(() => {
       draw().catch(() => {});
     }, 180);
-  });
+  };
+  const observer = typeof ResizeObserver === "function"
+    ? new ResizeObserver(onResize)
+    : null;
 
   return {
     async show(bytes) {
-      source = bytes;
+      source = copyBytes(bytes);
       lastWidth = 0;
-      await draw();
+      try {
+        await draw();
+      } catch {
+        // A browser-native PDF frame is a reliable last resort when canvas,
+        // workers, or a PDF.js feature are unavailable on the device.
+        showNativeFallback(source, token);
+      }
       if (!watching) {
-        observer.observe(container);
+        if (observer) observer.observe(container);
+        else window.addEventListener("resize", onResize, { passive: true });
         watching = true;
       }
     },
@@ -96,14 +139,16 @@ export function createPdfPreview(container) {
       token += 1;
       window.clearTimeout(timer);
       try {
-        observer.disconnect();
+        observer?.disconnect();
       } catch {
         /* already disconnected */
       }
+      window.removeEventListener("resize", onResize);
       watching = false;
       source = null;
       lastWidth = 0;
-      container.replaceChildren();
+      revokeFallback();
+      replaceContent(container);
     },
   };
 }
