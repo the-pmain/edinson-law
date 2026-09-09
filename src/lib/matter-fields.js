@@ -2,7 +2,7 @@ import { EU_DATE_PLACEHOLDER } from "./dates.js";
 import { esc } from "./html.js";
 
 /** Locked fee earner — matches FIRM_SRA_REGISTER.namedSolicitor in matter-validate.js. */
-export const FIXED_FEE_EARNER_LINE = "Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk";
+export const FIXED_FEE_EARNER_LINE = "Abigail Charlotte Wills · abi.wills@edisonlawlegal.com";
 
 export function field({
   id,

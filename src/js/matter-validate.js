@@ -22,7 +22,7 @@ export const FIRM_SRA_REGISTER = {
   organisationUrl: "https://www.sra.org.uk/consumers/register/organisation/?sraNumber=510498",
   namedSolicitor: {
     name: "Abigail Charlotte Wills",
-    email: "abi.wills@edisonlaw.co.uk",
+    email: "abi.wills@edisonlawlegal.com",
     slug: "abigail-wills",
     sraRegulated: true,
   },

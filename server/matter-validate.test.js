@@ -19,13 +19,13 @@ const people = [
   {
     slug: "liam-brennan",
     name: "Liam Brennan",
-    email: "liam.brennan@edisonlaw.co.uk",
+    email: "liam.brennan@edisonlawlegal.com",
     sraRegulated: false,
   },
   {
     slug: "abigail-wills",
     name: "Abigail Charlotte Wills",
-    email: "abi.wills@edisonlaw.co.uk",
+    email: "abi.wills@edisonlawlegal.com",
     sraRegulated: true,
   },
 ];
@@ -43,7 +43,7 @@ test("rejects investigator as letterhead solicitor", () => {
 
 test("accepts SRA-named solicitor", () => {
   const out = validateSolicitorCredentials(
-    "Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk",
+    "Abigail Charlotte Wills · abi.wills@edisonlawlegal.com",
     people,
   );
   assert.equal(out.ok, true);
@@ -81,7 +81,7 @@ test("validates ethereum wallet format", () => {
 test("validateDynamicField routes fee earner and money", () => {
   const fee = validateDynamicField(
     "feeEarner",
-    "Liam Brennan · liam.brennan@edisonlaw.co.uk",
+    "Liam Brennan · liam.brennan@edisonlawlegal.com",
     {},
     { people },
   );
@@ -106,7 +106,7 @@ test("rejects TheLegal-style placeholder applicant names", () => {
 
 test("matter pack catches missing NFRC and thin identity", () => {
   const out = validateMatterFields({
-    feeEarner: "Abigail Charlotte Wills · abi.wills@edisonlaw.co.uk",
+    feeEarner: "Abigail Charlotte Wills · abi.wills@edisonlawlegal.com",
     clientName: "Margaret",
     claimed: "50,005 USDT",
     lossValue: "£31,000",

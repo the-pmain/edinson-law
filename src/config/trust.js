@@ -82,7 +82,7 @@ export const trust = {
   complaints: {
     handlerName: "Priya Raman",
     handlerRole: "Compliance Officer for Legal Practice (COLP)",
-    email: "complaints@edisonlaw.co.uk",
+    email: "complaints@edisonlawlegal.com",
     acknowledgementDays: 5,
     finalResponseWeeks: 8,
     procedure: [
@@ -179,7 +179,7 @@ export const trust = {
 
   privacy: {
     controller: "Edison Law",
-    email: "dataprotection@edisonlaw.co.uk",
+    email: "dataprotection@edisonlawlegal.com",
     lawfulBases: [
       {
         basis: "Performance of a contract",

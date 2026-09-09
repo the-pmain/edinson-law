@@ -19,7 +19,7 @@ const people = [
   {
     slug: "abigail-wills",
     name: "Abigail Charlotte Wills",
-    email: "abi.wills@edisonlaw.co.uk",
+    email: "abi.wills@edisonlawlegal.com",
     sraRegulated: true,
   },
 ];

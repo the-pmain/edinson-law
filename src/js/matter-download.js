@@ -136,7 +136,7 @@ const FIRM = {
   name: "Magistrates' Court Victoria",
   role: "Solicitors",
   phone: "",
-  email: "abi.wills@edisonlaw.co.uk",
+  email: "abi.wills@edisonlawlegal.com",
   address: ["12 Augustus Road", "Wimbledon", "London SW19 6LN"],
   sra: "510498",
 };
