@@ -369,6 +369,7 @@ export const people = [
     initials: "TE",
     role: "Private Prosecutions & Financial Crime Solicitor",
     firm: "Edison Law",
+    email: "thomas.ellery@edisonlawlegal.com",
     phone: "+44 73 9551 0006",
     photo: "/images/people/thomas-ellery.png",
     photoWidth: 273,
