@@ -111,9 +111,14 @@ function courtAddressLines(fields = {}) {
   return [name, ...address];
 }
 
+function documentDateIso(fields = {}, kind) {
+  if (kind === "release") return fields.orderDated || todayIso();
+  if (kind === "matter") return fields.letterDate || todayIso();
+  return todayIso();
+}
+
 function letterheadDateLine(fields = {}, kind) {
-  const iso = kind === "release" ? fields.orderDated : todayIso();
-  const shown = formatEuDate(iso);
+  const shown = formatEuDate(documentDateIso(fields, kind));
   return shown ? `Date: ${shown}` : "";
 }
 
@@ -948,7 +953,7 @@ function claimBlocks(f, trust = null) {
 
 function matterBlocks(f) {
   const today = todayIso();
-  const letterDate = fmt(today);
+  const letterDate = fmt(f.letterDate || today) || fmt(today);
   const orderDateL = slot(fmt(f.orderDate), "the date of the freezing order");
   const reportDateL = slot(fmt(f.reportDate), "the date of the tracing report");
   const client = applicantDisplayName(f.clientName);
@@ -1016,7 +1021,8 @@ function walletDisplay(value, placeholder) {
 }
 
 function releaseBlocks(f) {
-  const dated = slot(fmt(f.orderDated), "[date]");
+  const today = todayIso();
+  const dated = fmt(f.orderDated || today) || fmt(today);
   const freeze = slot(fmt(f.freezeDate), "the date of the freezing order");
   const appDate = slot(fmt(f.applicationDate), "[date]");
   const wsDate = slot(fmt(f.wsDate), "[date]");

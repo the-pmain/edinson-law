@@ -1,4 +1,4 @@
-import { EU_DATE_PLACEHOLDER } from "./dates.js";
+import { EU_DATE_PLACEHOLDER, todayIso } from "./dates.js";
 import { esc } from "./html.js";
 
 /** Locked fee earner — matches FIRM_SRA_REGISTER.namedSolicitor in matter-validate.js. */
@@ -86,7 +86,7 @@ export function agreementFieldsHtml() {
   `;
 }
 
-export function claimFieldsHtml({ clientWallet = false } = {}) {
+export function claimFieldsHtml({ clientWallet = false, documentDate = false } = {}) {
   const frozenWalletField = field({
     id: "wallet",
     label: "Frozen wallet address",
@@ -102,6 +102,7 @@ export function claimFieldsHtml({ clientWallet = false } = {}) {
 
   return `
     ${group(1, "The client and the loss", `
+      ${documentDate ? field({ id: "letterDate", label: "Date", type: "date", value: todayIso() }) : ""}
       ${field({ id: "clientName", label: "Client's full name", autocomplete: "name", placeholder: "Margaret Hollis" })}
       ${field({ id: "clientAddr", label: "Client's address", autocomplete: "street-address", placeholder: "14 Weaver's Row, Leeds LS6 2QT" })}
       ${pair(
@@ -211,7 +212,7 @@ export function claimFieldsHtml({ clientWallet = false } = {}) {
 }
 
 export function matterFieldsHtml() {
-  return claimFieldsHtml({ clientWallet: true });
+  return claimFieldsHtml({ clientWallet: true, documentDate: true });
 }
 
 export function tracingFieldsHtml() {
@@ -617,7 +618,7 @@ export function releaseFieldsHtml() {
         field({ id: "before", label: "Before", placeholder: "District Judge ____ / the bench" }),
       )}
       ${pair(
-        field({ id: "orderDated", label: "Dated", type: "date" }),
+        field({ id: "orderDated", label: "Dated", type: "date", value: todayIso() }),
         field({ id: "freezeDate", label: "Crypto wallet freezing order made on", type: "date" }),
       )}
       ${field({ id: "applicant", label: "Applicant", autocomplete: "name", placeholder: "full legal name" })}

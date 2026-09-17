@@ -90,6 +90,7 @@ function prefill(kind, item, payload) {
       claimants: "none",
       copyTo: "CPS Proceeds of Crime Division",
       feeEarner,
+      ...(kind === "matter" ? { letterDate: todayIso() } : {}),
     };
   }
   return {
@@ -97,6 +98,7 @@ function prefill(kind, item, payload) {
     wsName: name,
     court: "City of London Magistrates' Court",
     feeEarner,
+    orderDated: todayIso(),
   };
 }
 
@@ -416,6 +418,10 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
       ...(kind === "tracing" ? {} : { feeEarner: FIXED_FEE_EARNER_LINE }),
     });
     if (kind !== "tracing") lockFeeEarner(form);
+    const documentDate = formControl(form, kind === "release" ? "orderDated" : "letterDate");
+    if ((kind === "matter" || kind === "release") && documentDate && !String(documentDate.value || "").trim()) {
+      documentDate.value = todayIso();
+    }
     const dob = formControl(form, "clientDob");
     if (dob) dob.max = todayIso();
     bindFullFieldPickers(form);
@@ -508,7 +514,7 @@ export function bindAdminDocuments({ payload, statusNode, onSaved }) {
   mockBtn.addEventListener("click", () => {
     if (saving || previewing) return;
     if (!applyMatterMock(form, activeKind, {
-      keepFilled: ["clientName", "applicant", "wsName", "sellerName"],
+      keepFilled: ["clientName", "applicant", "wsName", "sellerName", "letterDate", "orderDated"],
     })) return;
     if (activeKind !== "tracing") lockFeeEarner(form);
     syncShowWhen(form);

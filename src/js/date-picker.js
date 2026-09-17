@@ -14,8 +14,8 @@ const MONTHS = [
 ];
 const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const WEEKDAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-const YEAR_FLOOR = 1920;
-const YEAR_CEILING_PAD = 0;
+const YEAR_FLOOR = 1900;
+const YEAR_CEILING = 2100;
 
 const CARET = `<svg class="edison-cal-caret" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6.2 8 10.8l4.5-4.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const CHEVRON = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.2 3.2 5.4 8l4.8 4.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
@@ -61,12 +61,11 @@ function limitOf(input, attr) {
 function yearLimits() {
   const min = activeInput ? limitOf(activeInput, "min") : null;
   const max = activeInput ? limitOf(activeInput, "max") : null;
-  const now = new Date().getFullYear();
   return {
     min,
     max,
     minY: min ? min.getFullYear() : YEAR_FLOOR,
-    maxY: max ? max.getFullYear() : now + YEAR_CEILING_PAD,
+    maxY: max ? max.getFullYear() : YEAR_CEILING,
   };
 }
 
@@ -451,7 +450,7 @@ function drill(which) {
 function goToYear(year) {
   if (!Number.isInteger(year) || year < 1000 || year > 9999) return;
   const { min, max, minY, maxY } = yearLimits();
-  const next = Math.min(maxY, Math.max(minY, year));
+  const next = (min || max) ? Math.min(maxY, Math.max(minY, year)) : year;
   cursor = bound(new Date(next, cursor.getMonth(), 1), min, max);
   view = "month";
   jumpInput.value = "";
