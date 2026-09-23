@@ -1,6 +1,7 @@
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import { privacyNoticeUrl } from "./agreement-data.js";
+import { embedDocumentFonts } from "./document-fonts.js";
 import { formatEuDate, formatUkLong } from "../lib/dates.js";
 
 const TEMPLATE = "/documents/client-authority-consent.pdf";
@@ -11,6 +12,8 @@ const bodyInk = rgb(20 / 255, 37 / 255, 43 / 255);
 const pen = rgb(18 / 255, 24 / 255, 48 / 255);
 const paper = rgb(1, 1, 1);
 const PRIVACY_LINE = { page: 3, x: 51, y0: 467.32, y1: 478.39, w: 493.47, size: 10, leading: 15 };
+const FEE_VAT_LINE = { page: 1, x: 114.33948, baseline: 165.65991, width: 377.12, size: 10 };
+const FEE_WITHOUT_VAT = ". It is a single, one-off charge. There is nothing else to pay: our professional charges";
 
 function safeText(value) {
   return String(value || "")
@@ -94,6 +97,23 @@ function fillPrivacyUrl(page, font, url) {
   });
 }
 
+function stripPlusVat(page, font) {
+  page.drawRectangle({
+    x: FEE_VAT_LINE.x - 0.4,
+    y: FEE_VAT_LINE.baseline - 2.6,
+    width: FEE_VAT_LINE.width + 2,
+    height: 12.2,
+    color: paper,
+  });
+  page.drawText(FEE_WITHOUT_VAT, {
+    x: FEE_VAT_LINE.x,
+    y: FEE_VAT_LINE.baseline,
+    size: FEE_VAT_LINE.size,
+    font,
+    color: bodyInk,
+  });
+}
+
 function fill(page, font, slot, text) {
   const value = safeText(text);
   const pad = slot.pad ?? 1.2;
@@ -173,6 +193,8 @@ export async function generateAgreementPdf(data, templateBytes, scriptFontBytes)
     fill(pages[slot.page], slot.font || font, slot, slot.text);
   }
   fillPrivacyUrl(pages[PRIVACY_LINE.page], times, privacyNoticeUrl(data.privacyUrl));
+  const serif = await embedDocumentFonts(pdf);
+  stripPlusVat(pages[FEE_VAT_LINE.page], serif.regular);
 
   const client = safeText(data.clientName);
   const reference = safeText(data.matterReference);
