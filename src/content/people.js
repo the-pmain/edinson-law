@@ -121,6 +121,7 @@ export const people = [
     initials: "SL",
     role: "Payments & Transaction Tracing Specialist",
     firm: "Edison Law",
+    phone: "+44 74 6257 4907",
     photo: "/images/people/sophie-lang.png",
     photoWidth: 273,
     photoHeight: 273,
